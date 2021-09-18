@@ -1,6 +1,7 @@
 #ifndef PROG_H
 #define PROG_H
 
+#include "player.h"
 #include <stdbool.h>
 #include <SDL.h>
 
@@ -10,6 +11,8 @@ struct Prog
 
     SDL_Window* window;
     SDL_Renderer* rend;
+
+    struct Player* player;
 };
 
 struct Prog* prog_init();

@@ -3,6 +3,8 @@ Raycasting in C
 
 Yes, making all the sines and tangents in my code negative was intentional. Because Y increases downwards instead of upwards, if I used sin or tan normally the angle would be increasing in a clockwise direction instead of counterclockwise.
 
+![image](https://user-images.githubusercontent.com/73869536/133942257-c6592fcd-91f0-4c83-95f9-b0f13a98dfbe.png)
+
 # Building
 
 You need [vcpkg](https://github.com/microsoft/vcpkg) to build this project.

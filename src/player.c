@@ -33,10 +33,19 @@ void player_render(struct Player* p, SDL_Renderer* rend)
 }
 
 
-void player_move(struct Player* p)
+void player_move(struct Player* p, char* map, int map_width, int tile_size)
 {
-    p->rect.x += p->speed * cosf(p->angle);
-    p->rect.y += p->speed * sinf(p->angle);
+    SDL_FPoint moved = { .x = p->speed * cosf(p->angle), .y = p->speed * sinf(p->angle) };
+    SDL_Point grid_pos = {
+        .x = (int)((int)(p->rect.x + moved.x) - ((int)(p->rect.x + moved.x) % tile_size)) / tile_size,
+        .y = (int)((int)(p->rect.y + moved.y) - ((int)(p->rect.y + moved.y) % tile_size)) / tile_size
+    };
+
+    if (map[grid_pos.y * map_width + grid_pos.x] != '#')
+    {
+        p->rect.x += moved.x;
+        p->rect.y += moved.y;
+    }
 
     p->angle += p->angle_change;
 

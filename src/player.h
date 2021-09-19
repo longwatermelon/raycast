@@ -17,7 +17,7 @@ void player_cleanup(struct Player* p);
 
 void player_render(struct Player* p, SDL_Renderer* rend);
 
-void player_move(struct Player* p);
+void player_move(struct Player* p, char* map, int map_width, int tile_size);
 
 #endif
 

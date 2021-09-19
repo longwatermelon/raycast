@@ -13,7 +13,10 @@ struct Prog
     SDL_Renderer* rend;
 
     struct Player* player;
+
     char* map;
+    int map_width;
+    int tile_size;
 };
 
 struct Prog* prog_init();

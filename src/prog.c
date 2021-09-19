@@ -12,6 +12,8 @@ struct Prog* prog_init()
 
     p->player = player_init((SDL_Point){ 300, 300 }, 0);
     p->map = common_read_file("map");
+    p->map_width = 16;
+    p->tile_size = 50;
 
     return p;
 }
@@ -36,7 +38,7 @@ void prog_mainloop(struct Prog* p)
     {
         prog_handle_events(p, &evt);
 
-        player_move(p->player);
+        player_move(p->player, p->map, p->map_width, p->tile_size);
 
         SDL_RenderClear(p->rend);
 

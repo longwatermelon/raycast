@@ -10,7 +10,7 @@ struct Prog* prog_init()
     p->window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN);
     p->rend = SDL_CreateRenderer(p->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    p->player = player_init((SDL_Point){ 300, 320 }, 0.f);
+    p->player = player_init((SDL_Point){ 300, 320 }, 5.543169f);
     p->map = common_read_file("map");
     p->map_width = 16;
     p->tile_size = 50;
@@ -78,6 +78,14 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
             case SDLK_LEFT:
                 p->player->angle_change = .01f;
                 break;
+            case SDLK_r:
+                p->player->ray_mode = RAY_ALL;
+                break;
+            case SDLK_h:
+                p->player->ray_mode = RAY_HORIZONTAL;
+                break;
+            case SDLK_v:
+                p->player->ray_mode = RAY_VERTICAL;
             }
         } break;
         case SDL_KEYUP:

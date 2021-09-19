@@ -17,6 +17,9 @@ struct Prog
     char* map;
     int map_width;
     int tile_size;
+
+    SDL_Texture* tile_texture;
+    SDL_Point image_size;
 };
 
 struct Prog* prog_init();

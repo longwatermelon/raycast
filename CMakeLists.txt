@@ -4,6 +4,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(raycast)
 
 find_package(SDL2 CONFIG REQUIRED)
+find_package(sdl2-image CONFIG REQUIRED)
 
 add_executable(raycast
     src/main.c
@@ -15,6 +16,9 @@ add_executable(raycast
     src/common.c
 )
 
-target_link_libraries(raycast PRIVATE SDL2::SDL2 SDL2::SDL2main)
+target_link_libraries(raycast PRIVATE
+    SDL2::SDL2 SDL2::SDL2main
+    SDL2::SDL2_image
+)
 target_compile_options(raycast PRIVATE -ggdb)
 

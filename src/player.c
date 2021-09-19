@@ -55,15 +55,15 @@ void player_render(struct Player* p, SDL_Renderer* rend, char* map, int map_widt
 
     /* printf("%f\n", p->angle); */
 
-    bool is_horizontal;
-    SDL_Point end = player_cast_ray(p, p->angle, map, map_width, tile_size, &is_horizontal);
+    /* bool is_horizontal; */
+    /* SDL_Point end = player_cast_ray(p, p->angle, map, map_width, tile_size, &is_horizontal); */
 
-    if (is_horizontal)
-        SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
-    else
-        SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
+    /* if (is_horizontal) */
+    /*     SDL_SetRenderDrawColor(rend, 255, 0, 0, 255); */
+    /* else */
+    /*     SDL_SetRenderDrawColor(rend, 0, 255, 0, 255); */
 
-    SDL_RenderDrawLine(rend, center.x, center.y, end.x, end.y);
+    /* SDL_RenderDrawLine(rend, center.x, center.y, end.x, end.y); */
 }
 
 

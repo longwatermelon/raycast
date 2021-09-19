@@ -1,4 +1,5 @@
 #include "prog.h"
+#include "common.h"
 
 
 struct Prog* prog_init()
@@ -10,6 +11,7 @@ struct Prog* prog_init()
     p->rend = SDL_CreateRenderer(p->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     p->player = player_init((SDL_Point){ 300, 300 }, 0);
+    p->map = common_read_file("map");
 
     return p;
 }
@@ -19,6 +21,8 @@ void prog_cleanup(struct Prog* p)
 {
     SDL_DestroyRenderer(p->rend);
     SDL_DestroyWindow(p->window);
+
+    free(p->map);
 
     free(p);
 }

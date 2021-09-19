@@ -11,7 +11,10 @@ add_executable(raycast
     src/prog.c
     src/player.h
     src/player.c
+    src/common.h
+    src/common.c
 )
 
 target_link_libraries(raycast PRIVATE SDL2::SDL2 SDL2::SDL2main)
+target_compile_options(raycast PRIVATE -ggdb)
 

@@ -12,6 +12,8 @@ struct Player* player_init(SDL_Point pos, float angle)
     p->angle = angle;
     p->angle_change = 0.f;
 
+    p->ray_mode = RAY_ALL;
+
     return p;
 }
 
@@ -47,18 +49,21 @@ void player_render(struct Player* p, SDL_Renderer* rend, char* map, int map_widt
         else
             SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
 
+
         SDL_RenderDrawLine(rend, center.x, center.y, endp.x, endp.y);
     }
 
-    /* bool is_horizontal; */
-    /* SDL_Point end = player_cast_ray(p, p->angle, map, map_width, tile_size, &is_horizontal); */
+    /* printf("%f\n", p->angle); */
 
-    /* if (is_horizontal) */
-    /*     SDL_SetRenderDrawColor(rend, 255, 0, 0, 255); */
-    /* else */
-    /*     SDL_SetRenderDrawColor(rend, 0, 255, 0, 255); */
+    bool is_horizontal;
+    SDL_Point end = player_cast_ray(p, p->angle, map, map_width, tile_size, &is_horizontal);
 
-    /* SDL_RenderDrawLine(rend, center.x, center.y, end.x, end.y); */
+    if (is_horizontal)
+        SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
+    else
+        SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
+
+    SDL_RenderDrawLine(rend, center.x, center.y, end.x, end.y);
 }
 
 
@@ -102,6 +107,12 @@ void player_move(struct Player* p, char* map, int map_width, int tile_size)
 
 SDL_Point player_cast_ray(struct Player* p, float angle, char* map, int map_width, int tile_size, bool* is_horizontal)
 {
+    if (angle > 2.f * M_PI)
+        angle -= 2.f * M_PI;
+
+    if (angle < 0.f)
+        angle += 2.f * M_PI;
+
     SDL_Point horizontal = player_cast_ray_horizontal(p, angle, map, map_width, tile_size);
     SDL_Point vertical = player_cast_ray_vertical(p, angle, map, map_width, tile_size);
 
@@ -160,14 +171,14 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, char* map, i
         }
         else // It might be hitting a corner
         {
-            grid_pos.x = (closest_horizontal.x + 2) / tile_size;
+            grid_pos.x = (closest_horizontal.x + 3) / tile_size;
 
             if (map[(grid_pos.y - 1) * map_width + grid_pos.x] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
             {
                 return closest_horizontal;
             }
 
-            grid_pos.x = (closest_horizontal.x - 2) / tile_size;
+            grid_pos.x = (closest_horizontal.x - 3) / tile_size;
 
             if (map[(grid_pos.y - 1) * map_width + grid_pos.x] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
             {
@@ -216,14 +227,14 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, char* map, int
         }
         else // It may be hitting a corner
         {
-            grid_pos.y = (closest_vertical.y + 2) / tile_size;
+            grid_pos.y = (closest_vertical.y + 3) / tile_size;
 
             if (map[grid_pos.y * map_width + (grid_pos.x - 1)] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
             {
                 return closest_vertical;
             }
 
-            grid_pos.y = (closest_vertical.y - 2) / tile_size;
+            grid_pos.y = (closest_vertical.y - 3) / tile_size;
 
             if (map[grid_pos.y * map_width + (grid_pos.x - 1)] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
             {

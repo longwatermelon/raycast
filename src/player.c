@@ -175,6 +175,7 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, char* map, i
 
             if (map[(grid_pos.y - 1) * map_width + grid_pos.x] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
             {
+                closest_horizontal.x += 3;
                 return closest_horizontal;
             }
 
@@ -182,6 +183,7 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, char* map, i
 
             if (map[(grid_pos.y - 1) * map_width + grid_pos.x] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
             {
+                closest_horizontal.x -= 3;
                 return closest_horizontal;
             }
         }
@@ -231,6 +233,7 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, char* map, int
 
             if (map[grid_pos.y * map_width + (grid_pos.x - 1)] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
             {
+                closest_vertical.y += 3;
                 return closest_vertical;
             }
 
@@ -238,6 +241,7 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, char* map, int
 
             if (map[grid_pos.y * map_width + (grid_pos.x - 1)] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
             {
+                closest_vertical.y -= 3;
                 return closest_vertical;
             }
         }

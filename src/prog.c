@@ -10,7 +10,7 @@ struct Prog* prog_init()
     p->window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN);
     p->rend = SDL_CreateRenderer(p->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    p->player = player_init((SDL_Point){ 300, 300 }, 0);
+    p->player = player_init((SDL_Point){ 300, 300 }, 0.f);
     p->map = common_read_file("map");
     p->map_width = 16;
     p->tile_size = 50;
@@ -43,7 +43,7 @@ void prog_mainloop(struct Prog* p)
         SDL_RenderClear(p->rend);
 
         prog_render_map(p);
-        player_render(p->player, p->rend);
+        player_render(p->player, p->rend, p->map, p->map_width, p->tile_size);
 
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);
@@ -73,10 +73,10 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                 p->player->speed = -player_speed;
                 break;
             case SDLK_RIGHT:
-                p->player->angle_change = .1f;
+                p->player->angle_change = -.01f;
                 break;
             case SDLK_LEFT:
-                p->player->angle_change = -.1f;
+                p->player->angle_change = .01f;
                 break;
             }
         } break;

@@ -42,6 +42,7 @@ void prog_mainloop(struct Prog* p)
 
         SDL_RenderClear(p->rend);
 
+        prog_render_map(p);
         player_render(p->player, p->rend);
 
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
@@ -93,6 +94,27 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                 break;
             }
         } break;
+        }
+    }
+}
+
+
+void prog_render_map(struct Prog* p)
+{
+    SDL_SetRenderDrawColor(p->rend, 180, 180, 0, 255);
+
+    for (int i = 0; i < strlen(p->map); ++i)
+    {
+        if (p->map[i] == '#')
+        {
+            SDL_Rect rect = {
+                .x = (i % p->map_width) * p->tile_size,
+                .y = ((i - (i % p->map_width)) / p->map_width) * p->tile_size,
+                .w = p->tile_size,
+                .h = p->tile_size
+            };
+
+            SDL_RenderFillRect(p->rend, &rect);
         }
     }
 }

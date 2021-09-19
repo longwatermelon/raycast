@@ -35,17 +35,31 @@ void player_render(struct Player* p, SDL_Renderer* rend)
 
 void player_move(struct Player* p, char* map, int map_width, int tile_size)
 {
-    SDL_FPoint moved = { .x = p->speed * cosf(p->angle), .y = p->speed * sinf(p->angle) };
-    SDL_Point grid_pos = {
-        .x = (int)((int)(p->rect.x + moved.x) - ((int)(p->rect.x + moved.x) % tile_size)) / tile_size,
-        .y = (int)((int)(p->rect.y + moved.y) - ((int)(p->rect.y + moved.y) % tile_size)) / tile_size
+    SDL_FPoint moved = {
+        .x = p->speed * cosf(p->angle),
+        .y = p->speed * sinf(p->angle)
     };
 
-    if (map[grid_pos.y * map_width + grid_pos.x] != '#')
-    {
+    int xo = (moved.x > 0 ? p->rect.w : 0);
+    int yo = (moved.y > 0 ? p->rect.h : 0);
+
+    SDL_Point grid_pos = {
+        (int)((p->rect.x + xo) - ((int)(p->rect.x + xo) % tile_size)) / tile_size,
+        (int)((p->rect.y + yo) - ((int)(p->rect.y + yo) % tile_size)) / tile_size
+    };
+
+    SDL_Point new_grid_pos = {
+        (int)((p->rect.x + xo + moved.x) - ((int)(p->rect.x + xo + moved.x) % tile_size)) / tile_size,
+        (int)((p->rect.y + yo + moved.y) - ((int)(p->rect.y + yo + moved.y) % tile_size)) / tile_size
+    };
+
+    // Separate x and y collision checks so that player can still move in directions that aren't occupied by obstacles after colliding with something
+    if (map[grid_pos.y * map_width + new_grid_pos.x] != '#')
         p->rect.x += moved.x;
+
+    if (map[new_grid_pos.y * map_width + grid_pos.x] != '#')
         p->rect.y += moved.y;
-    }
+
 
     p->angle += p->angle_change;
 

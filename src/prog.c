@@ -42,8 +42,55 @@ void prog_mainloop(struct Prog* p)
 
         SDL_RenderClear(p->rend);
 
-        prog_render_map(p);
-        player_render(p->player, p->rend, p->map, p->map_width, p->tile_size);
+        /* prog_render_map(p); */
+        /* player_render(p->player, p->rend, p->map, p->map_width, p->tile_size); */
+
+        /* SDL_Point center = { */
+        /*     .x = p->player->rect.x + p->player->rect.w / 2, */
+        /*     .y = p->player->rect.y + p->player->rect.h / 2 */
+        /* }; */
+
+        SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);
+        int x_pos = 0;
+
+        for (float i = p->player->angle + M_PI / 6.f; i > p->player->angle - M_PI / 6.f; i -= 0.01f) // Cast 100 rays
+        {
+            bool is_horizontal;
+            SDL_Point endp = player_cast_ray(p->player, i, p->map, p->map_width, p->tile_size, &is_horizontal);
+            int ray_length = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
+
+            // Adjust for fisheye effect
+            float angle = p->player->angle - i;
+
+            if (angle < 0.f)
+                angle += 2.f * M_PI;
+
+            if (angle > 2.f * M_PI)
+                angle -= 2.f * M_PI;
+
+            float dist = ray_length * cosf(angle);
+            float line_height = (p->tile_size * 800.f) / dist;
+
+            if (line_height > 800.f)
+                line_height = 800.f;
+
+            float line_offset = 400.f - line_height / 2.f;
+
+            SDL_Rect rect = { .x = x_pos * 8, .y = (int)line_offset, .w = 8, .h = (int)line_height };
+
+            SDL_SetRenderDrawColor(p->rend, 255, (is_horizontal ? 255 : 0), 0, 255);
+            SDL_RenderFillRect(p->rend, &rect);
+
+            /* SDL_RenderDrawLine(p->rend, x_pos * 8, line_offset, x_pos * 8, line_offset + line_height); */
+
+            ++x_pos;
+            /* if (is_horizontal) */
+            /*     SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255); */
+            /* else */
+            /*     SDL_SetRenderDrawColor(p->rend, 0, 255, 0, 255); */
+
+            /* SDL_RenderDrawLine(p->rend, center.x, center.y, endp.x, endp.y); */
+        }
 
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);

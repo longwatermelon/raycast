@@ -36,8 +36,12 @@ void player_render(struct Player* p, SDL_Renderer* rend, char* map, int map_widt
     /* printf("%f\n", sinf(M_PI / 2.f)); */
     /* printf("%f %f\n", p->angle, 10 * sinf(p->angle)); */
     /* printf("%f\n", 10 * sinf(p->angle)); */
-    SDL_Point endp = player_cast_ray(p, p->angle, map, map_width, tile_size);
-    SDL_RenderDrawLine(rend, center.x, center.y, endp.x, endp.y);
+
+    for (float i = p->angle - M_PI / 5.f; i < p->angle + M_PI / 5.f; i += 0.01f)
+    {
+        SDL_Point endp = player_cast_ray(p, i, map, map_width, tile_size);
+        SDL_RenderDrawLine(rend, center.x, center.y, endp.x, endp.y);
+    }
 }
 
 
@@ -84,9 +88,14 @@ SDL_Point player_cast_ray(struct Player* p, float angle, char* map, int map_widt
     SDL_Point horizontal = player_cast_ray_horizontal(p, angle, map, map_width, tile_size);
     SDL_Point vertical = player_cast_ray_vertical(p, angle, map, map_width, tile_size);
 
-    // TODO find shortest ray
+    SDL_Point diff_h = { .x = horizontal.x - p->rect.x, .y = horizontal.y - p->rect.y };
+    SDL_Point diff_v = { .x = vertical.x - p->rect.x, .y = vertical.y - p->rect.y };
 
-    return horizontal;
+    int dist_h = sqrtf(diff_h.x * diff_h.x + diff_h.y * diff_h.y);
+    int dist_v = sqrtf(diff_v.x * diff_v.x + diff_v.y * diff_v.y);
+
+    return dist_h < dist_v ? horizontal : vertical;
+    /* return horizontal; */
 }
 
 
@@ -98,12 +107,12 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, char* map, i
     closest_horizontal.y = (int)p->rect.y - ((int)p->rect.y % tile_size) + (angle > M_PI ? tile_size : 0);
     closest_horizontal.x = p->rect.x + ((closest_horizontal.y - p->rect.y) / -tanf(angle));
 
-    if (angle <= 0.01f || 2 * M_PI - angle <= 0.01f) // Facing right, almost undefined
+    if (angle <= 0.001f || 2 * M_PI - angle <= 0.001f) // Facing right, almost undefined
     {
         return (SDL_Point){ 800, p->rect.y };
     }
 
-    if (fabsf((float)M_PI - angle) <= 0.01f) // Facing left, almost undefined
+    if (fabsf((float)M_PI - angle) <= 0.001f) // Facing left, almost undefined
     {
         return (SDL_Point){ -800, p->rect.y };
     }
@@ -136,5 +145,40 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, char* map, i
 
 SDL_Point player_cast_ray_vertical(struct Player* p, float angle, char* map, int map_width, int tile_size)
 {
+    // Cast ray that only intersects vertical lines
+    
+    SDL_Point closest_vertical;
+    closest_vertical.x = (int)p->rect.x - ((int)p->rect.x % tile_size) + (angle < M_PI / 2.f || angle > 3 * M_PI / 2.f ? tile_size : 0);
+    closest_vertical.y = p->rect.y + ((closest_vertical.x - p->rect.x) * -tanf(angle));
+
+    if (fabsf((float)(M_PI / 2.f) - angle) <= 0.001f)
+        return (SDL_Point){ p->rect.x, -800 };
+
+    if (fabsf((float)(3 * M_PI / 2.f) - angle) <= 0.001f)
+        return (SDL_Point){ p->rect.x, 800 };
+
+    while (true)
+    {
+        SDL_Point grid_pos = {
+            .x = (closest_vertical.x - (closest_vertical.x % tile_size)) / tile_size,
+            .y = (closest_vertical.y - (closest_vertical.y % tile_size)) / tile_size
+        };
+
+         // Out of bounds, no point in continuing
+        if (grid_pos.y < 0 || grid_pos.y >= strlen(map) / map_width || grid_pos.x < 0 || grid_pos.x >= map_width)
+        {
+            return closest_vertical;
+        }
+
+        if (map[grid_pos.y * map_width + (grid_pos.x - 1)] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
+        {
+            return closest_vertical;
+        }
+
+        int dx = (angle < M_PI / 2.f || angle > 3 * M_PI / 2.f ? tile_size : -tile_size);
+
+        closest_vertical.x += dx;
+        closest_vertical.y += dx * -tanf(angle);
+    }
 }
 

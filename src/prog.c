@@ -48,6 +48,7 @@ void prog_mainloop(struct Prog* p)
 
         SDL_RenderClear(p->rend);
 
+        
         SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);
         int x_pos = 0;
 
@@ -98,6 +99,9 @@ void prog_mainloop(struct Prog* p)
             ++x_pos;
         }
 
+        /* prog_render_map(p); */
+        /* player_render(p->player, p->rend, p->map, p->map_width, p->tile_size); */
+
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);
     }
@@ -139,6 +143,7 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                 break;
             case SDLK_v:
                 p->player->ray_mode = RAY_VERTICAL;
+                break;
             }
         } break;
         case SDL_KEYUP:

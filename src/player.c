@@ -46,7 +46,6 @@ void player_render(struct Player* p, SDL_Renderer* rend, char* map, int map_widt
         else
             SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
 
-
         SDL_RenderDrawLine(rend, center.x, center.y, endp.x, endp.y);
     }
 }
@@ -127,14 +126,10 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, char* map, i
     closest_horizontal.x = p->rect.x + ((closest_horizontal.y - p->rect.y) / -tanf(angle));
 
     if (angle <= 0.001f || 2 * M_PI - angle <= 0.001f) // Facing right, almost undefined
-    {
         return (SDL_Point){ 800, p->rect.y };
-    }
 
     if (fabsf((float)M_PI - angle) <= 0.001f) // Facing left, almost undefined
-    {
         return (SDL_Point){ -800, p->rect.y };
-    }
 
     while (true)
     {
@@ -143,13 +138,14 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, char* map, i
             .y = (closest_horizontal.y - (closest_horizontal.y % tile_size)) / tile_size
         };
 
+        if (angle < M_PI)
+            grid_pos.y -= 1;
+
         // Out of bounds, no point in continuing
         if (grid_pos.y < 0 || grid_pos.y >= strlen(map) / map_width || grid_pos.x < 0 || grid_pos.x >= map_width)
-        {
             return closest_horizontal;
-        }
 
-        if (map[(grid_pos.y - 1) * map_width + grid_pos.x] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
+        if (map[grid_pos.y * map_width + grid_pos.x] == '#')
         {
             return closest_horizontal;
         }
@@ -157,7 +153,7 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, char* map, i
         {
             grid_pos.x = (closest_horizontal.x + 3) / tile_size;
 
-            if (map[(grid_pos.y - 1) * map_width + grid_pos.x] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
+            if (map[grid_pos.y * map_width + grid_pos.x] == '#')
             {
                 closest_horizontal.x += 3;
                 return closest_horizontal;
@@ -165,7 +161,7 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, char* map, i
 
             grid_pos.x = (closest_horizontal.x - 3) / tile_size;
 
-            if (map[(grid_pos.y - 1) * map_width + grid_pos.x] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
+            if (map[grid_pos.y * map_width + grid_pos.x] == '#')
             {
                 closest_horizontal.x -= 3;
                 return closest_horizontal;
@@ -201,13 +197,14 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, char* map, int
             .y = (closest_vertical.y - (closest_vertical.y % tile_size)) / tile_size
         };
 
+        if (angle > M_PI / 2.f && angle < 3 * M_PI / 2.f)
+            grid_pos.x -= 1;
+
          // Out of bounds, no point in continuing
         if (grid_pos.y < 0 || grid_pos.y >= strlen(map) / map_width || grid_pos.x < 0 || grid_pos.x >= map_width)
-        {
             return closest_vertical;
-        }
 
-        if (map[grid_pos.y * map_width + (grid_pos.x - 1)] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
+        if (map[grid_pos.y * map_width + grid_pos.x] == '#')
         {
             return closest_vertical;
         }
@@ -215,7 +212,7 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, char* map, int
         {
             grid_pos.y = (closest_vertical.y + 3) / tile_size;
 
-            if (map[grid_pos.y * map_width + (grid_pos.x - 1)] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
+            if (map[grid_pos.y * map_width + grid_pos.x] == '#')
             {
                 closest_vertical.y += 3;
                 return closest_vertical;
@@ -223,7 +220,7 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, char* map, int
 
             grid_pos.y = (closest_vertical.y - 3) / tile_size;
 
-            if (map[grid_pos.y * map_width + (grid_pos.x - 1)] == '#' || map[grid_pos.y * map_width + grid_pos.x] == '#')
+            if (map[grid_pos.y * map_width + grid_pos.x] == '#')
             {
                 closest_vertical.y -= 3;
                 return closest_vertical;

@@ -11,7 +11,7 @@ struct Prog* prog_init()
     p->window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN);
     p->rend = SDL_CreateRenderer(p->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    p->player = player_init((SDL_Point){ 300, 320 }, 5.543169f);
+    p->player = player_init((SDL_Point){ 300, 320 }, M_PI);
     p->map = common_read_file("map");
     p->map_width = 16;
     p->tile_size = 50;

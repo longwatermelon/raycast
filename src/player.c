@@ -5,7 +5,7 @@
 
 struct Player* player_init(SDL_Point pos, float angle)
 {
-    struct Player* p = malloc(sizeof(struct Player));
+    struct Player* p = calloc(1, sizeof(struct Player));
     p->rect = (SDL_FRect){ .x = pos.x, .y = pos.y, .w = 10, .h = 10 };
     p->angle = angle;
 

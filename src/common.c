@@ -6,7 +6,7 @@
 
 char* common_read_file(const char* path)
 {
-    char* contents = malloc(0);
+    char* contents = malloc(sizeof(char));
     contents[0] = '\0';
 
     FILE* fp = fopen(path, "r");
@@ -28,6 +28,8 @@ char* common_read_file(const char* path)
         memcpy(&contents[prev_length], line, (read - 1) * sizeof(char));
         contents[prev_length + read - 1] = '\0';
     }
+
+    free(line);
 
     return contents;
 }

@@ -48,14 +48,6 @@ void prog_mainloop(struct Prog* p)
 
         SDL_RenderClear(p->rend);
 
-        /* prog_render_map(p); */
-        /* player_render(p->player, p->rend, p->map, p->map_width, p->tile_size); */
-
-        /* SDL_Point center = { */
-        /*     .x = p->player->rect.x + p->player->rect.w / 2, */
-        /*     .y = p->player->rect.y + p->player->rect.h / 2 */
-        /* }; */
-
         SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);
         int x_pos = 0;
 
@@ -86,10 +78,6 @@ void prog_mainloop(struct Prog* p)
 
             if (!is_horizontal)
             {
-                /* src.x = 0; */
-                /* src.y = endp.y % p->tile_size; */
-                /* src.w = p->tile_size; */
-                /* src.h = 1; */
                 src.x = ((float)(endp.y % p->tile_size) / (float)p->tile_size) * p->image_size.x;
                 src.y = 0;
                 src.w = 1;
@@ -103,25 +91,11 @@ void prog_mainloop(struct Prog* p)
                 src.h = p->image_size.y;
             }
 
-            /* printf("%d %d\n", endp.x % p->tile_size, endp.y % p->tile_size); */
-            /* printf("%d %d\n", src.x, src.y); */
-
             SDL_Rect dst = { .x = x_pos, .y = (int)line_offset, .w = 1, .h = (int)line_height };
             
             SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
 
-            /* SDL_SetRenderDrawColor(p->rend, 255, (is_horizontal ? 255 : 0), 0, 255); */
-            /* SDL_RenderFillRect(p->rend, &rect); */
-
-            /* SDL_RenderDrawLine(p->rend, x_pos * 8, line_offset, x_pos * 8, line_offset + line_height); */
-
             ++x_pos;
-            /* if (is_horizontal) */
-            /*     SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255); */
-            /* else */
-            /*     SDL_SetRenderDrawColor(p->rend, 0, 255, 0, 255); */
-
-            /* SDL_RenderDrawLine(p->rend, center.x, center.y, endp.x, endp.y); */
         }
 
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);

@@ -35,9 +35,6 @@ void player_render(struct Player* p, SDL_Renderer* rend, char* map, int map_widt
     SDL_RenderDrawLine(rend, center.x, center.y, center.x + 10 * cosf(p->angle), center.y + 10 * -sinf(p->angle));
 
     SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
-    /* printf("%f\n", sinf(M_PI / 2.f)); */
-    /* printf("%f %f\n", p->angle, 10 * sinf(p->angle)); */
-    /* printf("%f\n", 10 * sinf(p->angle)); */
 
     for (float i = p->angle - M_PI / 5.f; i < p->angle + M_PI / 5.f; i += 0.01f)
     {
@@ -52,18 +49,6 @@ void player_render(struct Player* p, SDL_Renderer* rend, char* map, int map_widt
 
         SDL_RenderDrawLine(rend, center.x, center.y, endp.x, endp.y);
     }
-
-    /* printf("%f\n", p->angle); */
-
-    /* bool is_horizontal; */
-    /* SDL_Point end = player_cast_ray(p, p->angle, map, map_width, tile_size, &is_horizontal); */
-
-    /* if (is_horizontal) */
-    /*     SDL_SetRenderDrawColor(rend, 255, 0, 0, 255); */
-    /* else */
-    /*     SDL_SetRenderDrawColor(rend, 0, 255, 0, 255); */
-
-    /* SDL_RenderDrawLine(rend, center.x, center.y, end.x, end.y); */
 }
 
 
@@ -130,7 +115,6 @@ SDL_Point player_cast_ray(struct Player* p, float angle, char* map, int map_widt
         return vertical;
 
     return dist_h < dist_v ? horizontal : vertical;
-    /* return horizontal; */
 }
 
 

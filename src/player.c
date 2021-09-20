@@ -5,6 +5,7 @@
 
 struct Player* player_init(SDL_Point pos, float angle)
 {
+    // Valgrind shits itself if I use malloc instead of calloc, no idea why
     struct Player* p = calloc(1, sizeof(struct Player));
     p->rect = (SDL_FRect){ .x = pos.x, .y = pos.y, .w = 10, .h = 10 };
     p->angle = angle;

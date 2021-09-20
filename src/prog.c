@@ -58,7 +58,6 @@ void prog_mainloop(struct Prog* p)
             SDL_Point endp = player_cast_ray(p->player, i, p->map, p->map_width, p->tile_size, &is_horizontal);
             int ray_length = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
 
-            // Adjust for fisheye effect
             float angle = p->player->angle - i;
 
             if (angle < 0.f)
@@ -67,6 +66,7 @@ void prog_mainloop(struct Prog* p)
             if (angle > 2.f * M_PI)
                 angle -= 2.f * M_PI;
 
+            // Adjust for fisheye effect
             float dist = ray_length * cosf(angle);
             float line_height = (p->tile_size * 800.f) / dist;
 
@@ -75,22 +75,12 @@ void prog_mainloop(struct Prog* p)
 
             float line_offset = 400.f - line_height / 2.f;
 
-            SDL_Rect src;
-
-            if (!is_horizontal)
-            {
-                src.x = ((float)(endp.y % p->tile_size) / (float)p->tile_size) * p->image_size.x;
-                src.y = 0;
-                src.w = 1;
-                src.h = p->image_size.y;
-            }
-            else
-            {
-                src.x = ((float)(endp.x % p->tile_size) / (float)p->tile_size) * p->image_size.x;
-                src.y = 0;
-                src.w = 1;
-                src.h = p->image_size.y;
-            }
+            SDL_Rect src = {
+                .x = ((float)((is_horizontal ? endp.x : endp.y) % p->tile_size) / (float)p->tile_size) * p->image_size.x,
+                .y = 0,
+                .w = 1,
+                .h = p->image_size.y
+            };
 
             SDL_Rect dst = { .x = x_pos, .y = (int)line_offset, .w = 1, .h = (int)line_height };
             

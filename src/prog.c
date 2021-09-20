@@ -26,6 +26,7 @@ struct Prog* prog_init()
 void prog_cleanup(struct Prog* p)
 {
     SDL_DestroyTexture(p->tile_texture);
+    player_cleanup(p->player);
 
     SDL_DestroyRenderer(p->rend);
     SDL_DestroyWindow(p->window);

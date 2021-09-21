@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "map.h"
 #include <stdbool.h>
 #include <SDL.h>
 
@@ -23,14 +24,14 @@ struct Player
 struct Player* player_init(SDL_Point pos, float angle);
 void player_cleanup(struct Player* p);
 
-void player_render(struct Player* p, SDL_Renderer* rend, char* map, int map_width, int tile_size);
+void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map);
 
-void player_move(struct Player* p, char* map, int map_width, int tile_size);
+void player_move(struct Player* p, struct Map* map);
 
 // Returns end point of casted ray
-SDL_Point player_cast_ray(struct Player* p, float angle, char* map, int map_width, int tile_size, bool* horizontal);
-SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, char* map, int map_width, int tile_size);
-SDL_Point player_cast_ray_vertical(struct Player* p, float angle, char* map, int map_width, int tile_size);
+SDL_Point player_cast_ray(struct Player* p, float angle, struct Map* map, bool* horizontal);
+SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, struct Map* map);
+SDL_Point player_cast_ray_vertical(struct Player* p, float angle, struct Map* map);
 
 #endif
 

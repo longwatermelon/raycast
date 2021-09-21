@@ -2,6 +2,7 @@
 #define PROG_H
 
 #include "player.h"
+#include "map.h"
 #include <stdbool.h>
 #include <SDL.h>
 
@@ -13,10 +14,7 @@ struct Prog
     SDL_Renderer* rend;
 
     struct Player* player;
-
-    char* map;
-    int map_width;
-    int tile_size;
+    struct Map* map;
 
     SDL_Texture* tile_texture;
     SDL_Point image_size;

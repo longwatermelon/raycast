@@ -12,9 +12,7 @@ struct Prog* prog_init()
     p->rend = SDL_CreateRenderer(p->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     p->player = player_init((SDL_Point){ 300, 320 }, M_PI);
-    p->map = common_read_file("map");
-    p->map_width = 16;
-    p->tile_size = 50;
+    p->map = map_init("map", (SDL_Point){ 16, 16 }, 50);
 
     p->tile_texture = IMG_LoadTexture(p->rend, "deez.png");
     SDL_QueryTexture(p->tile_texture, 0, 0, &p->image_size.x, &p->image_size.y);
@@ -45,18 +43,17 @@ void prog_mainloop(struct Prog* p)
     {
         prog_handle_events(p, &evt);
 
-        player_move(p->player, p->map, p->map_width, p->tile_size);
+        player_move(p->player, p->map);
 
         SDL_RenderClear(p->rend);
 
-        
         SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);
         int x_pos = 0;
 
         for (float i = p->player->angle + M_PI / 6.f; i > p->player->angle - M_PI / 6.f; i -= 0.0013f) // Cast 800 rays
         {
             bool is_horizontal;
-            SDL_Point endp = player_cast_ray(p->player, i, p->map, p->map_width, p->tile_size, &is_horizontal);
+            SDL_Point endp = player_cast_ray(p->player, i, p->map, &is_horizontal);
             int ray_length = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
 
             float angle = p->player->angle - i;
@@ -69,7 +66,7 @@ void prog_mainloop(struct Prog* p)
 
             // Adjust for fisheye effect
             float dist = ray_length * cosf(angle);
-            float line_height = (p->tile_size * 800.f) / dist;
+            float line_height = (p->map->tile_size * 800.f) / dist;
 
             if (line_height > 800.f)
                 line_height = 800.f;
@@ -77,14 +74,13 @@ void prog_mainloop(struct Prog* p)
             float line_offset = 400.f - line_height / 2.f;
 
             SDL_Rect src = {
-                .x = ((float)((is_horizontal ? endp.x : endp.y) % p->tile_size) / (float)p->tile_size) * p->image_size.x,
+                .x = ((float)((is_horizontal ? endp.x : endp.y) % p->map->tile_size) / (float)p->map->tile_size) * p->image_size.x,
                 .y = 0,
                 .w = 1,
                 .h = p->image_size.y
             };
 
             SDL_Rect dst = { .x = x_pos, .y = (int)line_offset, .w = 1, .h = (int)line_height };
-            
             SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
 
             ++x_pos;
@@ -160,15 +156,15 @@ void prog_render_map(struct Prog* p)
 {
     SDL_SetRenderDrawColor(p->rend, 180, 180, 0, 255);
 
-    for (int i = 0; i < strlen(p->map); ++i)
+    for (int i = 0; i < strlen(p->map->layout); ++i)
     {
-        if (p->map[i] == '#')
+        if (p->map->layout[i] == '#')
         {
             SDL_Rect rect = {
-                .x = (i % p->map_width) * p->tile_size,
-                .y = ((i - (i % p->map_width)) / p->map_width) * p->tile_size,
-                .w = p->tile_size,
-                .h = p->tile_size
+                .x = (i % p->map->size.x) * p->map->tile_size,
+                .y = ((i - (i % p->map->size.x)) / p->map->size.x) * p->map->tile_size,
+                .w = p->map->tile_size,
+                .h = p->map->tile_size
             };
 
             SDL_RenderFillRect(p->rend, &rect);

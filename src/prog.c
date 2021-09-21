@@ -25,11 +25,10 @@ void prog_cleanup(struct Prog* p)
 {
     SDL_DestroyTexture(p->tile_texture);
     player_cleanup(p->player);
+    map_cleanup(p->map);
 
     SDL_DestroyRenderer(p->rend);
     SDL_DestroyWindow(p->window);
-
-    free(p->map);
 
     free(p);
 }

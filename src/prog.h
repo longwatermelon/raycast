@@ -3,6 +3,7 @@
 
 #include "player.h"
 #include "map.h"
+#include "entity.h"
 #include <stdbool.h>
 #include <SDL.h>
 
@@ -15,6 +16,9 @@ struct Prog
 
     struct Player* player;
     struct Map* map;
+
+    struct Entity** entities;
+    size_t entities_size;
 
     SDL_Texture* tile_texture;
     SDL_Point image_size;

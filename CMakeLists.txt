@@ -16,6 +16,8 @@ add_executable(raycast
     src/common.c
     src/map.h
     src/map.c
+    src/entity.h
+    src/entity.c
 )
 
 target_link_libraries(raycast PRIVATE

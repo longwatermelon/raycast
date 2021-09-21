@@ -14,6 +14,9 @@ struct Prog* prog_init()
     p->player = player_init((SDL_Point){ 300, 320 }, M_PI);
     p->map = map_init("map", (SDL_Point){ 16, 16 }, 50);
 
+    p->entities = malloc(0);
+    p->entities_size = 0;
+
     p->tile_texture = IMG_LoadTexture(p->rend, "deez.png");
     SDL_QueryTexture(p->tile_texture, 0, 0, &p->image_size.x, &p->image_size.y);
 
@@ -26,6 +29,11 @@ void prog_cleanup(struct Prog* p)
     SDL_DestroyTexture(p->tile_texture);
     player_cleanup(p->player);
     map_cleanup(p->map);
+
+    for (int i = 0; i < p->entities_size; ++i)
+        entity_cleanup(p->entities[i]);
+
+    free(p->entities);
 
     SDL_DestroyRenderer(p->rend);
     SDL_DestroyWindow(p->window);
@@ -51,8 +59,8 @@ void prog_mainloop(struct Prog* p)
 
         for (float i = p->player->angle + M_PI / 6.f; i > p->player->angle - M_PI / 6.f; i -= 0.0013f) // Cast 800 rays
         {
-            bool is_horizontal;
-            SDL_Point endp = player_cast_ray(p->player, i, p->map, &is_horizontal);
+            int collision_type;
+            SDL_Point endp = player_cast_ray(p->player, i, p->map, p->entities, p->entities_size, &collision_type);
             int ray_length = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
 
             float angle = p->player->angle - i;
@@ -72,21 +80,24 @@ void prog_mainloop(struct Prog* p)
 
             float line_offset = 400.f - line_height / 2.f;
 
-            SDL_Rect src = {
-                .x = ((float)((is_horizontal ? endp.x : endp.y) % p->map->tile_size) / (float)p->map->tile_size) * p->image_size.x,
-                .y = 0,
-                .w = 1,
-                .h = p->image_size.y
-            };
+            if (collision_type == COLLISION_VERTICAL || collision_type == COLLISION_HORIZONTAL)
+            {
+                SDL_Rect src = {
+                    .x = ((float)((collision_type == COLLISION_HORIZONTAL ? endp.x : endp.y) % p->map->tile_size) / (float)p->map->tile_size) * p->image_size.x,
+                    .y = 0,
+                    .w = 1,
+                    .h = p->image_size.y
+                };
 
-            SDL_Rect dst = { .x = x_pos, .y = (int)line_offset, .w = 1, .h = (int)line_height };
-            SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
+                SDL_Rect dst = { .x = x_pos, .y = (int)line_offset, .w = 1, .h = (int)line_height };
+                SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
+            }
 
             ++x_pos;
         }
 
         /* prog_render_map(p); */
-        /* player_render(p->player, p->rend, p->map, p->map_width, p->tile_size); */
+        /* player_render(p->player, p->rend, p->map, p->entities, p->entities_size); */
 
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);

@@ -61,6 +61,7 @@ void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct
         };
 
         float dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
+
         if (enitity_length < dist && enitity_length != -1)
         {
             SDL_SetRenderDrawColor(rend, 255, 0, 255, 255);

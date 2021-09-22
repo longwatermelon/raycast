@@ -65,13 +65,14 @@ void prog_mainloop(struct Prog* p)
         {
             int collision_type;
             SDL_Point endp = player_cast_ray(p->player, i, p->map, p->entities, p->entities_size, &collision_type);
-            int ray_length = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
+
+            int ray_length_wall = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
             int ray_length_entity = player_cast_ray_entity(p->player, i, p->entities, p->entities_size);
 
             float angle = common_restrict_angle(p->player->angle - i);
 
             // Adjust for fisheye effect
-            float dist = ray_length * cosf(angle);
+            float dist = ray_length_wall * cosf(angle);
             float line_height = (p->map->tile_size * 800.f) / dist;
 
             if (line_height > 800.f)
@@ -79,18 +80,18 @@ void prog_mainloop(struct Prog* p)
 
             float line_offset = 400.f - line_height / 2.f;
 
-            if (ray_length_entity > ray_length || ray_length_entity == -1)
-            {
-                SDL_Rect src = {
-                    .x = ((float)((collision_type == COLLISION_HORIZONTAL ? endp.x : endp.y) % p->map->tile_size) / (float)p->map->tile_size) * p->image_size.x,
-                    .y = 0,
-                    .w = 1,
-                    .h = p->image_size.y
-                };
+            // Render walls
+            SDL_Rect src = {
+                .x = ((float)((collision_type == COLLISION_HORIZONTAL ? endp.x : endp.y) % p->map->tile_size) / (float)p->map->tile_size) * p->image_size.x,
+                .y = 0,
+                .w = 1,
+                .h = p->image_size.y
+            };
 
-                SDL_Rect dst = { .x = x_pos, .y = (int)line_offset, .w = 1, .h = (int)line_height };
-                SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
-            }
+            SDL_Rect dst = { .x = x_pos, .y = (int)line_offset, .w = 1, .h = (int)line_height };
+            SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
+
+            // TODO render entities
 
             ++x_pos;
         }

@@ -67,7 +67,9 @@ void prog_mainloop(struct Prog* p)
             SDL_Point endp = player_cast_ray(p->player, i, p->map, p->entities, p->entities_size, &collision_type);
 
             int ray_length_wall = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
-            int ray_length_entity = player_cast_ray_entity(p->player, i, p->entities, p->entities_size);
+
+            float intersection;
+            int ray_length_entity = player_cast_ray_entity(p->player, i, p->entities, p->entities_size, &intersection);
 
             float angle = common_restrict_angle(p->player->angle - i);
 
@@ -91,12 +93,20 @@ void prog_mainloop(struct Prog* p)
             SDL_Rect dst = { .x = x_pos, .y = (int)line_offset, .w = 1, .h = (int)line_height };
             SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
 
-            // TODO render entities
-            // Maybe take the distance between the ray intersection and the entity pos to find which part of the sprite to render
+            // Render entities
             if (ray_length_entity < ray_length_wall && ray_length_entity != -1)
             {
-                SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
-                SDL_RenderFillRect(p->rend, &dst);
+                src.x = intersection / 10.f * p->image_size.x;
+                
+                dist = ray_length_entity * cosf(angle);
+                line_height = (25.f * 800.f) / dist;
+                line_offset = 400.f - line_height / 2.f;
+
+                dst.y = line_offset;
+                dst.h = line_height;
+
+                /* SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255); */
+                SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
             }
 
             ++x_pos;

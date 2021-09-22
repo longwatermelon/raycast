@@ -92,6 +92,11 @@ void prog_mainloop(struct Prog* p)
             SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
 
             // TODO render entities
+            if (ray_length_entity < ray_length_wall && ray_length_entity != -1)
+            {
+                SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
+                SDL_RenderFillRect(p->rend, &dst);
+            }
 
             ++x_pos;
         }

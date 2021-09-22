@@ -40,7 +40,9 @@ void player_move(struct Player* p, struct Map* map);
 SDL_Point player_cast_ray(struct Player* p, float angle, struct Map* map, struct Entity** entities, size_t entities_size, int* collision_type);
 SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, struct Map* map);
 SDL_Point player_cast_ray_vertical(struct Player* p, float angle, struct Map* map);
-SDL_Point player_cast_ray_entity(struct Player* p, float angle, struct Map* map, struct Entity** entities, size_t entities_size);
+
+// Returns ray length of ray that intersects with entity
+int player_cast_ray_entity(struct Player* p, float angle, struct Map* map, struct Entity** entities, size_t entities_size);
 
 #endif
 

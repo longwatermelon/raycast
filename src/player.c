@@ -47,15 +47,25 @@ void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct
     {
         int collision_type;
         SDL_Point endp = player_cast_ray(p, i, map, entities, entities_size, &collision_type);
+        float enitity_length = player_cast_ray_entity(p, i, map, entities, entities_size);
 
         if (collision_type == COLLISION_HORIZONTAL)
             SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
         else if (collision_type == COLLISION_VERTICAL)
             SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
-        else
+
+        SDL_Point diff = {
+            endp.x - p->rect.x,
+            endp.y - p->rect.y
+        };
+
+        float dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
+        if (enitity_length < dist && enitity_length != -1)
+        {
             SDL_SetRenderDrawColor(rend, 255, 0, 255, 255);
 
         SDL_RenderDrawLine(rend, center.x, center.y, endp.x, endp.y);
+        }
     }
 }
 
@@ -108,26 +118,17 @@ SDL_Point player_cast_ray(struct Player* p, float angle, struct Map* map, struct
 
     SDL_Point horizontal = player_cast_ray_horizontal(p, angle, map);
     SDL_Point vertical = player_cast_ray_vertical(p, angle, map);
-    SDL_Point entity = player_cast_ray_entity(p, angle, map, entities, entities_size);
 
     SDL_Point diff_h = { .x = horizontal.x - p->rect.x, .y = horizontal.y - p->rect.y };
     SDL_Point diff_v = { .x = vertical.x - p->rect.x, .y = vertical.y - p->rect.y };
-    SDL_Point diff_e = { .x = entity.x - p->rect.x, .y = entity.y - p->rect.y };
 
     unsigned long dist_h = sqrtf(diff_h.x * diff_h.x + diff_h.y * diff_h.y);
     unsigned long dist_v = sqrtf(diff_v.x * diff_v.x + diff_v.y * diff_v.y);
-    unsigned long dist_e = sqrtf(diff_e.x * diff_e.x + diff_e.y * diff_e.y);
 
     if (dist_h < dist_v)
         *collision_type = COLLISION_HORIZONTAL;
     else
         *collision_type = COLLISION_VERTICAL;
-
-    if (dist_e < dist_h && dist_e < dist_v)
-    {
-        *collision_type = COLLISION_ENTITY;
-        return entity;
-    }
 
     if (p->ray_mode == RAY_HORIZONTAL)
         return horizontal;
@@ -256,9 +257,32 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, struct Map* ma
 }
 
 
-SDL_Point player_cast_ray_entity(struct Player* p, float angle, struct Map* map, struct Entity** entities, size_t entities_size)
+int player_cast_ray_entity(struct Player* p, float angle, struct Map* map, struct Entity** entities, size_t entities_size)
 {
-    // TODO actually do something here
-    return (SDL_Point){ .x = (int)1e5, .y = (int)1e5 };
+    for (int i = 0; i < entities_size; ++i)
+    {
+        SDL_Point diff = {
+            .x = entities[i]->pos.x - p->rect.x,
+            .y = entities[i]->pos.y - p->rect.y
+        };
+
+        float dist_a = sqrtf(diff.x * diff.x + diff.y * diff.y);
+        float angle_to_entity = -atanf((float)diff.y / (float)diff.x);
+
+        printf("%f %f\n", angle, angle_to_entity);
+        /* printf("%f\n", fabsf(fabsf(angle_to_entity) - 2.f * (float)M_PI)); */
+        /* if (fabsf(angle - angle_to_entity) >= M_PI) */
+        /*     return -1; */
+
+        float angle_diff = angle_to_entity - angle;
+        float h = fabsf(dist_a * -tanf(angle_diff));
+
+        if (h <= 10)
+        {
+            return sqrtf(dist_a * dist_a + h * h);
+        }
+    }
+
+    return -1;
 }
 

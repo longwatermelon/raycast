@@ -1,4 +1,5 @@
 #include "player.h"
+#include "common.h"
 #include <math.h>
 #include <stdbool.h>
 
@@ -63,9 +64,9 @@ void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct
         if (enitity_length < dist && enitity_length != -1)
         {
             SDL_SetRenderDrawColor(rend, 255, 0, 255, 255);
+        }
 
         SDL_RenderDrawLine(rend, center.x, center.y, endp.x, endp.y);
-        }
     }
 }
 
@@ -100,11 +101,7 @@ void player_move(struct Player* p, struct Map* map)
     p->angle += p->angle_change;
 
     // Keep angle between 0 and 2pi
-    if (p->angle > 2.f * M_PI)
-        p->angle -= 2.f * M_PI;
-
-    if (p->angle < 0.f)
-        p->angle += 2.f * M_PI;
+    p->angle = common_restrict_angle(p->angle);
 }
 
 
@@ -261,25 +258,34 @@ int player_cast_ray_entity(struct Player* p, float angle, struct Map* map, struc
 {
     for (int i = 0; i < entities_size; ++i)
     {
-        SDL_Point diff = {
+        SDL_FPoint diff = {
             .x = entities[i]->pos.x - p->rect.x,
             .y = entities[i]->pos.y - p->rect.y
         };
 
+        SDL_FPoint ray_vector = {
+            .x = cosf(angle),
+            .y = -sinf(angle)
+        };
+
+        float dot_product = diff.x * ray_vector.x + diff.y * ray_vector.y;
         float dist_a = sqrtf(diff.x * diff.x + diff.y * diff.y);
-        float angle_to_entity = -atanf((float)diff.y / (float)diff.x);
+        float theta = acosf(dot_product / dist_a);
 
-        printf("%f %f\n", angle, angle_to_entity);
-        /* printf("%f\n", fabsf(fabsf(angle_to_entity) - 2.f * (float)M_PI)); */
-        /* if (fabsf(angle - angle_to_entity) >= M_PI) */
-        /*     return -1; */
-
-        float angle_diff = angle_to_entity - angle;
-        float h = fabsf(dist_a * -tanf(angle_diff));
-
-        if (h <= 10)
+        // Floating poin error
+        if (dot_product / dist_a >= 1.f)
         {
-            return sqrtf(dist_a * dist_a + h * h);
+            theta = 0.f;
+        } 
+
+        if (theta <= M_PI / 2.f)
+        {
+            float h = fabsf(dist_a * -tanf(theta));
+
+            if (h <= 5.f)
+            {
+                return sqrtf(dist_a * dist_a + h * h);
+            }
         }
     }
 

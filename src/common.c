@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 
 char* common_read_file(const char* path)
@@ -32,5 +33,17 @@ char* common_read_file(const char* path)
     free(line);
 
     return contents;
+}
+
+
+float common_restrict_angle(float angle)
+{
+    if (angle > 2.f * M_PI)
+        angle -= 2.f * M_PI;
+
+    if (angle < 0.f)
+        angle += 2.f * M_PI;
+
+    return angle;
 }
 

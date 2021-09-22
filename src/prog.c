@@ -68,13 +68,7 @@ void prog_mainloop(struct Prog* p)
             int ray_length = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
             int ray_length_entity = player_cast_ray_entity(p->player, i, p->map, p->entities, p->entities_size);
 
-            float angle = p->player->angle - i;
-
-            if (angle < 0.f)
-                angle += 2.f * M_PI;
-
-            if (angle > 2.f * M_PI)
-                angle -= 2.f * M_PI;
+            float angle = common_restrict_angle(p->player->angle - i);
 
             // Adjust for fisheye effect
             float dist = ray_length * cosf(angle);
@@ -98,17 +92,11 @@ void prog_mainloop(struct Prog* p)
                 SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
             }
 
-            /* if (ray_length_entity < ray_length && ray_length_entity != -1) */
-            /* { */
-            /*     SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255); */
-            /*     SDL_RenderDrawLine(p->rend, x_pos, line_offset, x_pos, line_offset + line_height); */
-            /* } */
-
             ++x_pos;
         }
 
-        prog_render_map(p);
-        player_render(p->player, p->rend, p->map, p->entities, p->entities_size);
+        /* prog_render_map(p); */
+        /* player_render(p->player, p->rend, p->map, p->entities, p->entities_size); */
 
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);
@@ -138,10 +126,10 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                 p->player->speed = -player_speed;
                 break;
             case SDLK_RIGHT:
-                p->player->angle_change = -.01f;
+                p->player->angle_change = -.02f;
                 break;
             case SDLK_LEFT:
-                p->player->angle_change = .01f;
+                p->player->angle_change = .02f;
                 break;
             case SDLK_r:
                 p->player->ray_mode = RAY_ALL;

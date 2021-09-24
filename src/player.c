@@ -50,7 +50,8 @@ void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct
         SDL_Point endp = player_cast_ray(p, i, map, entities, entities_size, &collision_type);
 
         float intersection;
-        float enitity_length = player_cast_ray_entity(p, i, entities, entities_size, &intersection);
+        struct Entity* entity_hit;
+        float enitity_length = player_cast_ray_entity(p, i, entities, entities_size, &intersection, &entity_hit);
 
         if (collision_type == COLLISION_HORIZONTAL)
             SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
@@ -257,7 +258,7 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, struct Map* ma
 }
 
 
-int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entities, size_t entities_size, float* intersection)
+int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entities, size_t entities_size, float* intersection, struct Entity** entity_hit)
 {
     for (int i = 0; i < entities_size; ++i)
     {
@@ -288,6 +289,7 @@ int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entiti
             if (h <= 10.f)
             {
                 *intersection = h;
+                *entity_hit = entities[i];
                 return sqrtf(dist_a * dist_a + h * h);
             }
         }

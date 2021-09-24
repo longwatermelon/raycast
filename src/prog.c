@@ -18,7 +18,7 @@ struct Prog* prog_init()
     p->entities_size = 0;
 
     p->entities = realloc(p->entities, sizeof(struct Entity*));
-    p->entities[0] = entity_init((SDL_Point){ 4 * p->map->tile_size + 10, 3 * p->map->tile_size - 5 });
+    p->entities[0] = entity_init((SDL_Point){ 4 * p->map->tile_size + 10, 3 * p->map->tile_size - 5 }, p->rend, "deez.png");
     p->entities_size = 1;
 
     p->tile_texture = IMG_LoadTexture(p->rend, "deez.png");
@@ -69,7 +69,8 @@ void prog_mainloop(struct Prog* p)
             int ray_length_wall = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
 
             float intersection;
-            int ray_length_entity = player_cast_ray_entity(p->player, i, p->entities, p->entities_size, &intersection);
+            struct Entity* entity_hit;
+            int ray_length_entity = player_cast_ray_entity(p->player, i, p->entities, p->entities_size, &intersection, &entity_hit);
 
             float angle = common_restrict_angle(p->player->angle - i);
 
@@ -107,7 +108,7 @@ void prog_mainloop(struct Prog* p)
                 dst.h = line_height;
 
                 /* SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255); */
-                SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
+                SDL_RenderCopy(p->rend, entity_hit->sprite, &src, &dst);
             }
 
             ++x_pos;

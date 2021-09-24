@@ -100,7 +100,7 @@ void prog_mainloop(struct Prog* p)
                 
                 dist = ray_length_entity * cosf(angle);
                 line_height = (25.f * 800.f) / dist;
-                line_offset = 400.f - line_height / 2.f;
+                line_offset = 400.f;
 
                 dst.y = line_offset;
                 dst.h = line_height;

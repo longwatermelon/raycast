@@ -3,6 +3,7 @@
 #include "entity.h"
 #include "player.h"
 #include <time.h>
+#include <sys/time.h>
 #include <SDL_image.h>
 
 
@@ -15,7 +16,7 @@ struct Prog* prog_init()
     p->rend = SDL_CreateRenderer(p->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     p->player = player_init((SDL_Point){ 300, 320 }, M_PI);
-    p->map = map_init("map", (SDL_Point){ 16, 16 }, 50);
+    p->map = map_init("map", (SDL_Point){ 32, 32 }, 50);
 
     p->entities = malloc(0);
     p->entities_size = 0;
@@ -26,6 +27,11 @@ struct Prog* prog_init()
     p->tile_texture = IMG_LoadTexture(p->rend, "deez.png");
     SDL_QueryTexture(p->tile_texture, 0, 0, &p->image_size.x, &p->image_size.y);
 
+    p->shooting = false;
+    p->gun_texture = IMG_LoadTexture(p->rend, "gun.png");
+    p->shot_texture = IMG_LoadTexture(p->rend, "gun_shoot.png");
+    p->last_shot_time = clock();
+
     return p;
 }
 
@@ -33,6 +39,8 @@ struct Prog* prog_init()
 void prog_cleanup(struct Prog* p)
 {
     SDL_DestroyTexture(p->tile_texture);
+    SDL_DestroyTexture(p->gun_texture);
+
     player_cleanup(p->player);
     map_cleanup(p->map);
 
@@ -63,9 +71,21 @@ void prog_mainloop(struct Prog* p)
             entity_move_towards_player(p->entities[i], p->player, p->map);
         }
 
+        if (p->shooting)
+        {
+            if ((float)(clock() - p->last_shot_time) / CLOCKS_PER_SEC >= .01f)
+            {
+                p->shooting = false;
+            }
+        }
+
+        if (rand() % 2000 > 1995)
+            prog_add_entity(p);
+
         SDL_RenderClear(p->rend);
 
         prog_render_3d(p);
+        prog_render_gun(p);
 
         /* prog_render_map(p); */
         /* player_render(p->player, p->rend, p->map, p->entities, p->entities_size); */
@@ -118,6 +138,9 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                 break;
             case SDLK_z:
             {
+                p->shooting = true;
+                p->last_shot_time = clock();
+
                 float intersection;
                 struct Entity* entity;
                 int entity_dist = player_cast_ray_entity(p->player, p->player->angle, p->entities, p->entities_size, &intersection, &entity);
@@ -129,7 +152,6 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
 
                 if (entity_dist != -1 && entity_dist < wall_dist)
                 {
-                    printf("Hit an entity\n");
                     prog_remove_entity(p, entity);
                 }
             } break;
@@ -230,6 +252,17 @@ void prog_render_map(struct Prog* p)
 }
 
 
+void prog_render_gun(struct Prog* p)
+{
+    SDL_Texture* tex = p->shooting ? p->shot_texture : p->gun_texture;
+
+    SDL_Rect rect = { .x = 500, .y = 500 };
+    SDL_QueryTexture(tex, 0, 0, &rect.w, &rect.h);
+
+    SDL_RenderCopy(p->rend, tex, 0, &rect);
+}
+
+
 void prog_add_entity(struct Prog* p)
 {
     ++p->entities_size;
@@ -241,13 +274,21 @@ void prog_add_entity(struct Prog* p)
         .y = (e->pos.y - ((int)e->pos.y % p->map->tile_size)) / p->map->tile_size
     };
 
-    while (p->map->layout[grid_pos.y * p->map->size.x + grid_pos.x] == '#')
+    SDL_Point diff = { .x = e->pos.x - p->player->rect.x, .y = e->pos.y - p->player->rect.y };
+    float distance_to_player = sqrtf(diff.x * diff.x + diff.y * diff.y);
+
+    while (p->map->layout[grid_pos.y * p->map->size.x + grid_pos.x] == '#' || distance_to_player < 300)
     {
-        e->pos.x = rand() % 800;
-        e->pos.y = rand() % 800;
+        e->pos.x = rand() % (p->map->size.x * p->map->tile_size);
+        e->pos.y = rand() % (p->map->size.y * p->map->tile_size);
 
         grid_pos.x = (e->pos.x - ((int)e->pos.x % p->map->tile_size)) / p->map->tile_size;
         grid_pos.y = (e->pos.y - ((int)e->pos.y % p->map->tile_size)) / p->map->tile_size;
+
+        diff.x = e->pos.x - p->player->rect.x;
+        diff.y = e->pos.y - p->player->rect.y;
+
+        distance_to_player = sqrtf(diff.x * diff.x + diff.y * diff.y);
     }
 
     p->entities[p->entities_size - 1] = e;

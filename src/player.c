@@ -149,10 +149,10 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, struct Map* 
     closest_horizontal.x = p->rect.x + ((closest_horizontal.y - p->rect.y) / -tanf(angle));
 
     if (angle <= 0.001f || 2 * M_PI - angle <= 0.001f) // Facing right, almost undefined
-        return (SDL_Point){ 800, p->rect.y };
+        return (SDL_Point){ 1e5, p->rect.y };
 
     if (fabsf((float)M_PI - angle) <= 0.001f) // Facing left, almost undefined
-        return (SDL_Point){ -800, p->rect.y };
+        return (SDL_Point){ -1e5, p->rect.y };
 
     while (true)
     {
@@ -208,10 +208,10 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, struct Map* ma
     closest_vertical.y = p->rect.y + ((closest_vertical.x - p->rect.x) * -tanf(angle));
 
     if (fabsf((float)(M_PI / 2.f) - angle) <= 0.001f)
-        return (SDL_Point){ p->rect.x, -800 };
+        return (SDL_Point){ p->rect.x, -1e5 };
 
     if (fabsf((float)(3 * M_PI / 2.f) - angle) <= 0.001f)
-        return (SDL_Point){ p->rect.x, 800 };
+        return (SDL_Point){ p->rect.x, 1e5 };
 
     while (true)
     {

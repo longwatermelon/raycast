@@ -82,8 +82,8 @@ void player_move(struct Player* p, struct Map* map)
         .y = p->speed * -sinf(p->angle)
     };
 
-    int xo = (moved.x > 0 ? p->rect.w : 0);
-    int yo = (moved.y > 0 ? p->rect.h : 0);
+    int xo = (moved.x > 0 ? p->rect.w + 5 : -5);
+    int yo = (moved.y > 0 ? p->rect.h + 5 : -5);
 
     SDL_Point grid_pos = {
         (int)((p->rect.x + xo) - ((int)(p->rect.x + xo) % map->tile_size)) / map->tile_size,

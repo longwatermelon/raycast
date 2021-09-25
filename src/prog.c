@@ -1,5 +1,7 @@
 #include "prog.h"
 #include "common.h"
+#include "entity.h"
+#include "player.h"
 #include <SDL_image.h>
 
 
@@ -18,7 +20,7 @@ struct Prog* prog_init()
     p->entities_size = 0;
 
     p->entities = realloc(p->entities, sizeof(struct Entity*));
-    p->entities[0] = entity_init((SDL_Point){ 4 * p->map->tile_size + 10, 3 * p->map->tile_size - 5 }, p->rend, "deez.png");
+    p->entities[0] = entity_init((SDL_FPoint){ 4 * p->map->tile_size + 10, 3 * p->map->tile_size - 5 }, p->rend, "deezn.png");
     p->entities_size = 1;
 
     p->tile_texture = IMG_LoadTexture(p->rend, "deez.png");
@@ -56,10 +58,15 @@ void prog_mainloop(struct Prog* p)
 
         player_move(p->player, p->map);
 
+        for (int i = 0; i < p->entities_size; ++i)
+        {
+            entity_move_towards_player(p->entities[i], p->player, p->map);
+        }
+
         SDL_RenderClear(p->rend);
 
         SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);
-        int x_pos = 0;
+        float x_pos = 0.f;
 
         for (float i = p->player->angle + M_PI / 6.f; i > p->player->angle - M_PI / 6.f; i -= 0.0013f) // Cast 800 rays
         {
@@ -78,8 +85,8 @@ void prog_mainloop(struct Prog* p)
             float dist = ray_length_wall * cosf(angle);
             float line_height = (p->map->tile_size * 800.f) / dist;
 
-            if (line_height > 800.f)
-                line_height = 800.f;
+            /* if (line_height > 800.f) */
+            /*     line_height = 800.f; */
 
             float line_offset = 400.f - line_height / 2.f;
 
@@ -97,21 +104,21 @@ void prog_mainloop(struct Prog* p)
             // Render entities
             if (ray_length_entity < ray_length_wall && ray_length_entity != -1)
             {
-                src.x = intersection / 10.f * p->image_size.x;
+                src.x = (intersection / 10.f) * entity_hit->sprite_size.x;
                 
                 dist = ray_length_entity * cosf(angle);
                 line_height = (25.f * 800.f) / dist;
+
                 // line_offset = 400.f - line_height / 2.f + line_height / 2.f
                 line_offset = 400.f;
 
                 dst.y = line_offset;
                 dst.h = line_height;
 
-                /* SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255); */
                 SDL_RenderCopy(p->rend, entity_hit->sprite, &src, &dst);
             }
 
-            ++x_pos;
+            x_pos += 1.f;
         }
 
         /* prog_render_map(p); */

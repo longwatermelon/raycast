@@ -23,16 +23,29 @@ void entity_cleanup(struct Entity* e)
 }
 
 
-void entity_move(struct Entity* e, float x, float y)
+void entity_move(struct Entity* e, struct Map* map, float x, float y)
 {
-    e->pos.x += x;
-    e->pos.y += y;
+    SDL_Point grid_pos = {
+        (int)(e->pos.x - ((int)(e->pos.x) % map->tile_size)) / map->tile_size,
+        (int)(e->pos.y - ((int)(e->pos.y) % map->tile_size)) / map->tile_size
+    };
+
+    SDL_Point new_grid_pos = {
+        (int)((e->pos.x + x) - ((int)(e->pos.x + x) % map->tile_size)) / map->tile_size,
+        (int)((e->pos.y + y) - ((int)(e->pos.y + y) % map->tile_size)) / map->tile_size
+    };
+
+    if (map->layout[grid_pos.y * map->size.x + new_grid_pos.x] != '#')
+        e->pos.x += x;
+
+    if (map->layout[new_grid_pos.y * map->size.x + grid_pos.x] != '#')
+        e->pos.y += y;
 }
 
 
 void entity_move_towards_player(struct Entity* e, struct Player* p, struct Map* map)
 {
     float theta = atan2f(p->rect.y - e->pos.y, p->rect.x - e->pos.x);
-    entity_move(e, cosf(theta), sinf(theta));
+    entity_move(e, map, cosf(theta), sinf(theta));
 }
 

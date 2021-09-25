@@ -17,7 +17,7 @@ struct Entity
 struct Entity* entity_init(SDL_FPoint pos, SDL_Renderer* rend, const char* sprite_path);
 void entity_cleanup(struct Entity* e);
 
-void entity_move(struct Entity* e, float x, float y);
+void entity_move(struct Entity* e, struct Map* map, float x, float y);
 void entity_move_towards_player(struct Entity* e, struct Player* p, struct Map* map);
 
 #endif

@@ -66,8 +66,9 @@ void prog_mainloop(struct Prog* p)
         SDL_RenderClear(p->rend);
 
         prog_render_3d(p);
-        prog_render_map(p);
-        player_render(p->player, p->rend, p->map, p->entities, p->entities_size);
+
+        /* prog_render_map(p); */
+        /* player_render(p->player, p->rend, p->map, p->entities, p->entities_size); */
 
         SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
         SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);
@@ -194,7 +195,6 @@ void prog_render_3d(struct Prog* p)
             dist = ray_length_entity * cosf(angle);
             line_height = (25.f * 800.f) / dist;
 
-            // line_offset = 400.f - line_height / 2.f + line_height / 2.f
             line_offset = 400.f;
 
             dst.y = line_offset;

@@ -13,8 +13,6 @@ struct Entity* entity_init(SDL_FPoint pos, SDL_Renderer* rend, const char* sprit
     e->sprite = IMG_LoadTexture(rend, sprite_path);
     SDL_QueryTexture(e->sprite, 0, 0, &e->sprite_size.x, &e->sprite_size.y);
 
-    e->last_hit = clock();
-
     return e;
 }
 
@@ -28,8 +26,6 @@ void entity_cleanup(struct Entity* e)
 
 void entity_move(struct Entity* e, struct Map* map, float x, float y)
 {
-    clock_t t2 = clock();
-
     SDL_Point grid_pos = {
         (int)(e->pos.x - ((int)(e->pos.x) % map->tile_size)) / map->tile_size,
         (int)(e->pos.y - ((int)(e->pos.y) % map->tile_size)) / map->tile_size

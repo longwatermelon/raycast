@@ -169,27 +169,7 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, struct Map* 
             return closest_horizontal;
 
         if (map->layout[grid_pos.y * map->size.x + grid_pos.x] == '#')
-        {
             return closest_horizontal;
-        }
-        else // It might be hitting a corner
-        {
-            grid_pos.x = (closest_horizontal.x + 3) / map->tile_size;
-
-            if (map->layout[grid_pos.y * map->size.x + grid_pos.x] == '#')
-            {
-                closest_horizontal.x += 3;
-                return closest_horizontal;
-            }
-
-            grid_pos.x = (closest_horizontal.x - 3) / map->tile_size;
-
-            if (map->layout[grid_pos.y * map->size.x + grid_pos.x] == '#')
-            {
-                closest_horizontal.x -= 3;
-                return closest_horizontal;
-            }
-        }
 
         int dy = (angle < M_PI ? -map->tile_size : map->tile_size);
 
@@ -228,27 +208,7 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, struct Map* ma
             return closest_vertical;
 
         if (map->layout[grid_pos.y * map->size.x + grid_pos.x] == '#')
-        {
             return closest_vertical;
-        }
-        else // It may be hitting a corner
-        {
-            grid_pos.y = (closest_vertical.y + 3) / map->tile_size;
-
-            if (map->layout[grid_pos.y * map->size.x + grid_pos.x] == '#')
-            {
-                closest_vertical.y += 3;
-                return closest_vertical;
-            }
-
-            grid_pos.y = (closest_vertical.y - 3) / map->tile_size;
-
-            if (map->layout[grid_pos.y * map->size.x + grid_pos.x] == '#')
-            {
-                closest_vertical.y -= 3;
-                return closest_vertical;
-            }
-        }
 
         int dx = (angle < M_PI / 2.f || angle > 3 * M_PI / 2.f ? map->tile_size : -map->tile_size);
 

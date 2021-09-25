@@ -33,5 +33,8 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt);
 void prog_render_3d(struct Prog* p);
 void prog_render_map(struct Prog* p);
 
+void prog_add_entity(struct Prog* p);
+void prog_remove_entity(struct Prog* p, struct Entity* entity);
+
 #endif
 

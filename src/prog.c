@@ -2,6 +2,7 @@
 #include "common.h"
 #include "entity.h"
 #include "player.h"
+#include <time.h>
 #include <SDL_image.h>
 
 
@@ -19,9 +20,7 @@ struct Prog* prog_init()
     p->entities = malloc(0);
     p->entities_size = 0;
 
-    p->entities = realloc(p->entities, sizeof(struct Entity*));
-    p->entities[0] = entity_init((SDL_FPoint){ 4 * p->map->tile_size + 10, 3 * p->map->tile_size - 5 }, p->rend, "deezn.png");
-    p->entities_size = 1;
+    prog_add_entity(p);
 
     p->tile_texture = IMG_LoadTexture(p->rend, "deez.png");
     SDL_QueryTexture(p->tile_texture, 0, 0, &p->image_size.x, &p->image_size.y);
@@ -67,8 +66,8 @@ void prog_mainloop(struct Prog* p)
 
         prog_render_3d(p);
 
-        /* prog_render_map(p); */
-        /* player_render(p->player, p->rend, p->map, p->entities, p->entities_size); */
+        prog_render_map(p);
+        player_render(p->player, p->rend, p->map, p->entities, p->entities_size);
 
         SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
         SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);
@@ -226,5 +225,34 @@ void prog_render_map(struct Prog* p)
             SDL_RenderFillRect(p->rend, &rect);
         }
     }
+}
+
+
+void prog_add_entity(struct Prog* p)
+{
+    ++p->entities_size;
+    p->entities = realloc(p->entities, sizeof(struct Entity*) * p->entities_size);
+
+    struct Entity* e = entity_init((SDL_FPoint){ rand() % (p->map->size.x * p->map->tile_size), rand() % (p->map->size.y * p->map->tile_size) }, p->rend, "deezn.png");
+    SDL_Point grid_pos = {
+        .x = (e->pos.x - ((int)e->pos.x % p->map->tile_size)) / p->map->tile_size,
+        .y = (e->pos.y - ((int)e->pos.y % p->map->tile_size)) / p->map->tile_size
+    };
+
+    while (p->map->layout[grid_pos.y * p->map->size.x + grid_pos.x] == '#')
+    {
+        e->pos.x = rand() % 800;
+        e->pos.y = rand() % 800;
+
+        grid_pos.x = (e->pos.x - ((int)e->pos.x % p->map->tile_size)) / p->map->tile_size;
+        grid_pos.y = (e->pos.y - ((int)e->pos.y % p->map->tile_size)) / p->map->tile_size;
+    }
+
+    p->entities[p->entities_size - 1] = e;
+}
+
+
+void prog_remove_entity(struct Prog* p, struct Entity* entity)
+{
 }
 

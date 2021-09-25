@@ -66,8 +66,12 @@ void prog_mainloop(struct Prog* p)
         SDL_RenderClear(p->rend);
 
         prog_render_3d(p);
-        /* prog_render_map(p); */
-        /* player_render(p->player, p->rend, p->map, p->entities, p->entities_size); */
+        prog_render_map(p);
+        player_render(p->player, p->rend, p->map, p->entities, p->entities_size);
+
+        SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
+        SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);
+        SDL_RenderFillRect(p->rend, &crosshair);
 
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);
@@ -111,6 +115,22 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
             case SDLK_v:
                 p->player->ray_mode = RAY_VERTICAL;
                 break;
+            case SDLK_z:
+            {
+                float intersection;
+                struct Entity* entity;
+                int entity_dist = player_cast_ray_entity(p->player, p->player->angle, p->entities, p->entities_size, &intersection, &entity);
+
+                int collision_type;
+                SDL_Point wall_vector = player_cast_ray(p->player, p->player->angle, p->map, p->entities, p->entities_size, &collision_type);
+                SDL_Point diff = { .x = wall_vector.x - p->player->rect.x, .y = wall_vector.y - p->player->rect.y };
+                int wall_dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
+
+                if (entity_dist != -1 && entity_dist < wall_dist)
+                {
+                    printf("Hit an entity\n");
+                }
+            } break;
             }
         } break;
         case SDL_KEYUP:

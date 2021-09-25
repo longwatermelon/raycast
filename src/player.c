@@ -282,13 +282,16 @@ int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entiti
             theta = 0.f;
         } 
 
-        float h = dist_a * tanf(theta);
-
-        if (h <= 10.f)
+        if (theta < M_PI / 2.f)
         {
-            *intersection = h;
-            *entity_hit = entities[i];
-            return sqrtf(dist_a * dist_a + h * h);
+            float h = dist_a * tanf(theta);
+
+            if (h <= 10.f)
+            {
+                *intersection = h;
+                *entity_hit = entities[i];
+                return sqrtf(dist_a * dist_a + h * h);
+            }
         }
     }
 

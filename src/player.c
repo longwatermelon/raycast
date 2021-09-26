@@ -16,6 +16,8 @@ struct Player* player_init(SDL_Point pos, float angle)
 
     p->ray_mode = RAY_ALL;
 
+    p->bullets = 20;
+
     return p;
 }
 

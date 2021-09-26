@@ -3,7 +3,6 @@
 #include "entity.h"
 #include "player.h"
 #include <time.h>
-#include <sys/time.h>
 #include <SDL_image.h>
 
 
@@ -15,13 +14,15 @@ struct Prog* prog_init()
     p->window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN);
     p->rend = SDL_CreateRenderer(p->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
+    p->font = TTF_OpenFont("res/font.ttf", 16);
+
     p->player = player_init((SDL_Point){ 300, 320 }, M_PI);
     p->map = map_init("map", (SDL_Point){ 32, 32 }, 50);
 
     p->entities = malloc(0);
     p->entities_size = 0;
 
-    p->tile_texture = IMG_LoadTexture(p->rend, "res/deez.png");
+    p->tile_texture = IMG_LoadTexture(p->rend, "res/wall.png");
     SDL_QueryTexture(p->tile_texture, 0, 0, &p->image_size.x, &p->image_size.y);
 
     p->shooting = false;
@@ -37,6 +38,8 @@ void prog_cleanup(struct Prog* p)
 {
     SDL_DestroyTexture(p->tile_texture);
     SDL_DestroyTexture(p->gun_texture);
+
+    TTF_CloseFont(p->font);
 
     player_cleanup(p->player);
     map_cleanup(p->map);
@@ -135,8 +138,12 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                 break;
             case SDLK_z:
             {
+                if (p->player->bullets <= 0)
+                    break;
+
                 p->shooting = true;
                 p->last_shot_time = clock();
+                --p->player->bullets;
 
                 float intersection;
                 struct Entity* entity;

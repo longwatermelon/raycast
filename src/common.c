@@ -47,3 +47,16 @@ float common_restrict_angle(float angle)
     return angle;
 }
 
+
+SDL_Texture* common_render_text(SDL_Renderer* rend, TTF_Font* font, const char* text)
+{
+    if (strlen(text) == 0)
+        return 0;
+
+    SDL_Surface* surf = TTF_RenderText_Blended(font, text, (SDL_Color){ 255, 255, 255 });
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(rend, surf);
+
+    SDL_FreeSurface(surf);
+    return tex;
+}
+

@@ -26,6 +26,8 @@ struct Player
         RAY_VERTICAL,
         RAY_ALL
     } ray_mode;
+
+    int bullets;
 };
 
 struct Player* player_init(SDL_Point pos, float angle);

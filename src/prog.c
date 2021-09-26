@@ -30,6 +30,7 @@ struct Prog* prog_init()
     p->last_shot_time = clock();
 
     prog_add_entity(p);
+    prog_add_entity(p);
 
     return p;
 }
@@ -149,12 +150,10 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                 SDL_Point diff = { .x = wall_vector.x - p->player->rect.x, .y = wall_vector.y - p->player->rect.y };
                 int wall_dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
 
-                printf("%f\n", intersection);
-
                 if (entity_dist != -1 && entity_dist < wall_dist)
                 {
-                    printf("Hit\n");
-                    /* prog_remove_entity(p, entity); */
+                    /* printf("Hit\n"); */
+                    prog_remove_entity(p, entity);
                 }
             } break;
             }

@@ -255,17 +255,19 @@ int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entiti
 
             if (h <= entities[i]->width / 2.f)
             {
-                if (cross < 0)
-                    *intersection = (entities[i]->width / 2.f) - h;
-                else
-                    *intersection = (entities[i]->width / 2.f) + h;
-
-                *entity_hit = entities[i];
-
                 float len = sqrtf(dist_a * dist_a + h * h);
 
                 if (len < shortest || shortest == -1)
+                {
                     shortest = len;
+
+                    if (cross < 0)
+                        *intersection = (entities[i]->width / 2.f) - h;
+                    else
+                        *intersection = (entities[i]->width / 2.f) + h;
+
+                    *entity_hit = entities[i];
+                }
             }
         }
     }

@@ -32,9 +32,6 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 
     p->restart = false;
 
-    struct Entity* e = entity_init(ENTITY_AMMO, (SDL_FPoint){ 2 * p->map->tile_size, 2 * p->map->tile_size }, p->rend, "res/deez.png");
-    prog_add_entity(p, e);
-
     return p;
 }
 
@@ -91,7 +88,7 @@ void prog_mainloop(struct Prog* p)
                 }
                 else if (p->entities[i]->type == ENTITY_AMMO)
                 {
-                    p->player->bullets += 40;
+                    p->player->bullets += 30;
                     prog_remove_entity(p, p->entities[i]);
                     break;
                 }
@@ -108,8 +105,14 @@ void prog_mainloop(struct Prog* p)
                 }
             }
 
-            if (p->entities_size < 15 && rand() % 2000 > 1985)
-                prog_spawn_enemy(p);
+            if (p->entities_size < 15)
+            {
+                if (rand() % 2000 > 1985)
+                    prog_spawn_entity(p, ENTITY_ENEMY, "res/goomba.png");
+
+                if (rand() % 2000 > 1996)
+                    prog_spawn_entity(p, ENTITY_AMMO, "res/deez.png");
+            }
         }
         
         SDL_RenderClear(p->rend);
@@ -242,29 +245,18 @@ void prog_remove_entity(struct Prog* p, struct Entity* entity)
 }
 
 
-void prog_spawn_enemy(struct Prog* p)
+void prog_spawn_entity(struct Prog* p, int type, const char* sprite_path)
 {
-    struct Entity* e = entity_init(ENTITY_ENEMY, (SDL_FPoint){ rand() % (p->map->size.x * p->map->tile_size), rand() % (p->map->size.y * p->map->tile_size) }, p->rend, "res/goomba.png");
-    SDL_Point grid_pos = {
-        .x = (e->pos.x - ((int)e->pos.x % p->map->tile_size)) / p->map->tile_size,
-        .y = (e->pos.y - ((int)e->pos.y % p->map->tile_size)) / p->map->tile_size
-    };
+    struct Entity* e = entity_init(type, (SDL_FPoint){ rand() % (p->map->size.x * p->map->tile_size), rand() % (p->map->size.y * p->map->tile_size) }, p->rend, sprite_path);
 
-    SDL_Point diff = { .x = e->pos.x - p->player->rect.x, .y = e->pos.y - p->player->rect.y };
-    float distance_to_player = sqrtf(diff.x * diff.x + diff.y * diff.y);
-
-    while (p->map->layout[grid_pos.y * p->map->size.x + grid_pos.x] == '#' || distance_to_player < 300)
+    while (true)
     {
-        e->pos.x = rand() % (p->map->size.x * p->map->tile_size);
-        e->pos.y = rand() % (p->map->size.y * p->map->tile_size);
+        e->pos = map_get_random_empty_spot(p->map);
+        SDL_Point diff = { .x = e->pos.x - p->player->rect.x, .y = e->pos.y - p->player->rect.y };
+        float distance_to_player = sqrtf(diff.x * diff.x + diff.y * diff.y);
 
-        grid_pos.x = (e->pos.x - ((int)e->pos.x % p->map->tile_size)) / p->map->tile_size;
-        grid_pos.y = (e->pos.y - ((int)e->pos.y % p->map->tile_size)) / p->map->tile_size;
-
-        diff.x = e->pos.x - p->player->rect.x;
-        diff.y = e->pos.y - p->player->rect.y;
-
-        distance_to_player = sqrtf(diff.x * diff.x + diff.y * diff.y);
+        if (distance_to_player > 300)
+            break;
     }
 
     prog_add_entity(p, e);

@@ -43,7 +43,7 @@ void prog_render_gun(struct Prog* p);
 void prog_add_entity(struct Prog* p, struct Entity* entity);
 void prog_remove_entity(struct Prog* p, struct Entity* entity);
 
-void prog_spawn_enemy(struct Prog* p);
+void prog_spawn_entity(struct Prog* p, int type, const char* sprite_path);
 
 #endif
 

@@ -13,5 +13,7 @@ struct Map
 struct Map* map_init(const char* path, SDL_Point size, int tile_size);
 void map_cleanup(struct Map* m);
 
+SDL_FPoint map_get_random_empty_spot(struct Map* m);
+
 #endif
 

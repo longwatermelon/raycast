@@ -22,7 +22,7 @@ struct Player* player_init(SDL_Point pos, float angle)
     p->shooting = false;
     p->last_shot_time = clock();
     p->reloading = false;
-    p->bullets = 100;
+    p->bullets = 20;
     p->bullets_loaded = 20;
 
     return p;

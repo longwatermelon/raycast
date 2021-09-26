@@ -22,7 +22,6 @@ void events_base(struct Prog* p, SDL_Event* evt)
         } break;
         }
     }
-
 }
 
 

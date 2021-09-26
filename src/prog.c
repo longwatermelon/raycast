@@ -21,12 +21,12 @@ struct Prog* prog_init()
     p->entities = malloc(0);
     p->entities_size = 0;
 
-    p->tile_texture = IMG_LoadTexture(p->rend, "deez.png");
+    p->tile_texture = IMG_LoadTexture(p->rend, "res/deez.png");
     SDL_QueryTexture(p->tile_texture, 0, 0, &p->image_size.x, &p->image_size.y);
 
     p->shooting = false;
-    p->gun_texture = IMG_LoadTexture(p->rend, "gun.png");
-    p->shot_texture = IMG_LoadTexture(p->rend, "gun_shoot.png");
+    p->gun_texture = IMG_LoadTexture(p->rend, "res/gun.png");
+    p->shot_texture = IMG_LoadTexture(p->rend, "res/gun_shoot.png");
     p->last_shot_time = clock();
 
     return p;
@@ -319,7 +319,7 @@ void prog_add_entity(struct Prog* p)
     ++p->entities_size;
     p->entities = realloc(p->entities, sizeof(struct Entity*) * p->entities_size);
 
-    struct Entity* e = entity_init((SDL_FPoint){ rand() % (p->map->size.x * p->map->tile_size), rand() % (p->map->size.y * p->map->tile_size) }, p->rend, "goomba.png");
+    struct Entity* e = entity_init((SDL_FPoint){ rand() % (p->map->size.x * p->map->tile_size), rand() % (p->map->size.y * p->map->tile_size) }, p->rend, "res/goomba.png");
     SDL_Point grid_pos = {
         .x = (e->pos.x - ((int)e->pos.x % p->map->tile_size)) / p->map->tile_size,
         .y = (e->pos.y - ((int)e->pos.y % p->map->tile_size)) / p->map->tile_size

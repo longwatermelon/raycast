@@ -21,7 +21,7 @@ struct Prog* prog_init()
     p->entities = malloc(0);
     p->entities_size = 0;
 
-    p->tile_texture = IMG_LoadTexture(p->rend, "deez.png");
+    p->tile_texture = IMG_LoadTexture(p->rend, "wall.png");
     SDL_QueryTexture(p->tile_texture, 0, 0, &p->image_size.x, &p->image_size.y);
 
     p->shooting = false;
@@ -76,16 +76,16 @@ void prog_mainloop(struct Prog* p)
             }
         }
 
-        /* if (rand() % 2000 > 1995) */
-        /*     prog_add_entity(p); */
+        if (rand() % 2000 > 1995)
+            prog_add_entity(p);
 
         SDL_RenderClear(p->rend);
 
         prog_render_3d(p);
         prog_render_gun(p);
 
-        prog_render_map(p);
-        player_render(p->player, p->rend, p->map, p->entities, p->entities_size);
+        /* prog_render_map(p); */
+        /* player_render(p->player, p->rend, p->map, p->entities, p->entities_size); */
 
         SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
         SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);

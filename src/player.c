@@ -220,7 +220,7 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, struct Map* ma
 
 int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entities, size_t entities_size, float* intersection, struct Entity** entity_hit)
 {
-    float shortest = 1e10;
+    float shortest = -1;
 
     for (int i = 0; i < entities_size; ++i)
     {
@@ -252,17 +252,14 @@ int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entiti
             {
                 *intersection = h;
                 *entity_hit = entities[i];
-                
+
                 float len = sqrtf(dist_a * dist_a + h * h);
 
-                if (len < shortest)
+                if (len < shortest || shortest == -1)
                     shortest = len;
             }
         }
     }
-
-    if (shortest == 1e10)
-        return -1;
 
     return shortest;
 }

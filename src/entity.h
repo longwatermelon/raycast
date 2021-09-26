@@ -12,6 +12,8 @@ struct Entity
 
     SDL_Texture* sprite;
     SDL_Point sprite_size;
+
+    int width;
 };
 
 struct Entity* entity_init(SDL_FPoint pos, SDL_Renderer* rend, const char* sprite_path);

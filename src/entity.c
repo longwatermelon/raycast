@@ -13,6 +13,8 @@ struct Entity* entity_init(SDL_FPoint pos, SDL_Renderer* rend, const char* sprit
     e->sprite = IMG_LoadTexture(rend, sprite_path);
     SDL_QueryTexture(e->sprite, 0, 0, &e->sprite_size.x, &e->sprite_size.y);
 
+    e->width = 20.f;
+
     return e;
 }
 

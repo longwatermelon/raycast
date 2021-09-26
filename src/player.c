@@ -38,11 +38,7 @@ void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct
 
     SDL_SetRenderDrawColor(rend, 0, 0, 255, 255);
 
-    for (int i = 0; i < entities_size; ++i)
-    {
-        SDL_Rect rect = { .x = entities[i]->pos.x - 5, .y = entities[i]->pos.y - 5, .w = 10, .h = 10 };
-        SDL_RenderFillRect(rend, &rect);
-    }
+    
 
     for (float i = p->angle - M_PI / 6.f; i < p->angle + M_PI / 6.f; i += 0.0013f)
     {
@@ -68,9 +64,14 @@ void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct
         if (enitity_length < dist && enitity_length != -1)
         {
             SDL_SetRenderDrawColor(rend, 255, 0, 255, 255);
+            SDL_RenderDrawLine(rend, center.x, center.y, endp.x, endp.y);
         }
+    }
 
-        SDL_RenderDrawLine(rend, center.x, center.y, endp.x, endp.y);
+    for (int i = 0; i < entities_size; ++i)
+    {
+        SDL_Rect rect = { .x = entities[i]->pos.x - 5, .y = entities[i]->pos.y - 5, .w = 10, .h = 10 };
+        SDL_RenderFillRect(rend, &rect);
     }
 }
 
@@ -236,21 +237,29 @@ int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entiti
 
         float dot_product = diff.x * ray_vector.x + diff.y * ray_vector.y;
         float dist_a = sqrtf(diff.x * diff.x + diff.y * diff.y);
-        float theta = acosf(dot_product / dist_a);
 
-        // Floating point error
-        if (dot_product / dist_a >= 1.f)
-        {
-            theta = 0.f;
-        } 
+        float cos_theta = dot_product / dist_a;
+        if (cos_theta > 1.f)
+            cos_theta = 1.f;
+
+        if (cos_theta < -1.f)
+            cos_theta = -1.f;
+
+        float theta = acosf(cos_theta);
+
+        float cross = diff.x * ray_vector.y - diff.y * ray_vector.x;
 
         if (theta < M_PI / 2.f)
         {
             float h = dist_a * tanf(theta);
 
-            if (h <= 10.f)
+            if (h <= entities[i]->width / 2.f)
             {
-                *intersection = h;
+                if (cross < 0)
+                    *intersection = (entities[i]->width / 2.f) - h;
+                else
+                    *intersection = (entities[i]->width / 2.f) + h;
+
                 *entity_hit = entities[i];
 
                 float len = sqrtf(dist_a * dist_a + h * h);

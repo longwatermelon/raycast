@@ -29,6 +29,8 @@ struct Prog* prog_init()
     p->shot_texture = IMG_LoadTexture(p->rend, "gun_shoot.png");
     p->last_shot_time = clock();
 
+    prog_add_entity(p);
+
     return p;
 }
 
@@ -76,8 +78,8 @@ void prog_mainloop(struct Prog* p)
             }
         }
 
-        if (rand() % 2000 > 1995)
-            prog_add_entity(p);
+        /* if (rand() % 2000 > 1995) */
+        /*     prog_add_entity(p); */
 
         SDL_RenderClear(p->rend);
 
@@ -147,9 +149,12 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                 SDL_Point diff = { .x = wall_vector.x - p->player->rect.x, .y = wall_vector.y - p->player->rect.y };
                 int wall_dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
 
+                printf("%f\n", intersection);
+
                 if (entity_dist != -1 && entity_dist < wall_dist)
                 {
-                    prog_remove_entity(p, entity);
+                    printf("Hit\n");
+                    /* prog_remove_entity(p, entity); */
                 }
             } break;
             }
@@ -210,8 +215,8 @@ void prog_render_3d(struct Prog* p)
         // Render entities
         if (ray_length_entity < ray_length_wall && ray_length_entity != -1)
         {
-            src.x = (intersection / 10.f) * entity_hit->sprite_size.x;
-            
+            src.x = (intersection / entity_hit->width) * entity_hit->sprite_size.x;
+
             dist = ray_length_entity * cosf(angle);
             line_height = (25.f * 800.f) / dist;
 

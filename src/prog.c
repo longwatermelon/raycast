@@ -29,9 +29,6 @@ struct Prog* prog_init()
     p->shot_texture = IMG_LoadTexture(p->rend, "gun_shoot.png");
     p->last_shot_time = clock();
 
-    prog_add_entity(p);
-    prog_add_entity(p);
-
     return p;
 }
 
@@ -79,8 +76,8 @@ void prog_mainloop(struct Prog* p)
             }
         }
 
-        /* if (rand() % 2000 > 1995) */
-        /*     prog_add_entity(p); */
+        if (rand() % 2000 > 1985)
+            prog_add_entity(p);
 
         SDL_RenderClear(p->rend);
 
@@ -143,7 +140,7 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
 
                 float intersection;
                 struct Entity* entity;
-                int entity_dist = player_cast_ray_entity(p->player, p->player->angle, p->entities, p->entities_size, &intersection, &entity);
+                int entity_dist = player_cast_ray_entity(p->player, p->player->angle, p->entities, p->entities_size, 0, 0, &intersection, &entity);
 
                 int collision_type;
                 SDL_Point wall_vector = player_cast_ray(p->player, p->player->angle, p->map, p->entities, p->entities_size, &collision_type);
@@ -188,10 +185,6 @@ void prog_render_3d(struct Prog* p)
 
         int ray_length_wall = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
 
-        float intersection;
-        struct Entity* entity_hit;
-        int ray_length_entity = player_cast_ray_entity(p->player, i, p->entities, p->entities_size, &intersection, &entity_hit);
-
         float angle = common_restrict_angle(p->player->angle - i);
 
         // Adjust for fisheye effect
@@ -211,21 +204,96 @@ void prog_render_3d(struct Prog* p)
         SDL_Rect dst = { .x = x_pos, .y = (int)line_offset, .w = 1, .h = (int)line_height };
         SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
 
-        // Render entities
-        if (ray_length_entity < ray_length_wall && ray_length_entity != -1)
+        struct Entity* entity_hit;
+
+        struct Entity** ignored_entities = malloc(0);
+        size_t ignored_entities_size = 0;
+
+        int* entity_ray_lengths = malloc(0);
+        size_t entity_ray_lengths_size = 0;
+
+        float* intersections = malloc(0);
+        size_t intersections_size = 0;
+
+        for (int j = 0; j < p->entities_size; ++j)
         {
-            src.x = (intersection / entity_hit->width) * entity_hit->sprite_size.x;
+            float intersection;
+            int ray_length_entity = player_cast_ray_entity(p->player, i, p->entities, p->entities_size, ignored_entities, ignored_entities_size, &intersection, &entity_hit);
 
-            dist = ray_length_entity * cosf(angle);
-            line_height = (25.f * 800.f) / dist;
+            ++ignored_entities_size;
+            ignored_entities = realloc(ignored_entities, ignored_entities_size * sizeof(struct Entity*));
+            ignored_entities[ignored_entities_size - 1] = entity_hit;
 
-            line_offset = 400.f;
+            ++entity_ray_lengths_size;
+            entity_ray_lengths = realloc(entity_ray_lengths, sizeof(int) * entity_ray_lengths_size);
+            entity_ray_lengths[entity_ray_lengths_size - 1] = ray_length_entity;
 
-            dst.y = line_offset;
-            dst.h = line_height;
-
-            SDL_RenderCopy(p->rend, entity_hit->sprite, &src, &dst);
+            ++intersections_size;
+            intersections = realloc(intersections, sizeof(float) * intersections_size);
+            intersections[intersections_size - 1] = intersection;
         }
+
+        // Sort ray lengths
+        for (int j = 0; j < entity_ray_lengths_size; ++j)
+        {
+            for (int k = j; k < entity_ray_lengths_size; ++k)
+            {
+                if (entity_ray_lengths[k] > entity_ray_lengths[j])
+                {
+                    int tmp = entity_ray_lengths[j];
+                    entity_ray_lengths[j] = entity_ray_lengths[k];
+                    entity_ray_lengths[k] = tmp;
+
+                    float intersection = intersections[j];
+                    intersections[j] = intersections[k];
+                    intersections[k] = intersection;
+
+                    struct Entity* tmpe = ignored_entities[j];
+                    ignored_entities[j] = ignored_entities[k];
+                    ignored_entities[k] = tmpe;
+                }
+            }
+        }
+
+        /* if (entity_ray_lengths[1] > -1) */
+        /* { */
+        /*     printf("=======\n"); */
+            
+        /*     for (int j = 0; j < entity_ray_lengths_size; ++j) */
+        /*     { */
+        /*         printf("%d %d\n", entity_ray_lengths[j], ray_length_wall); */
+        /*     } */
+
+        /*     printf("===\n\n"); */
+        /* } */
+
+        // Render entities
+        for (int j = 0; j < entity_ray_lengths_size; ++j)
+        {
+            if (entity_ray_lengths[j] < ray_length_wall && entity_ray_lengths[j] != -1)
+            {
+                src.x = (intersections[j] / ignored_entities[j]->width) * ignored_entities[j]->sprite_size.x;
+
+                dist = entity_ray_lengths[j] * cosf(angle);
+                line_height = (25.f * 800.f) / dist;
+
+                line_offset = 400.f;
+
+                dst.y = line_offset;
+                dst.h = line_height;
+
+                /* if (entity_ray_lengths[1] > -1) */
+                /* { */
+                /*     printf("%d %d %d %d %d %f\n", j, entity_ray_lengths[j], dst.y, dst.h, src.x, line_height); */
+                /* } */
+
+                SDL_RenderCopy(p->rend, ignored_entities[j]->sprite, &src, &dst);
+            }
+        }
+
+        free(ignored_entities);
+        free(entity_ray_lengths);
+        free(intersections);
 
         x_pos += 1.f;
     }

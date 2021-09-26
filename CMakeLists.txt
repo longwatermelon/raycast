@@ -19,6 +19,8 @@ add_executable(raycast
     src/map.c
     src/entity.h
     src/entity.c
+    src/events.h
+    src/events.c
 )
 
 target_link_libraries(raycast PRIVATE

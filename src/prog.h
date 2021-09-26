@@ -34,7 +34,6 @@ struct Prog* prog_init();
 void prog_cleanup(struct Prog* p);
 
 void prog_mainloop(struct Prog* p);
-void prog_handle_events(struct Prog* p, SDL_Event* evt);
 
 void prog_render_3d(struct Prog* p);
 void prog_render_map(struct Prog* p);

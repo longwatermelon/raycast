@@ -2,6 +2,7 @@
 #include "common.h"
 #include "entity.h"
 #include "player.h"
+#include "events.h"
 #include <time.h>
 #include <SDL_image.h>
 
@@ -60,7 +61,7 @@ void prog_mainloop(struct Prog* p)
 
     while (p->running)
     {
-        prog_handle_events(p, &evt);
+        events_base(p, &evt);
 
         player_move(p->player, p->map);
 

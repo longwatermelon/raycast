@@ -1,5 +1,6 @@
 #include "events.h"
 #include "prog.h"
+#include "audio.h"
 #include <time.h>
 
 
@@ -53,6 +54,8 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
             p->player->shooting = true;
             p->player->last_shot_time = clock();
             --p->player->bullets_loaded;
+
+            audio_play_sound("res/gunshot.wav");
 
             float intersection;
             struct Entity* entity = 0;

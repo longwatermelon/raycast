@@ -4,6 +4,7 @@
 #include "player.h"
 #include "events.h"
 #include "render.h"
+#include "audio.h"
 #include <time.h>
 #include <SDL_image.h>
 
@@ -62,6 +63,7 @@ void prog_mainloop(struct Prog* p)
     while (p->running)
     {
         events_base(p, &evt);
+        audio_stop_finished_sounds();
 
         player_move(p->player, p->map);
 
@@ -138,6 +140,8 @@ void prog_mainloop(struct Prog* p)
             SDL_Rect tmp = { .x = 300, .y = 380 };
             SDL_QueryTexture(game_over_tex, 0, 0, &tmp.w, &tmp.h);
             SDL_RenderCopy(p->rend, game_over_tex, 0, &tmp);
+
+            SDL_DestroyTexture(game_over_tex);
         }
 
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);

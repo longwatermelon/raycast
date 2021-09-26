@@ -149,7 +149,6 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
 
                 if (entity_dist != -1 && entity_dist < wall_dist)
                 {
-                    /* printf("Hit\n"); */
                     prog_remove_entity(p, entity);
                 }
             } break;
@@ -255,18 +254,6 @@ void prog_render_3d(struct Prog* p)
             }
         }
 
-        /* if (entity_ray_lengths[1] > -1) */
-        /* { */
-        /*     printf("=======\n"); */
-            
-        /*     for (int j = 0; j < entity_ray_lengths_size; ++j) */
-        /*     { */
-        /*         printf("%d %d\n", entity_ray_lengths[j], ray_length_wall); */
-        /*     } */
-
-        /*     printf("===\n\n"); */
-        /* } */
-
         // Render entities
         for (int j = 0; j < entity_ray_lengths_size; ++j)
         {
@@ -281,11 +268,6 @@ void prog_render_3d(struct Prog* p)
 
                 dst.y = line_offset;
                 dst.h = line_height;
-
-                /* if (entity_ray_lengths[1] > -1) */
-                /* { */
-                /*     printf("%d %d %d %d %d %f\n", j, entity_ray_lengths[j], dst.y, dst.h, src.x, line_height); */
-                /* } */
 
                 SDL_RenderCopy(p->rend, ignored_entities[j]->sprite, &src, &dst);
             }

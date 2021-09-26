@@ -27,6 +27,8 @@ struct Player
         RAY_ALL
     } ray_mode;
 
+    bool alive;
+
     bool shooting;
     clock_t last_shot_time;
     bool reloading;

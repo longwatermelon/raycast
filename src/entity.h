@@ -9,6 +9,7 @@ struct Player;
 struct Entity
 {
     SDL_FPoint pos;
+    float speed;
 
     SDL_Texture* sprite;
     SDL_Point sprite_size;

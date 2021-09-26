@@ -28,9 +28,11 @@ struct Prog
 
     SDL_Texture* gun_texture;
     SDL_Texture* shot_texture;
+
+    bool restart;
 };
 
-struct Prog* prog_init();
+struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend);
 void prog_cleanup(struct Prog* p);
 
 void prog_mainloop(struct Prog* p);

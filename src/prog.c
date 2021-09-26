@@ -8,13 +8,13 @@
 #include <SDL_image.h>
 
 
-struct Prog* prog_init()
+struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 {
     struct Prog* p = malloc(sizeof(struct Prog));
     p->running = true;
 
-    p->window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN);
-    p->rend = SDL_CreateRenderer(p->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    p->window = window;
+    p->rend = rend;
 
     p->font = TTF_OpenFont("res/font.ttf", 16);
 
@@ -29,6 +29,8 @@ struct Prog* prog_init()
 
     p->gun_texture = IMG_LoadTexture(p->rend, "res/gun.png");
     p->shot_texture = IMG_LoadTexture(p->rend, "res/gun_shoot.png");
+
+    p->restart = false;
 
     return p;
 }
@@ -49,9 +51,6 @@ void prog_cleanup(struct Prog* p)
 
     free(p->entities);
 
-    SDL_DestroyRenderer(p->rend);
-    SDL_DestroyWindow(p->window);
-
     free(p);
 }
 
@@ -68,24 +67,40 @@ void prog_mainloop(struct Prog* p)
 
         for (int i = 0; i < p->entities_size; ++i)
         {
-            entity_move_towards_player(p->entities[i], p->player, p->map);
-        }
+            if (p->player->alive)
+                entity_move_towards_player(p->entities[i], p->player, p->map);
 
-        if (p->player->shooting)
-        {
-            if ((float)(clock() - p->player->last_shot_time) / CLOCKS_PER_SEC >= .01f)
+            SDL_FPoint diff = {
+                .x = p->player->rect.x - p->entities[i]->pos.x,
+                .y = p->player->rect.y - p->entities[i]->pos.y
+            };
+
+            float distance = sqrtf(diff.x * diff.x + diff.y * diff.y);
+
+            if (distance <= p->entities[i]->width / 2.f)
             {
-                p->player->shooting = false;
+                p->player->alive = false;
+                break;
             }
         }
 
-        if (p->entities_size < 15 && rand() % 2000 > 1985)
-            prog_add_entity(p);
+        if (p->player->alive)
+        {
+            if (p->player->shooting)
+            {
+                if ((float)(clock() - p->player->last_shot_time) / CLOCKS_PER_SEC >= .01f)
+                {
+                    p->player->shooting = false;
+                }
+            }
 
+            if (p->entities_size < 15 && rand() % 2000 > 1985)
+                prog_add_entity(p);
+        }
+        
         SDL_RenderClear(p->rend);
 
         render_3d_all(p);
-        /* prog_render_3d(p); */
         prog_render_gun(p);
 
         common_display_statistic(p->rend, p->font, "Bullets: ", p->player->bullets, (SDL_Point){ 20, 20 });
@@ -94,6 +109,19 @@ void prog_mainloop(struct Prog* p)
         SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
         SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);
         SDL_RenderFillRect(p->rend, &crosshair);
+
+        if (!p->player->alive)
+        {
+            SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
+            SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 200);
+            SDL_RenderFillRect(p->rend, 0);
+            SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_NONE);
+
+            SDL_Texture* game_over_tex = common_render_text(p->rend, p->font, "Game over, press r to restart");
+            SDL_Rect tmp = { .x = 300, .y = 380 };
+            SDL_QueryTexture(game_over_tex, 0, 0, &tmp.w, &tmp.h);
+            SDL_RenderCopy(p->rend, game_over_tex, 0, &tmp);
+        }
 
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);

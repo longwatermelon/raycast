@@ -17,6 +17,8 @@ struct Player* player_init(SDL_Point pos, float angle)
 
     p->ray_mode = RAY_ALL;
 
+    p->alive = true;
+
     p->shooting = false;
     p->last_shot_time = clock();
     p->reloading = false;
@@ -50,7 +52,7 @@ void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct
         SDL_Point endp = player_cast_ray(p, i, map, entities, entities_size, &collision_type);
 
         float intersection;
-        struct Entity* entity_hit;
+        struct Entity* entity_hit = 0;
         float enitity_length = player_cast_ray_entity(p, i, entities, entities_size, 0, 0, &intersection, &entity_hit);
 
         if (collision_type == COLLISION_HORIZONTAL)

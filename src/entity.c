@@ -9,6 +9,7 @@ struct Entity* entity_init(SDL_FPoint pos, SDL_Renderer* rend, const char* sprit
 {
     struct Entity* e = malloc(sizeof(struct Entity));
     e->pos = pos;
+    e->speed = fmod(rand(), 2.f) + 0.1f;
 
     e->sprite = IMG_LoadTexture(rend, sprite_path);
     SDL_QueryTexture(e->sprite, 0, 0, &e->sprite_size.x, &e->sprite_size.y);
@@ -49,6 +50,6 @@ void entity_move(struct Entity* e, struct Map* map, float x, float y)
 void entity_move_towards_player(struct Entity* e, struct Player* p, struct Map* map)
 {
     float theta = atan2f(p->rect.y - e->pos.y, p->rect.x - e->pos.x);
-    entity_move(e, map, cosf(theta), sinf(theta));
+    entity_move(e, map, e->speed * cosf(theta), e->speed * sinf(theta));
 }
 

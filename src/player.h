@@ -33,6 +33,7 @@ struct Player
     clock_t last_shot_time;
     bool reloading;
     int bullets;
+    int bullets_loaded;
 };
 
 struct Player* player_init(SDL_Point pos, float angle);
@@ -48,7 +49,8 @@ SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, struct Map* 
 SDL_Point player_cast_ray_vertical(struct Player* p, float angle, struct Map* map);
 
 // Returns ray length of ray that intersects with entity
-int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entities, size_t entities_size, struct Entity** ignored_entities, size_t ignored_entities_size, float* intersection, struct Entity** entity_hit);
+// If target type is -1, the ray will apply to all entity types
+int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entities, size_t entities_size, struct Entity** ignored_entities, size_t ignored_entities_size, int target_type, float* intersection, struct Entity** entity_hit);
 
 #endif
 

@@ -22,7 +22,8 @@ struct Player* player_init(SDL_Point pos, float angle)
     p->shooting = false;
     p->last_shot_time = clock();
     p->reloading = false;
-    p->bullets = 20;
+    p->bullets = 100;
+    p->bullets_loaded = 20;
 
     return p;
 }
@@ -53,7 +54,7 @@ void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct
 
         float intersection;
         struct Entity* entity_hit = 0;
-        float enitity_length = player_cast_ray_entity(p, i, entities, entities_size, 0, 0, &intersection, &entity_hit);
+        float enitity_length = player_cast_ray_entity(p, i, entities, entities_size, 0, 0, -1, &intersection, &entity_hit);
 
         if (collision_type == COLLISION_HORIZONTAL)
             SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
@@ -231,12 +232,15 @@ SDL_Point player_cast_ray_vertical(struct Player* p, float angle, struct Map* ma
 }
 
 
-int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entities, size_t entities_size, struct Entity** ignored_entities, size_t ignored_entities_size, float* intersection, struct Entity** entity_hit)
+int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entities, size_t entities_size, struct Entity** ignored_entities, size_t ignored_entities_size, int target_type, float* intersection, struct Entity** entity_hit)
 {
     float shortest = -1;
 
     for (int i = 0; i < entities_size; ++i)
     {
+        if (target_type != -1 && entities[i]->type != target_type)
+            continue;
+
         bool is_ignored = false;
 
         for (int j = 0; j < ignored_entities_size; ++j)

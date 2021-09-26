@@ -48,16 +48,16 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
             break;
         case SDLK_SPACE:
         {
-            if (p->player->bullets <= 0 || p->player->reloading)
+            if (p->player->bullets_loaded <= 0 || p->player->reloading)
                 break;
 
             p->player->shooting = true;
             p->player->last_shot_time = clock();
-            --p->player->bullets;
+            --p->player->bullets_loaded;
 
             float intersection;
             struct Entity* entity = 0;
-            int entity_dist = player_cast_ray_entity(p->player, p->player->angle, p->entities, p->entities_size, 0, 0, &intersection, &entity);
+            int entity_dist = player_cast_ray_entity(p->player, p->player->angle, p->entities, p->entities_size, 0, 0, ENTITY_ENEMY, &intersection, &entity);
 
             int collision_type;
             SDL_Point wall_vector = player_cast_ray(p->player, p->player->angle, p->map, p->entities, p->entities_size, &collision_type);

@@ -8,6 +8,12 @@ struct Player;
 
 struct Entity
 {
+    enum
+    {
+        ENTITY_ENEMY,
+        ENTITY_AMMO
+    } type;
+
     SDL_FPoint pos;
     float speed;
 
@@ -17,7 +23,7 @@ struct Entity
     int width;
 };
 
-struct Entity* entity_init(SDL_FPoint pos, SDL_Renderer* rend, const char* sprite_path);
+struct Entity* entity_init(int type, SDL_FPoint pos, SDL_Renderer* rend, const char* sprite_path);
 void entity_cleanup(struct Entity* e);
 
 void entity_move(struct Entity* e, struct Map* map, float x, float y);

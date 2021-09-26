@@ -64,7 +64,7 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
     {
         float intersection;
         struct Entity* entity_hit = 0;
-        int ray_length_entity = player_cast_ray_entity(p->player, angle, p->entities, p->entities_size, rendered_entities, rendered_entities_size, &intersection, &entity_hit);
+        int ray_length_entity = player_cast_ray_entity(p->player, angle, p->entities, p->entities_size, rendered_entities, rendered_entities_size, -1, &intersection, &entity_hit);
 
         ++rendered_entities_size;
         rendered_entities = realloc(rendered_entities, rendered_entities_size * sizeof(struct Entity*));

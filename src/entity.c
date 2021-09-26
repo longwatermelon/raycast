@@ -5,9 +5,11 @@
 #include <SDL_image.h>
 
 
-struct Entity* entity_init(SDL_FPoint pos, SDL_Renderer* rend, const char* sprite_path)
+struct Entity* entity_init(int type, SDL_FPoint pos, SDL_Renderer* rend, const char* sprite_path)
 {
     struct Entity* e = malloc(sizeof(struct Entity));
+    e->type = type;
+
     e->pos = pos;
     e->speed = fmod(rand(), 2.f) + 0.1f;
 

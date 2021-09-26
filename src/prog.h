@@ -40,8 +40,10 @@ void prog_mainloop(struct Prog* p);
 void prog_render_map(struct Prog* p);
 void prog_render_gun(struct Prog* p);
 
-void prog_add_entity(struct Prog* p);
+void prog_add_entity(struct Prog* p, struct Entity* entity);
 void prog_remove_entity(struct Prog* p, struct Entity* entity);
+
+void prog_spawn_enemy(struct Prog* p);
 
 #endif
 

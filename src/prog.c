@@ -76,7 +76,7 @@ void prog_mainloop(struct Prog* p)
             }
         }
 
-        if (rand() % 2000 > 1985)
+        if (p->entities_size < 15 && rand() % 2000 > 1985)
             prog_add_entity(p);
 
         SDL_RenderClear(p->rend);

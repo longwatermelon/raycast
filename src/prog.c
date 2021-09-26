@@ -162,16 +162,7 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
             case SDLK_LEFT:
                 p->player->angle_change = .02f;
                 break;
-            case SDLK_r:
-                p->player->ray_mode = RAY_ALL;
-                break;
-            case SDLK_h:
-                p->player->ray_mode = RAY_HORIZONTAL;
-                break;
-            case SDLK_v:
-                p->player->ray_mode = RAY_VERTICAL;
-                break;
-            case SDLK_z:
+            case SDLK_SPACE:
             {
                 if (p->player->bullets <= 0)
                     break;
@@ -194,7 +185,7 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                     prog_remove_entity(p, entity);
                 }
             } break;
-            case SDLK_x:
+            case SDLK_r:
             {
                 p->player->reloading = true;
             } break;

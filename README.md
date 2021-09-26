@@ -1,7 +1,7 @@
 # raycast
 Raycasting in C
 
-![image](https://user-images.githubusercontent.com/73869536/134788635-85a2cfbd-834e-469c-b026-07b0ab8f0cd0.png)
+![image](https://user-images.githubusercontent.com/73869536/134826217-95698ff2-2766-49fc-afc5-77347704a68b.png)
 
 # Building
 

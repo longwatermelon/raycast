@@ -51,8 +51,8 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
 {
     float angle_diff = common_restrict_angle(p->player->angle - angle);
 
-    struct Entity** ignored_entities = malloc(0);
-    size_t ignored_entities_size = 0;
+    struct Entity** rendered_entities = malloc(0);
+    size_t rendered_entities_size = 0;
 
     int* entity_ray_lengths = malloc(0);
     size_t entity_ray_lengths_size = 0;
@@ -64,11 +64,11 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
     {
         float intersection;
         struct Entity* entity_hit;
-        int ray_length_entity = player_cast_ray_entity(p->player, angle, p->entities, p->entities_size, ignored_entities, ignored_entities_size, &intersection, &entity_hit);
+        int ray_length_entity = player_cast_ray_entity(p->player, angle, p->entities, p->entities_size, rendered_entities, rendered_entities_size, &intersection, &entity_hit);
 
-        ++ignored_entities_size;
-        ignored_entities = realloc(ignored_entities, ignored_entities_size * sizeof(struct Entity*));
-        ignored_entities[ignored_entities_size - 1] = entity_hit;
+        ++rendered_entities_size;
+        rendered_entities = realloc(rendered_entities, rendered_entities_size * sizeof(struct Entity*));
+        rendered_entities[rendered_entities_size - 1] = entity_hit;
 
         ++entity_ray_lengths_size;
         entity_ray_lengths = realloc(entity_ray_lengths, sizeof(int) * entity_ray_lengths_size);
@@ -94,9 +94,9 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
                 intersections[j] = intersections[k];
                 intersections[k] = tmpi;
 
-                struct Entity* tmpe = ignored_entities[j];
-                ignored_entities[j] = ignored_entities[k];
-                ignored_entities[k] = tmpe;
+                struct Entity* tmpe = rendered_entities[j];
+                rendered_entities[j] = rendered_entities[k];
+                rendered_entities[k] = tmpe;
             }
         }
     }
@@ -109,8 +109,8 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
     {
         if (entity_ray_lengths[j] < ray_length_wall && entity_ray_lengths[j] != -1)
         {
-            src.x = (intersections[j] / ignored_entities[j]->width) * ignored_entities[j]->sprite_size.x;
-            src.h = ignored_entities[j]->sprite_size.y;
+            src.x = (intersections[j] / rendered_entities[j]->width) * rendered_entities[j]->sprite_size.x;
+            src.h = rendered_entities[j]->sprite_size.y;
 
             float dist = entity_ray_lengths[j] * cosf(angle_diff);
             float line_height = (25.f * 800.f) / dist;
@@ -120,11 +120,11 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
             dst.y = line_offset;
             dst.h = line_height;
 
-            SDL_RenderCopy(p->rend, ignored_entities[j]->sprite, &src, &dst);
+            SDL_RenderCopy(p->rend, rendered_entities[j]->sprite, &src, &dst);
         }
     }
 
-    free(ignored_entities);
+    free(rendered_entities);
     free(entity_ray_lengths);
     free(intersections);
 }

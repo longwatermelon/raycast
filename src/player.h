@@ -27,6 +27,9 @@ struct Player
         RAY_ALL
     } ray_mode;
 
+    bool shooting;
+    clock_t last_shot_time;
+    bool reloading;
     int bullets;
 };
 

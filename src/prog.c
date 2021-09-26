@@ -25,11 +25,8 @@ struct Prog* prog_init()
     p->tile_texture = IMG_LoadTexture(p->rend, "res/wall.png");
     SDL_QueryTexture(p->tile_texture, 0, 0, &p->image_size.x, &p->image_size.y);
 
-    p->shooting = false;
-    p->reloading = false;
     p->gun_texture = IMG_LoadTexture(p->rend, "res/gun.png");
     p->shot_texture = IMG_LoadTexture(p->rend, "res/gun_shoot.png");
-    p->last_shot_time = clock();
 
     return p;
 }
@@ -61,8 +58,6 @@ void prog_mainloop(struct Prog* p)
 {
     SDL_Event evt;
 
-    SDL_Texture* ammo_warning = common_render_text(p->rend, p->font, "Out of ammo");
-
     while (p->running)
     {
         prog_handle_events(p, &evt);
@@ -74,11 +69,11 @@ void prog_mainloop(struct Prog* p)
             entity_move_towards_player(p->entities[i], p->player, p->map);
         }
 
-        if (p->shooting)
+        if (p->player->shooting)
         {
-            if ((float)(clock() - p->last_shot_time) / CLOCKS_PER_SEC >= .01f)
+            if ((float)(clock() - p->player->last_shot_time) / CLOCKS_PER_SEC >= .01f)
             {
-                p->shooting = false;
+                p->player->shooting = false;
             }
         }
 
@@ -90,12 +85,42 @@ void prog_mainloop(struct Prog* p)
         prog_render_3d(p);
         prog_render_gun(p);
 
-        if (p->player->bullets <= 0)
+        // TODO move this to a function
         {
+            int bullet_num_len = snprintf(0, 0, "%d", p->player->bullets);
+            int length = strlen("Bullets: ") + bullet_num_len + 1;
+            char* bullets = malloc(sizeof(char) * length);
+            snprintf(bullets, length, "Bullets: %d", p->player->bullets);
+            SDL_Texture* ammo_counter_tex = common_render_text(p->rend, p->font, bullets);
+            free(bullets);
+
             SDL_Rect tmp = { .x = 20, .y = 20 };
-            SDL_QueryTexture(ammo_warning, 0, 0, &tmp.w, &tmp.h);
-            SDL_RenderCopy(p->rend, ammo_warning, 0, &tmp);
+            SDL_QueryTexture(ammo_counter_tex, 0, 0, &tmp.w, &tmp.h);
+            SDL_RenderCopy(p->rend, ammo_counter_tex, 0, &tmp);
+
+            SDL_DestroyTexture(ammo_counter_tex);
         }
+
+        {
+            int enemies_num_len = snprintf(0, 0, "%ld", p->entities_size);
+            int length = strlen("Enemies alive: ") + enemies_num_len + 1;
+            char* enemies = malloc(sizeof(char) * length);
+            snprintf(enemies, length, "Enemies alive: %ld", p->entities_size);
+            SDL_Texture* enemy_counter_tex = common_render_text(p->rend, p->font, enemies);
+            free(enemies);
+
+            SDL_Rect tmp = { .x = 20, .y = 40 };
+            SDL_QueryTexture(enemy_counter_tex, 0, 0, &tmp.w, &tmp.h);
+            SDL_RenderCopy(p->rend, enemy_counter_tex, 0, &tmp);
+
+            SDL_DestroyTexture(enemy_counter_tex);
+        }
+        /* if (p->player->bullets <= 0) */
+        /* { */
+        /*     SDL_Rect tmp = { .x = 20, .y = 20 }; */
+        /*     SDL_QueryTexture(ammo_warning, 0, 0, &tmp.w, &tmp.h); */
+        /*     SDL_RenderCopy(p->rend, ammo_warning, 0, &tmp); */
+        /* } */
 
         /* prog_render_map(p); */
         /* player_render(p->player, p->rend, p->map, p->entities, p->entities_size); */
@@ -107,8 +132,6 @@ void prog_mainloop(struct Prog* p)
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);
     }
-
-    SDL_DestroyTexture(ammo_warning);
 }
 
 
@@ -153,8 +176,8 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                 if (p->player->bullets <= 0)
                     break;
 
-                p->shooting = true;
-                p->last_shot_time = clock();
+                p->player->shooting = true;
+                p->player->last_shot_time = clock();
                 --p->player->bullets;
 
                 float intersection;
@@ -173,7 +196,7 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
             } break;
             case SDLK_x:
             {
-                p->reloading = true;
+                p->player->reloading = true;
             } break;
             }
         } break;
@@ -328,12 +351,12 @@ void prog_render_map(struct Prog* p)
 
 void prog_render_gun(struct Prog* p)
 {
-    SDL_Texture* tex = p->shooting ? p->shot_texture : p->gun_texture;
+    SDL_Texture* tex = p->player->shooting ? p->shot_texture : p->gun_texture;
 
     static SDL_Rect rect = { .x = 500, .y = 500 };
     static bool finished_reloading = false;
 
-    if (p->reloading)
+    if (p->player->reloading)
     {
         if (!finished_reloading)
             rect.y += 20;
@@ -348,7 +371,7 @@ void prog_render_gun(struct Prog* p)
 
         if (finished_reloading && rect.y <= 500)
         {
-            p->reloading = false;
+            p->player->reloading = false;
             finished_reloading = false;
         }
     }

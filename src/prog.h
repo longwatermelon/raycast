@@ -26,11 +26,8 @@ struct Prog
     SDL_Texture* tile_texture;
     SDL_Point image_size;
 
-    bool shooting;
-    bool reloading;
     SDL_Texture* gun_texture;
     SDL_Texture* shot_texture;
-    clock_t last_shot_time;
 };
 
 struct Prog* prog_init();

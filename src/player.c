@@ -1,6 +1,7 @@
 #include "player.h"
 #include "common.h"
 #include <math.h>
+#include <time.h>
 #include <stdbool.h>
 
 
@@ -16,6 +17,9 @@ struct Player* player_init(SDL_Point pos, float angle)
 
     p->ray_mode = RAY_ALL;
 
+    p->shooting = false;
+    p->last_shot_time = clock();
+    p->reloading = false;
     p->bullets = 20;
 
     return p;
@@ -82,6 +86,12 @@ void player_move(struct Player* p, struct Map* map)
         .x = p->speed * cosf(p->angle),
         .y = p->speed * -sinf(p->angle)
     };
+
+    if (p->reloading)
+    {
+        moved.x *= 0.5f;
+        moved.y *= 0.5f;
+    }
 
     int xo = (moved.x > 0 ? p->rect.w + 5 : -5);
     int yo = (moved.y > 0 ? p->rect.h + 5 : -5);

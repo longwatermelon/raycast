@@ -33,6 +33,8 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 
     p->restart = false;
 
+    p->enemies_killed = 0;
+
     return p;
 }
 
@@ -90,6 +92,7 @@ void prog_mainloop(struct Prog* p)
                 }
                 else if (p->entities[i]->type == ENTITY_AMMO)
                 {
+                    audio_play_sound("res/ammo.wav");
                     p->player->bullets += 30;
                     prog_remove_entity(p, p->entities[i]);
                     break;
@@ -124,6 +127,7 @@ void prog_mainloop(struct Prog* p)
 
         common_display_statistic(p->rend, p->font, "Bullets loaded: ", p->player->bullets_loaded, (SDL_Point){ 20, 20 });
         common_display_statistic(p->rend, p->font, "Unused bullets: ", p->player->bullets, (SDL_Point){ 20, 40 });
+        common_display_statistic(p->rend, p->font, "Enemies killed: ", p->enemies_killed, (SDL_Point){ 20, 60 });
 
         SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
         SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);

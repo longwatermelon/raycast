@@ -68,11 +68,14 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
 
             if (entity_dist != -1 && entity_dist < wall_dist)
             {
+                audio_play_sound("res/scream.wav");
+                ++p->enemies_killed;
                 prog_remove_entity(p, entity);
             }
         } break;
         case SDLK_r:
         {
+            audio_play_sound("res/reload.wav");
             p->player->reloading = true;
         } break;
         }

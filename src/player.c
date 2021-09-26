@@ -38,8 +38,6 @@ void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct
 
     SDL_SetRenderDrawColor(rend, 0, 0, 255, 255);
 
-    
-
     for (float i = p->angle - M_PI / 6.f; i < p->angle + M_PI / 6.f; i += 0.0013f)
     {
         int collision_type;

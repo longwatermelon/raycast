@@ -80,6 +80,8 @@ void prog_mainloop(struct Prog* p)
             if (distance <= p->entities[i]->width / 2.f)
             {
                 p->player->alive = false;
+                p->player->speed = 0.f;
+                p->player->angle_change = 0.f;
                 break;
             }
         }

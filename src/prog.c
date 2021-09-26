@@ -85,45 +85,8 @@ void prog_mainloop(struct Prog* p)
         prog_render_3d(p);
         prog_render_gun(p);
 
-        // TODO move this to a function
-        {
-            int bullet_num_len = snprintf(0, 0, "%d", p->player->bullets);
-            int length = strlen("Bullets: ") + bullet_num_len + 1;
-            char* bullets = malloc(sizeof(char) * length);
-            snprintf(bullets, length, "Bullets: %d", p->player->bullets);
-            SDL_Texture* ammo_counter_tex = common_render_text(p->rend, p->font, bullets);
-            free(bullets);
-
-            SDL_Rect tmp = { .x = 20, .y = 20 };
-            SDL_QueryTexture(ammo_counter_tex, 0, 0, &tmp.w, &tmp.h);
-            SDL_RenderCopy(p->rend, ammo_counter_tex, 0, &tmp);
-
-            SDL_DestroyTexture(ammo_counter_tex);
-        }
-
-        {
-            int enemies_num_len = snprintf(0, 0, "%ld", p->entities_size);
-            int length = strlen("Enemies alive: ") + enemies_num_len + 1;
-            char* enemies = malloc(sizeof(char) * length);
-            snprintf(enemies, length, "Enemies alive: %ld", p->entities_size);
-            SDL_Texture* enemy_counter_tex = common_render_text(p->rend, p->font, enemies);
-            free(enemies);
-
-            SDL_Rect tmp = { .x = 20, .y = 40 };
-            SDL_QueryTexture(enemy_counter_tex, 0, 0, &tmp.w, &tmp.h);
-            SDL_RenderCopy(p->rend, enemy_counter_tex, 0, &tmp);
-
-            SDL_DestroyTexture(enemy_counter_tex);
-        }
-        /* if (p->player->bullets <= 0) */
-        /* { */
-        /*     SDL_Rect tmp = { .x = 20, .y = 20 }; */
-        /*     SDL_QueryTexture(ammo_warning, 0, 0, &tmp.w, &tmp.h); */
-        /*     SDL_RenderCopy(p->rend, ammo_warning, 0, &tmp); */
-        /* } */
-
-        /* prog_render_map(p); */
-        /* player_render(p->player, p->rend, p->map, p->entities, p->entities_size); */
+        common_display_statistic(p->rend, p->font, "Bullets: ", p->player->bullets, (SDL_Point){ 20, 20 });
+        common_display_statistic(p->rend, p->font, "Enemies alive: ", p->entities_size, (SDL_Point){ 20, 40 });
 
         SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
         SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);
@@ -164,7 +127,7 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                 break;
             case SDLK_SPACE:
             {
-                if (p->player->bullets <= 0)
+                if (p->player->bullets <= 0 || p->player->reloading)
                     break;
 
                 p->player->shooting = true;

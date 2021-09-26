@@ -60,3 +60,20 @@ SDL_Texture* common_render_text(SDL_Renderer* rend, TTF_Font* font, const char* 
     return tex;
 }
 
+
+void common_display_statistic(SDL_Renderer* rend, TTF_Font* font, const char* text, int value, SDL_Point pos)
+{
+    int value_len = snprintf(0, 0, "%d", value);
+    int length = strlen(text) + value_len + 1;
+    char* display = malloc(sizeof(char) * length);
+    snprintf(display, length, "%s%d", text, value);
+    SDL_Texture* tex = common_render_text(rend, font, display);
+    free(display);
+
+    SDL_Rect tmp = { .x = pos.x, .y = pos.y };
+    SDL_QueryTexture(tex, 0, 0, &tmp.w, &tmp.h);
+    SDL_RenderCopy(rend, tex, 0, &tmp);
+
+    SDL_DestroyTexture(tex);
+}
+

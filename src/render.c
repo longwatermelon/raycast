@@ -9,16 +9,15 @@ void render_3d_all(struct Prog* p)
 
     for (float i = p->player->angle + M_PI / 6.f; i > p->player->angle - M_PI / 6.f; i -= 0.0013f) // Cast 800 rays
     {
-        SDL_Rect src, dst;
-        int ray_length_wall = render_3d_wall(p, i, x_pos, &src, &dst);
-        render_3d_entity(p, i, x_pos, ray_length_wall, &src, &dst);
+        int ray_length_wall = render_3d_wall(p, i, x_pos);
+        render_3d_entity(p, i, x_pos, ray_length_wall);
 
         x_pos += 1.f;
     }
 }
 
 
-int render_3d_wall(struct Prog* p, float i, int col, SDL_Rect* src, SDL_Rect* dst)
+int render_3d_wall(struct Prog* p, float i, int col)
 {
     int collision_type;
     SDL_Point endp = player_cast_ray(p->player, i, p->map, p->entities, p->entities_size, &collision_type);
@@ -34,21 +33,21 @@ int render_3d_wall(struct Prog* p, float i, int col, SDL_Rect* src, SDL_Rect* ds
     float line_offset = 400.f - line_height / 2.f;
 
     // Render walls
-    *src = (SDL_Rect){
+    SDL_Rect src = (SDL_Rect){
         .x = ((float)((collision_type == COLLISION_HORIZONTAL ? endp.x : endp.y) % p->map->tile_size) / (float)p->map->tile_size) * p->image_size.x,
         .y = 0,
         .w = 1,
         .h = p->image_size.y
     };
 
-    *dst = (SDL_Rect){ .x = col, .y = (int)line_offset, .w = 1, .h = (int)line_height };
-    SDL_RenderCopy(p->rend, p->tile_texture, src, dst);
+    SDL_Rect dst = (SDL_Rect){ .x = col, .y = (int)line_offset, .w = 1, .h = (int)line_height };
+    SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
 
     return ray_length_wall;
 }
 
 
-void render_3d_entity(struct Prog* p, float i, int col, int ray_length_wall, SDL_Rect* src, SDL_Rect* dst)
+void render_3d_entity(struct Prog* p, float i, int col, int ray_length_wall)
 {
     float angle = common_restrict_angle(p->player->angle - i);
 
@@ -102,22 +101,26 @@ void render_3d_entity(struct Prog* p, float i, int col, int ray_length_wall, SDL
         }
     }
 
+    SDL_Rect src = { .y = 0, .w = 1 };
+    SDL_Rect dst = { .x = col, .w = 1 };
+
     // Render entities
     for (int j = 0; j < entity_ray_lengths_size; ++j)
     {
         if (entity_ray_lengths[j] < ray_length_wall && entity_ray_lengths[j] != -1)
         {
-            src->x = (intersections[j] / ignored_entities[j]->width) * ignored_entities[j]->sprite_size.x;
+            src.x = (intersections[j] / ignored_entities[j]->width) * ignored_entities[j]->sprite_size.x;
+            src.h = ignored_entities[j]->sprite_size.y;
 
             float dist = entity_ray_lengths[j] * cosf(angle);
             float line_height = (25.f * 800.f) / dist;
 
             float line_offset = 400.f;
 
-            dst->y = line_offset;
-            dst->h = line_height;
+            dst.y = line_offset;
+            dst.h = line_height;
 
-            SDL_RenderCopy(p->rend, ignored_entities[j]->sprite, src, dst);
+            SDL_RenderCopy(p->rend, ignored_entities[j]->sprite, &src, &dst);
         }
     }
 

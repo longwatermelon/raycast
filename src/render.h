@@ -7,8 +7,8 @@ struct Prog;
 void render_3d_all(struct Prog* p);
 
 // Return nearest wall length
-int render_3d_wall(struct Prog* p, float angle, int col, SDL_Rect* src, SDL_Rect* dst);
-void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall, SDL_Rect* src, SDL_Rect* dst);
+int render_3d_wall(struct Prog* p, float angle, int col);
+void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall);
 
 #endif
 

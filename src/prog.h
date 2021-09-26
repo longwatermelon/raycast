@@ -35,7 +35,6 @@ void prog_cleanup(struct Prog* p);
 
 void prog_mainloop(struct Prog* p);
 
-void prog_render_3d(struct Prog* p);
 void prog_render_map(struct Prog* p);
 void prog_render_gun(struct Prog* p);
 

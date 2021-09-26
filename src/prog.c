@@ -26,6 +26,7 @@ struct Prog* prog_init()
     SDL_QueryTexture(p->tile_texture, 0, 0, &p->image_size.x, &p->image_size.y);
 
     p->shooting = false;
+    p->reloading = false;
     p->gun_texture = IMG_LoadTexture(p->rend, "res/gun.png");
     p->shot_texture = IMG_LoadTexture(p->rend, "res/gun_shoot.png");
     p->last_shot_time = clock();
@@ -60,6 +61,8 @@ void prog_mainloop(struct Prog* p)
 {
     SDL_Event evt;
 
+    SDL_Texture* ammo_warning = common_render_text(p->rend, p->font, "Out of ammo");
+
     while (p->running)
     {
         prog_handle_events(p, &evt);
@@ -87,6 +90,13 @@ void prog_mainloop(struct Prog* p)
         prog_render_3d(p);
         prog_render_gun(p);
 
+        if (p->player->bullets <= 0)
+        {
+            SDL_Rect tmp = { .x = 20, .y = 20 };
+            SDL_QueryTexture(ammo_warning, 0, 0, &tmp.w, &tmp.h);
+            SDL_RenderCopy(p->rend, ammo_warning, 0, &tmp);
+        }
+
         /* prog_render_map(p); */
         /* player_render(p->player, p->rend, p->map, p->entities, p->entities_size); */
 
@@ -97,6 +107,8 @@ void prog_mainloop(struct Prog* p)
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);
     }
+
+    SDL_DestroyTexture(ammo_warning);
 }
 
 
@@ -158,6 +170,10 @@ void prog_handle_events(struct Prog* p, SDL_Event* evt)
                 {
                     prog_remove_entity(p, entity);
                 }
+            } break;
+            case SDLK_x:
+            {
+                p->reloading = true;
             } break;
             }
         } break;
@@ -314,7 +330,29 @@ void prog_render_gun(struct Prog* p)
 {
     SDL_Texture* tex = p->shooting ? p->shot_texture : p->gun_texture;
 
-    SDL_Rect rect = { .x = 500, .y = 500 };
+    static SDL_Rect rect = { .x = 500, .y = 500 };
+    static bool finished_reloading = false;
+
+    if (p->reloading)
+    {
+        if (!finished_reloading)
+            rect.y += 20;
+        else
+            rect.y -= 20;
+
+        if (!finished_reloading && rect.y >= 2000)
+        {
+            p->player->bullets = 20;
+            finished_reloading = true;
+        }
+
+        if (finished_reloading && rect.y <= 500)
+        {
+            p->reloading = false;
+            finished_reloading = false;
+        }
+    }
+
     SDL_QueryTexture(tex, 0, 0, &rect.w, &rect.h);
 
     SDL_RenderCopy(p->rend, tex, 0, &rect);

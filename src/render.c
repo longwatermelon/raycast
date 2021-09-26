@@ -17,17 +17,17 @@ void render_3d_all(struct Prog* p)
 }
 
 
-int render_3d_wall(struct Prog* p, float i, int col)
+int render_3d_wall(struct Prog* p, float angle, int col)
 {
     int collision_type;
-    SDL_Point endp = player_cast_ray(p->player, i, p->map, p->entities, p->entities_size, &collision_type);
+    SDL_Point endp = player_cast_ray(p->player, angle, p->map, p->entities, p->entities_size, &collision_type);
 
     int ray_length_wall = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
 
-    float angle = common_restrict_angle(p->player->angle - i);
+    float angle_diff = common_restrict_angle(p->player->angle - angle);
 
     // Adjust for fisheye effect
-    float dist = ray_length_wall * cosf(angle);
+    float dist = ray_length_wall * cosf(angle_diff);
     float line_height = (p->map->tile_size * 800.f) / dist;
 
     float line_offset = 400.f - line_height / 2.f;
@@ -47,9 +47,9 @@ int render_3d_wall(struct Prog* p, float i, int col)
 }
 
 
-void render_3d_entity(struct Prog* p, float i, int col, int ray_length_wall)
+void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
 {
-    float angle = common_restrict_angle(p->player->angle - i);
+    float angle_diff = common_restrict_angle(p->player->angle - angle);
 
     struct Entity** ignored_entities = malloc(0);
     size_t ignored_entities_size = 0;
@@ -64,7 +64,7 @@ void render_3d_entity(struct Prog* p, float i, int col, int ray_length_wall)
     {
         float intersection;
         struct Entity* entity_hit;
-        int ray_length_entity = player_cast_ray_entity(p->player, i, p->entities, p->entities_size, ignored_entities, ignored_entities_size, &intersection, &entity_hit);
+        int ray_length_entity = player_cast_ray_entity(p->player, angle, p->entities, p->entities_size, ignored_entities, ignored_entities_size, &intersection, &entity_hit);
 
         ++ignored_entities_size;
         ignored_entities = realloc(ignored_entities, ignored_entities_size * sizeof(struct Entity*));
@@ -112,7 +112,7 @@ void render_3d_entity(struct Prog* p, float i, int col, int ray_length_wall)
             src.x = (intersections[j] / ignored_entities[j]->width) * ignored_entities[j]->sprite_size.x;
             src.h = ignored_entities[j]->sprite_size.y;
 
-            float dist = entity_ray_lengths[j] * cosf(angle);
+            float dist = entity_ray_lengths[j] * cosf(angle_diff);
             float line_height = (25.f * 800.f) / dist;
 
             float line_offset = 400.f;

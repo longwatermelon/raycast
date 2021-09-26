@@ -203,7 +203,6 @@ void prog_render_3d(struct Prog* p)
         SDL_Rect dst = { .x = x_pos, .y = (int)line_offset, .w = 1, .h = (int)line_height };
         SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
 
-        struct Entity* entity_hit;
 
         struct Entity** ignored_entities = malloc(0);
         size_t ignored_entities_size = 0;
@@ -217,6 +216,7 @@ void prog_render_3d(struct Prog* p)
         for (int j = 0; j < p->entities_size; ++j)
         {
             float intersection;
+            struct Entity* entity_hit;
             int ray_length_entity = player_cast_ray_entity(p->player, i, p->entities, p->entities_size, ignored_entities, ignored_entities_size, &intersection, &entity_hit);
 
             ++ignored_entities_size;
@@ -239,13 +239,13 @@ void prog_render_3d(struct Prog* p)
             {
                 if (entity_ray_lengths[k] > entity_ray_lengths[j])
                 {
-                    int tmp = entity_ray_lengths[j];
+                    int tmpl = entity_ray_lengths[j];
                     entity_ray_lengths[j] = entity_ray_lengths[k];
-                    entity_ray_lengths[k] = tmp;
+                    entity_ray_lengths[k] = tmpl;
 
-                    float intersection = intersections[j];
+                    float tmpi = intersections[j];
                     intersections[j] = intersections[k];
-                    intersections[k] = intersection;
+                    intersections[k] = tmpi;
 
                     struct Entity* tmpe = ignored_entities[j];
                     ignored_entities[j] = ignored_entities[k];

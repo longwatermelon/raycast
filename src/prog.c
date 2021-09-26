@@ -3,6 +3,7 @@
 #include "entity.h"
 #include "player.h"
 #include "events.h"
+#include "render.h"
 #include <time.h>
 #include <SDL_image.h>
 
@@ -83,7 +84,8 @@ void prog_mainloop(struct Prog* p)
 
         SDL_RenderClear(p->rend);
 
-        prog_render_3d(p);
+        render_3d_all(p);
+        /* prog_render_3d(p); */
         prog_render_gun(p);
 
         common_display_statistic(p->rend, p->font, "Bullets: ", p->player->bullets, (SDL_Point){ 20, 20 });
@@ -95,81 +97,6 @@ void prog_mainloop(struct Prog* p)
 
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);
-    }
-}
-
-
-void prog_handle_events(struct Prog* p, SDL_Event* evt)
-{
-    float player_speed = 2.f;
-
-    while (SDL_PollEvent(evt))
-    {
-        switch (evt->type)
-        {
-        case SDL_QUIT:
-            p->running = false;
-            break;
-        case SDL_KEYDOWN:
-        {
-            switch (evt->key.keysym.sym)
-            {
-            case SDLK_UP:
-                p->player->speed = player_speed;
-                break;
-            case SDLK_DOWN:
-                p->player->speed = -player_speed;
-                break;
-            case SDLK_RIGHT:
-                p->player->angle_change = -.02f;
-                break;
-            case SDLK_LEFT:
-                p->player->angle_change = .02f;
-                break;
-            case SDLK_SPACE:
-            {
-                if (p->player->bullets <= 0 || p->player->reloading)
-                    break;
-
-                p->player->shooting = true;
-                p->player->last_shot_time = clock();
-                --p->player->bullets;
-
-                float intersection;
-                struct Entity* entity;
-                int entity_dist = player_cast_ray_entity(p->player, p->player->angle, p->entities, p->entities_size, 0, 0, &intersection, &entity);
-
-                int collision_type;
-                SDL_Point wall_vector = player_cast_ray(p->player, p->player->angle, p->map, p->entities, p->entities_size, &collision_type);
-                SDL_Point diff = { .x = wall_vector.x - p->player->rect.x, .y = wall_vector.y - p->player->rect.y };
-                int wall_dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
-
-                if (entity_dist != -1 && entity_dist < wall_dist)
-                {
-                    prog_remove_entity(p, entity);
-                }
-            } break;
-            case SDLK_r:
-            {
-                p->player->reloading = true;
-            } break;
-            }
-        } break;
-        case SDL_KEYUP:
-        {
-            switch (evt->key.keysym.sym)
-            {
-            case SDLK_UP:
-            case SDLK_DOWN:
-                p->player->speed = 0;
-                break;
-            case SDLK_RIGHT:
-            case SDLK_LEFT:
-                p->player->angle_change = 0.f;
-                break;
-            }
-        } break;
-        }
     }
 }
 

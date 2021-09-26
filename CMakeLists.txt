@@ -21,6 +21,8 @@ add_executable(raycast
     src/entity.c
     src/events.h
     src/events.c
+    src/render.h
+    src/render.c
 )
 
 target_link_libraries(raycast PRIVATE

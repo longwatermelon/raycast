@@ -85,11 +85,6 @@ void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct
 
 void player_move(struct Player* p, struct Map* map, float x, float y)
 {
-    /* SDL_FPoint moved = { */
-    /*     .x = p->speed * cosf(p->angle), */
-    /*     .y = p->speed * -sinf(p->angle) */
-    /* }; */
-
     if (p->reloading)
     {
         x *= 0.5f;

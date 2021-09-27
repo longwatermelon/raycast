@@ -6,10 +6,6 @@
 
 void events_base(struct Prog* p, SDL_Event* evt)
 {
-    /* while (SDL_PollEvent(evt)) */
-    /* { */
-        
-
     while (SDL_PollEvent(evt))
     {
         switch (evt->type)

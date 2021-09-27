@@ -93,7 +93,7 @@ void prog_mainloop(struct Prog* p)
                 else if (p->entities[i]->type == ENTITY_AMMO)
                 {
                     audio_play_sound("res/ammo.wav");
-                    p->player->bullets += 30;
+                    p->player->bullets += 16;
                     prog_remove_entity(p, p->entities[i]);
                     break;
                 }
@@ -192,8 +192,8 @@ void prog_render_gun(struct Prog* p)
         if (!finished_reloading && rect.y >= 2000)
         {
             p->player->bullets += p->player->bullets_loaded;
-            p->player->bullets -= 20;
-            p->player->bullets_loaded = 20;
+            p->player->bullets -= 16;
+            p->player->bullets_loaded = 16;
 
             if (p->player->bullets < 0)
             {

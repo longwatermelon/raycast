@@ -11,7 +11,7 @@ struct Entity* entity_init(int type, SDL_FPoint pos, SDL_Renderer* rend, const c
     e->type = type;
 
     e->pos = pos;
-    e->speed = fmod(rand(), 2.f) + 0.1f;
+    e->speed = fmod(rand(), 2.f) + 1.f;
 
     e->sprite = IMG_LoadTexture(rend, sprite_path);
     SDL_QueryTexture(e->sprite, 0, 0, &e->sprite_size.x, &e->sprite_size.y);
@@ -31,14 +31,28 @@ void entity_cleanup(struct Entity* e)
 
 void entity_move(struct Entity* e, struct Map* map, float x, float y)
 {
+    int xo = 0;
+
+    if (x > 0)
+        xo = 10;
+    if (x < 0)
+        xo = -10;
+
+    int yo = 0;
+
+    if (y > 0)
+        yo = 10;
+    if (y < 0)
+        yo = -10;
+
     SDL_Point grid_pos = {
         (int)(e->pos.x - ((int)(e->pos.x) % map->tile_size)) / map->tile_size,
         (int)(e->pos.y - ((int)(e->pos.y) % map->tile_size)) / map->tile_size
     };
 
     SDL_Point new_grid_pos = {
-        (int)((e->pos.x + x) - ((int)(e->pos.x + x) % map->tile_size)) / map->tile_size,
-        (int)((e->pos.y + y) - ((int)(e->pos.y + y) % map->tile_size)) / map->tile_size
+        (int)((e->pos.x + x + xo) - ((int)(e->pos.x + x + xo) % map->tile_size)) / map->tile_size,
+        (int)((e->pos.y + y + yo) - ((int)(e->pos.y + y + yo) % map->tile_size)) / map->tile_size
     };
 
     if (map->layout[grid_pos.y * map->size.x + new_grid_pos.x] != '#')

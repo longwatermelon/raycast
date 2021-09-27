@@ -19,8 +19,10 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 
     p->font = TTF_OpenFont("res/font.ttf", 16);
 
-    p->player = player_init((SDL_Point){ 300, 320 }, M_PI);
     p->map = map_init("map", (SDL_Point){ 32, 32 }, 50);
+
+    SDL_FPoint pos = map_get_random_empty_spot(p->map);
+    p->player = player_init((SDL_Point){ .x = (int)pos.x,  .y = (int)pos.y }, M_PI);
 
     p->entities = malloc(0);
     p->entities_size = 0;

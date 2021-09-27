@@ -111,7 +111,7 @@ void prog_mainloop(struct Prog* p)
 
             if (p->entities_size < 15)
             {
-                if (rand() % 2000 > 1985)
+                if (rand() % 2000 > 1975)
                     prog_spawn_entity(p, ENTITY_ENEMY, "res/goomba.png");
 
                 if (rand() % 2000 > 1996)

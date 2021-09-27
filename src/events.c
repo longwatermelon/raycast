@@ -6,6 +6,10 @@
 
 void events_base(struct Prog* p, SDL_Event* evt)
 {
+    /* while (SDL_PollEvent(evt)) */
+    /* { */
+        
+
     while (SDL_PollEvent(evt))
     {
         switch (evt->type)
@@ -14,38 +18,50 @@ void events_base(struct Prog* p, SDL_Event* evt)
             p->running = false;
             break;
         case SDL_KEYDOWN:
-        {
             events_keydown(p, evt);
-        } break;
-        case SDL_KEYUP:
-        {
-            events_keyup(p, evt);
-        } break;
+            break;
         }
+    }
+   
+    events_no_delay(p);
+}
+
+
+void events_no_delay(struct Prog* p)
+{
+    float player_speed = 2.f;
+
+    const Uint8* keystates = SDL_GetKeyboardState(0);
+
+    if (p->player->alive)
+    {
+        if (keystates[SDL_SCANCODE_W])
+            player_move(p->player, p->map, player_speed * cosf(p->player->angle), player_speed * -sinf(p->player->angle));
+
+        if (keystates[SDL_SCANCODE_S])
+            player_move(p->player, p->map, -player_speed * cosf(p->player->angle), -player_speed * -sinf(p->player->angle));
+
+        if (keystates[SDL_SCANCODE_A])
+            player_move(p->player, p->map, player_speed / 2.f * cosf(p->player->angle + M_PI / 2.f), player_speed / 2.f * -sinf(p->player->angle + M_PI / 2.f));
+
+        if (keystates[SDL_SCANCODE_D])
+            player_move(p->player, p->map, player_speed / 2.f * cosf(p->player->angle - M_PI / 2.f), player_speed / 2.f * -sinf(p->player->angle - M_PI / 2.f));
+
+        if (keystates[SDL_SCANCODE_RIGHT])
+            p->player->angle -= 0.03f;
+
+        if (keystates[SDL_SCANCODE_LEFT])
+            p->player->angle += 0.03f;
     }
 }
 
 
 void events_keydown(struct Prog* p, SDL_Event* evt)
 {
-    float player_speed = 2.f;
-
     if (p->player->alive)
     {
         switch (evt->key.keysym.sym)
         {
-        case SDLK_UP:
-            p->player->speed = player_speed;
-            break;
-        case SDLK_DOWN:
-            p->player->speed = -player_speed;
-            break;
-        case SDLK_RIGHT:
-            p->player->angle_change = -.02f;
-            break;
-        case SDLK_LEFT:
-            p->player->angle_change = .02f;
-            break;
         case SDLK_SPACE:
         {
             if (p->player->bullets_loaded <= 0 || p->player->reloading)
@@ -75,6 +91,9 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         } break;
         case SDLK_r:
         {
+            if (p->player->reloading)
+                break;
+
             audio_play_sound("res/reload.wav");
             p->player->reloading = true;
         } break;
@@ -85,27 +104,10 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         switch (evt->key.keysym.sym)
         {
         case SDLK_r:
-        {
-            p->running = false;
             p->restart = true;
-        } break;
+            p->running = false;
+            break;
         }
-    }
-}
-
-
-void events_keyup(struct Prog* p, SDL_Event* evt)
-{
-    switch (evt->key.keysym.sym)
-    {
-    case SDLK_UP:
-    case SDLK_DOWN:
-        p->player->speed = 0;
-        break;
-    case SDLK_RIGHT:
-    case SDLK_LEFT:
-        p->player->angle_change = 0.f;
-        break;
     }
 }
 

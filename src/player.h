@@ -15,7 +15,6 @@ enum
 struct Player
 {
     SDL_FRect rect;
-    float speed;
 
     float angle;
     float angle_change;
@@ -41,7 +40,7 @@ void player_cleanup(struct Player* p);
 
 void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct Entity** entities, size_t entities_size);
 
-void player_move(struct Player* p, struct Map* map);
+void player_move(struct Player* p, struct Map* map, float x, float y);
 
 // Returns end point of casted ray
 SDL_Point player_cast_ray(struct Player* p, float angle, struct Map* map, struct Entity** entities, size_t entities_size, int* collision_type);

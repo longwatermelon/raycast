@@ -67,8 +67,6 @@ void prog_mainloop(struct Prog* p)
         events_base(p, &evt);
         audio_stop_finished_sounds();
 
-        player_move(p->player, p->map);
-
         for (int i = 0; i < p->entities_size; ++i)
         {
             if (p->player->alive && p->entities[i]->type == ENTITY_ENEMY)
@@ -86,7 +84,6 @@ void prog_mainloop(struct Prog* p)
                 if (p->entities[i]->type == ENTITY_ENEMY)
                 {
                     p->player->alive = false;
-                    p->player->speed = 0.f;
                     p->player->angle_change = 0.f;
                     break;
                 }

@@ -16,6 +16,20 @@ void events_base(struct Prog* p, SDL_Event* evt)
         case SDL_KEYDOWN:
             events_keydown(p, evt);
             break;
+        case SDL_MOUSEMOTION:
+        {
+            if (!p->player->alive)
+                break;
+
+            p->player->angle -= 0.002f * evt->motion.xrel;
+        } break;
+        case SDL_MOUSEBUTTONDOWN:
+        {
+            if (!p->player->alive)
+                break;
+
+            player_shoot(p);
+        } break;
         }
     }
    
@@ -60,30 +74,10 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         {
         case SDLK_SPACE:
         {
-            if (p->player->bullets_loaded <= 0 || p->player->reloading)
+            if (!p->player->alive)
                 break;
 
-            p->player->shooting = true;
-            p->player->last_shot_time = clock();
-            --p->player->bullets_loaded;
-
-            audio_play_sound("res/gunshot.wav");
-
-            float intersection;
-            struct Entity* entity = 0;
-            int entity_dist = player_cast_ray_entity(p->player, p->player->angle, p->entities, p->entities_size, 0, 0, ENTITY_ENEMY, &intersection, &entity);
-
-            int collision_type;
-            SDL_Point wall_vector = player_cast_ray(p->player, p->player->angle, p->map, p->entities, p->entities_size, &collision_type);
-            SDL_Point diff = { .x = wall_vector.x - p->player->rect.x, .y = wall_vector.y - p->player->rect.y };
-            int wall_dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
-
-            if (entity_dist != -1 && entity_dist < wall_dist)
-            {
-                audio_play_sound("res/scream.wav");
-                ++p->enemies_killed;
-                prog_remove_entity(p, entity);
-            }
+            player_shoot(p);
         } break;
         case SDLK_r:
         {

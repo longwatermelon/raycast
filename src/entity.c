@@ -11,7 +11,7 @@ struct Entity* entity_init(int type, SDL_FPoint pos, SDL_Renderer* rend, const c
     e->type = type;
 
     e->pos = pos;
-    e->speed = fmod(rand(), 5.f) + 1.f;
+    e->speed = fmod(rand(), 4.f) + 2.f;
 
     e->sprite = IMG_LoadTexture(rend, sprite_path);
     SDL_QueryTexture(e->sprite, 0, 0, &e->sprite_size.x, &e->sprite_size.y);

@@ -1,5 +1,7 @@
 #include "player.h"
 #include "common.h"
+#include "prog.h"
+#include "audio.h"
 #include <math.h>
 #include <time.h>
 #include <stdbool.h>
@@ -298,5 +300,34 @@ int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entiti
     }
 
     return shortest;
+}
+
+
+void player_shoot(struct Prog* p)
+{
+    if (p->player->bullets_loaded <= 0 || p->player->reloading)
+        return;
+
+    p->player->shooting = true;
+    p->player->last_shot_time = clock();
+    --p->player->bullets_loaded;
+
+    audio_play_sound("res/gunshot.wav");
+
+    float intersection;
+    struct Entity* entity = 0;
+    int entity_dist = player_cast_ray_entity(p->player, p->player->angle, p->entities, p->entities_size, 0, 0, ENTITY_ENEMY, &intersection, &entity);
+
+    int collision_type;
+    SDL_Point wall_vector = player_cast_ray(p->player, p->player->angle, p->map, p->entities, p->entities_size, &collision_type);
+    SDL_Point diff = { .x = wall_vector.x - p->player->rect.x, .y = wall_vector.y - p->player->rect.y };
+    int wall_dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
+
+    if (entity_dist != -1 && entity_dist < wall_dist)
+    {
+        audio_play_sound("res/scream.wav");
+        ++p->enemies_killed;
+        prog_remove_entity(p, entity);
+    }
 }
 

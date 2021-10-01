@@ -37,12 +37,16 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 
     p->enemies_killed = 0;
 
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
     return p;
 }
 
 
 void prog_cleanup(struct Prog* p)
 {
+    SDL_SetRelativeMouseMode(SDL_FALSE);
+
     SDL_DestroyTexture(p->tile_texture);
     SDL_DestroyTexture(p->gun_texture);
 
@@ -111,10 +115,10 @@ void prog_mainloop(struct Prog* p)
 
             if (p->entities_size < 15)
             {
-                if (rand() % 2000 > 1940)
+                if (rand() % 2000 > 1930)
                     prog_spawn_entity(p, ENTITY_ENEMY, "res/shrek.png");
 
-                if (rand() % 2000 > 1960)
+                if (rand() % 2000 > 1980)
                     prog_spawn_entity(p, ENTITY_AMMO, "res/deez.png");
             }
         }
@@ -213,6 +217,7 @@ void prog_render_gun(struct Prog* p)
     if (!p->player->reloading)
     {
         rect.y = 500;
+        finished_reloading = false;
     }
 
     SDL_QueryTexture(tex, 0, 0, &rect.w, &rect.h);

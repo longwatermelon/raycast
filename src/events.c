@@ -139,7 +139,7 @@ void events_mouse_down_left(struct Prog* p, SDL_Event* evt)
 
 void events_mouse_down_right(struct Prog* p, SDL_Event* evt)
 {
-    if (!p->player->alive)
+    if (!p->player->alive || p->player->mode_data.mode != PLAYER_MODE_NORMAL)
         return;
 
     int collision_type;

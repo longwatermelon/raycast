@@ -25,6 +25,8 @@ void events_base(struct Prog* p, SDL_Event* evt)
         } break;
         case SDL_MOUSEBUTTONDOWN:
         {
+            SDL_SetRelativeMouseMode(SDL_TRUE);
+
             if (!p->player->alive)
                 break;
 
@@ -98,6 +100,13 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
             p->running = false;
             break;
         }
+    }
+
+    switch (evt->key.keysym.sym)
+    {
+    case SDLK_ESCAPE:
+        SDL_SetRelativeMouseMode(SDL_FALSE);
+        break;
     }
 }
 

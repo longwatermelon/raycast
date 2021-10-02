@@ -19,6 +19,7 @@ int main(int argc, char** argv)
     SDL_Renderer* rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     audio_init();
+    audio_play_music("res/shreksophone.wav");
 
     while (true)
     {

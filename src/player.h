@@ -14,6 +14,18 @@ enum
     COLLISION_VERTICAL
 };
 
+struct PlayerModeData
+{
+    enum
+    {
+        PLAYER_MODE_NORMAL,
+        PLAYER_MODE_GRAPPLING
+    } mode;
+
+    SDL_Point grappling_dst;
+    float grappling_theta;
+};
+
 struct Player
 {
     SDL_FRect rect;
@@ -37,6 +49,8 @@ struct Player
     int bullets_loaded;
 
     int enemies_killed;
+
+    struct PlayerModeData mode_data;
 };
 
 struct Player* player_init(SDL_Point pos, float angle);
@@ -45,6 +59,8 @@ void player_cleanup(struct Player* self);
 void player_render(struct Player* self, SDL_Renderer* rend, struct Map* map, struct Entity** entities, size_t entities_size);
 
 void player_move(struct Player* self, struct Map* map, float x, float y);
+
+void player_execute_mode(struct Player* self);
 
 // Returns end point of casted ray
 SDL_Point player_cast_ray(struct Player* self, float angle, struct Map* map, struct Entity** entities, size_t entities_size, int* collision_type);

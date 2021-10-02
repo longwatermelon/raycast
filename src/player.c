@@ -29,6 +29,10 @@ struct Player* player_init(SDL_Point pos, float angle)
 
     self->enemies_killed = 0;
 
+    self->mode_data.mode = PLAYER_MODE_NORMAL;
+    self->mode_data.grappling_dst = (SDL_Point){ .x = -1, .y = -1 };
+    self->mode_data.grappling_theta = 0.f;
+
     return self;
 }
 
@@ -119,6 +123,32 @@ void player_move(struct Player* self, struct Map* map, float x, float y)
 
     // Keep angle between 0 and 2pi
     self->angle = common_restrict_angle(self->angle);
+}
+
+
+void player_execute_mode(struct Player* self)
+{
+    switch (self->mode_data.mode)
+    {
+    case PLAYER_MODE_GRAPPLING:
+    { 
+        self->rect.x += 7.f * cosf(self->mode_data.grappling_theta);
+        self->rect.y += 7.f * sinf(self->mode_data.grappling_theta);
+
+        if (fabsf(self->rect.x - self->mode_data.grappling_dst.x) < 10.f &&
+            fabsf(self->rect.y - self->mode_data.grappling_dst.y) < 10.f)
+        {
+            self->mode_data.mode = PLAYER_MODE_NORMAL;
+            self->rect.x = self->mode_data.grappling_dst.x;
+            self->rect.y = self->mode_data.grappling_dst.y;
+
+            self->mode_data.grappling_dst = (SDL_Point){ .x = -1, .y = -1 };
+            self->mode_data.grappling_theta = 0.f;
+        }
+    } break;
+    default:
+        break;
+    }
 }
 
 
@@ -328,9 +358,6 @@ struct Entity* player_shoot(struct Player* self, struct Entity** entities, size_
     if (entity_dist != -1 && entity_dist < wall_dist)
     {
         return entity;
-        /* audio_play_sound("res/scream.wav"); */
-        /* ++self->enemies_killed; */
-        /* prog_remove_entity(p, entity); */
     }
 
     return 0;

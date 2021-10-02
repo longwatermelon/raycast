@@ -38,18 +38,21 @@ void events_no_delay(struct Prog* p)
 
     if (p->player->alive)
     {
-        if (keystates[SDL_SCANCODE_W])
-            player_move(p->player, p->map, player_speed * cosf(p->player->angle), player_speed * -sinf(p->player->angle));
+        if (p->player->mode_data.mode == PLAYER_MODE_NORMAL)
+        {
+            if (keystates[SDL_SCANCODE_W])
+                player_move(p->player, p->map, player_speed * cosf(p->player->angle), player_speed * -sinf(p->player->angle));
 
-        if (keystates[SDL_SCANCODE_S])
-            player_move(p->player, p->map, -player_speed * cosf(p->player->angle), -player_speed * -sinf(p->player->angle));
+            if (keystates[SDL_SCANCODE_S])
+                player_move(p->player, p->map, -player_speed * cosf(p->player->angle), -player_speed * -sinf(p->player->angle));
 
-        if (keystates[SDL_SCANCODE_A])
-            player_move(p->player, p->map, player_speed / 2.f * cosf(p->player->angle + M_PI / 2.f), player_speed / 2.f * -sinf(p->player->angle + M_PI / 2.f));
+            if (keystates[SDL_SCANCODE_A])
+                player_move(p->player, p->map, player_speed / 2.f * cosf(p->player->angle + M_PI / 2.f), player_speed / 2.f * -sinf(p->player->angle + M_PI / 2.f));
 
-        if (keystates[SDL_SCANCODE_D])
-            player_move(p->player, p->map, player_speed / 2.f * cosf(p->player->angle - M_PI / 2.f), player_speed / 2.f * -sinf(p->player->angle - M_PI / 2.f));
-
+            if (keystates[SDL_SCANCODE_D])
+                player_move(p->player, p->map, player_speed / 2.f * cosf(p->player->angle - M_PI / 2.f), player_speed / 2.f * -sinf(p->player->angle - M_PI / 2.f));
+        }
+        
         if (keystates[SDL_SCANCODE_RIGHT])
             p->player->angle -= 0.03f;
 
@@ -136,5 +139,19 @@ void events_mouse_down_left(struct Prog* p, SDL_Event* evt)
 
 void events_mouse_down_right(struct Prog* p, SDL_Event* evt)
 {
+    if (!p->player->alive)
+        return;
+
+    int collision_type;
+    SDL_Point dst = player_cast_ray(p->player, p->player->angle, p->map, p->entities, p->entities_size, &collision_type);
+
+    int xo = dst.x > p->player->rect.x ? -5 : 5;
+    int yo = dst.y > p->player->rect.y ? -5 : 5;
+
+    p->player->mode_data.mode = PLAYER_MODE_GRAPPLING;
+    p->player->mode_data.grappling_dst = (SDL_Point){ .x = dst.x + xo, .y = dst.y + yo };
+    p->player->mode_data.grappling_theta = atan2f(dst.y - p->player->rect.y, dst.x - p->player->rect.x);
+
+    audio_play_sound("res/sfx/grapple.wav");
 }
 

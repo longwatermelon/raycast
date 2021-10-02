@@ -120,6 +120,8 @@ void prog_mainloop(struct Prog* self)
                     prog_spawn_entity(self, ENTITY_AMMO, "res/gfx/deez.png");
             }
         }
+
+        player_execute_mode(self->player);
         
         SDL_RenderClear(self->rend);
 

@@ -30,7 +30,13 @@ void events_base(struct Prog* p, SDL_Event* evt)
             if (!p->player->alive)
                 break;
 
-            player_shoot(p);
+            struct Entity* hit = player_shoot(p->player, p->entities, p->entities_size, p->map);
+            if (hit)
+            {
+                audio_play_sound("res/scream.wav");
+                ++p->player->enemies_killed;
+                prog_remove_entity(p, hit);
+            }
         } break;
         }
     }
@@ -79,7 +85,13 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
             if (!p->player->alive)
                 break;
 
-            player_shoot(p);
+            struct Entity* hit = player_shoot(p->player, p->entities, p->entities_size, p->map);
+            if (hit)
+            {
+                audio_play_sound("res/scream.wav");
+                ++p->player->enemies_killed;
+                prog_remove_entity(p, hit);
+            }
         } break;
         case SDLK_r:
         {

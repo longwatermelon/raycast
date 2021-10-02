@@ -35,8 +35,6 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 
     self->restart = false;
 
-    self->enemies_killed = 0;
-
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
     return self;
@@ -130,7 +128,7 @@ void prog_mainloop(struct Prog* self)
 
         common_display_statistic(self->rend, self->font, "Bullets loaded: ", self->player->bullets_loaded, (SDL_Point){ 20, 20 });
         common_display_statistic(self->rend, self->font, "Unused bullets: ", self->player->bullets, (SDL_Point){ 20, 40 });
-        common_display_statistic(self->rend, self->font, "Enemies killed: ", self->enemies_killed, (SDL_Point){ 20, 60 });
+        common_display_statistic(self->rend, self->font, "Enemies killed: ", self->player->enemies_killed, (SDL_Point){ 20, 60 });
 
         SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
         SDL_SetRenderDrawColor(self->rend, 255, 0, 0, 255);

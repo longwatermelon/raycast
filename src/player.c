@@ -27,6 +27,8 @@ struct Player* player_init(SDL_Point pos, float angle)
     self->bullets = 16;
     self->bullets_loaded = 16;
 
+    self->enemies_killed = 0;
+
     return self;
 }
 
@@ -303,31 +305,34 @@ int player_cast_ray_entity(struct Player* self, float angle, struct Entity** ent
 }
 
 
-void player_shoot(struct Prog* p)
+struct Entity* player_shoot(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map)
 {
-    if (p->player->bullets_loaded <= 0 || p->player->reloading)
-        return;
+    if (self->bullets_loaded <= 0 || self->reloading)
+        return 0;
 
-    p->player->shooting = true;
-    p->player->last_shot_time = clock();
-    --p->player->bullets_loaded;
+    self->shooting = true;
+    self->last_shot_time = clock();
+    --self->bullets_loaded;
 
     audio_play_sound("res/gunshot.wav");
 
     float intersection;
     struct Entity* entity = 0;
-    int entity_dist = player_cast_ray_entity(p->player, p->player->angle, p->entities, p->entities_size, 0, 0, ENTITY_ENEMY, &intersection, &entity);
+    int entity_dist = player_cast_ray_entity(self, self->angle, entities, entities_size, 0, 0, ENTITY_ENEMY, &intersection, &entity);
 
     int collision_type;
-    SDL_Point wall_vector = player_cast_ray(p->player, p->player->angle, p->map, p->entities, p->entities_size, &collision_type);
-    SDL_Point diff = { .x = wall_vector.x - p->player->rect.x, .y = wall_vector.y - p->player->rect.y };
+    SDL_Point wall_vector = player_cast_ray(self, self->angle, map, entities, entities_size, &collision_type);
+    SDL_Point diff = { .x = wall_vector.x - self->rect.x, .y = wall_vector.y - self->rect.y };
     int wall_dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
 
     if (entity_dist != -1 && entity_dist < wall_dist)
     {
-        audio_play_sound("res/scream.wav");
-        ++p->enemies_killed;
-        prog_remove_entity(p, entity);
+        return entity;
+        /* audio_play_sound("res/scream.wav"); */
+        /* ++self->enemies_killed; */
+        /* prog_remove_entity(p, entity); */
     }
+
+    return 0;
 }
 

@@ -30,8 +30,6 @@ struct Prog
     SDL_Texture* shot_texture;
 
     bool restart;
-
-    int enemies_killed;
 };
 
 struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend);

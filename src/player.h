@@ -35,6 +35,8 @@ struct Player
     bool reloading;
     int bullets;
     int bullets_loaded;
+
+    int enemies_killed;
 };
 
 struct Player* player_init(SDL_Point pos, float angle);
@@ -53,7 +55,7 @@ SDL_Point player_cast_ray_vertical(struct Player* self, float angle, struct Map*
 // If target type is -1, the ray will apply to all entity types
 int player_cast_ray_entity(struct Player* self, float angle, struct Entity** entities, size_t entities_size, struct Entity** ignored_entities, size_t ignored_entities_size, int target_type, float* intersection, struct Entity** entity_hit);
 
-void player_shoot(struct Prog* self);
+struct Entity* player_shoot(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map);
 
 #endif
 

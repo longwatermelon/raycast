@@ -21,20 +21,8 @@ void events_base(struct Prog* p, SDL_Event* evt)
             p->player->angle -= 0.002f * evt->motion.xrel;
         } break;
         case SDL_MOUSEBUTTONDOWN:
-        {
-            SDL_SetRelativeMouseMode(SDL_TRUE);
-
-            if (!p->player->alive)
-                break;
-
-            struct Entity* hit = player_shoot(p->player, p->entities, p->entities_size, p->map);
-            if (hit)
-            {
-                audio_play_sound("res/sfx/scream.wav");
-                ++p->player->enemies_killed;
-                prog_remove_entity(p, hit);
-            }
-        } break;
+            events_mouse_down(p, evt);
+            break;
         }
     }
    
@@ -117,5 +105,36 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         SDL_SetRelativeMouseMode(SDL_FALSE);
         break;
     }
+}
+
+
+void events_mouse_down(struct Prog* p, SDL_Event* evt)
+{
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
+    if (evt->button.button == SDL_BUTTON_LEFT)
+        events_mouse_down_left(p, evt);
+    else if (evt->button.button == SDL_BUTTON_RIGHT)
+        events_mouse_down_right(p, evt);
+}
+
+
+void events_mouse_down_left(struct Prog* p, SDL_Event* evt)
+{
+    if (!p->player->alive)
+        return;
+
+    struct Entity* hit = player_shoot(p->player, p->entities, p->entities_size, p->map);
+    if (hit)
+    {
+        audio_play_sound("res/sfx/scream.wav");
+        ++p->player->enemies_killed;
+        prog_remove_entity(p, hit);
+    }
+}
+
+
+void events_mouse_down_right(struct Prog* p, SDL_Event* evt)
+{
 }
 

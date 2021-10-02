@@ -18,9 +18,6 @@ void events_base(struct Prog* p, SDL_Event* evt)
             break;
         case SDL_MOUSEMOTION:
         {
-            if (!p->player->alive)
-                break;
-
             p->player->angle -= 0.002f * evt->motion.xrel;
         } break;
         case SDL_MOUSEBUTTONDOWN:

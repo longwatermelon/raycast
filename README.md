@@ -1,6 +1,8 @@
 # raycast
 Raycasting in C
 
+Press esc to release mouse and click on the screen to recapture the mouse.
+
 WASD to move, left and right arrow keys to rotate
 
 Space to shoot, r to reload

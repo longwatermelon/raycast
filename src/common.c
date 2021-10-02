@@ -31,6 +31,7 @@ char* common_read_file(const char* path)
     }
 
     free(line);
+    fclose(fp);
 
     return contents;
 }

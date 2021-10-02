@@ -38,22 +38,22 @@ struct Player
 };
 
 struct Player* player_init(SDL_Point pos, float angle);
-void player_cleanup(struct Player* p);
+void player_cleanup(struct Player* self);
 
-void player_render(struct Player* p, SDL_Renderer* rend, struct Map* map, struct Entity** entities, size_t entities_size);
+void player_render(struct Player* self, SDL_Renderer* rend, struct Map* map, struct Entity** entities, size_t entities_size);
 
-void player_move(struct Player* p, struct Map* map, float x, float y);
+void player_move(struct Player* self, struct Map* map, float x, float y);
 
 // Returns end point of casted ray
-SDL_Point player_cast_ray(struct Player* p, float angle, struct Map* map, struct Entity** entities, size_t entities_size, int* collision_type);
-SDL_Point player_cast_ray_horizontal(struct Player* p, float angle, struct Map* map);
-SDL_Point player_cast_ray_vertical(struct Player* p, float angle, struct Map* map);
+SDL_Point player_cast_ray(struct Player* self, float angle, struct Map* map, struct Entity** entities, size_t entities_size, int* collision_type);
+SDL_Point player_cast_ray_horizontal(struct Player* self, float angle, struct Map* map);
+SDL_Point player_cast_ray_vertical(struct Player* self, float angle, struct Map* map);
 
 // Returns ray length of ray that intersects with entity
 // If target type is -1, the ray will apply to all entity types
-int player_cast_ray_entity(struct Player* p, float angle, struct Entity** entities, size_t entities_size, struct Entity** ignored_entities, size_t ignored_entities_size, int target_type, float* intersection, struct Entity** entity_hit);
+int player_cast_ray_entity(struct Player* self, float angle, struct Entity** entities, size_t entities_size, struct Entity** ignored_entities, size_t ignored_entities_size, int target_type, float* intersection, struct Entity** entity_hit);
 
-void player_shoot(struct Prog* p);
+void player_shoot(struct Prog* self);
 
 #endif
 

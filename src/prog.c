@@ -11,181 +11,181 @@
 
 struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 {
-    struct Prog* p = malloc(sizeof(struct Prog));
-    p->running = true;
+    struct Prog* self = malloc(sizeof(struct Prog));
+    self->running = true;
 
-    p->window = window;
-    p->rend = rend;
+    self->window = window;
+    self->rend = rend;
 
-    p->font = TTF_OpenFont("res/font.ttf", 16);
+    self->font = TTF_OpenFont("res/font.ttf", 16);
 
-    p->map = map_init("map", (SDL_Point){ 32, 32 }, 50);
+    self->map = map_init("map", (SDL_Point){ 32, 32 }, 50);
 
-    SDL_FPoint pos = map_get_random_empty_spot(p->map);
-    p->player = player_init((SDL_Point){ .x = (int)pos.x,  .y = (int)pos.y }, M_PI);
+    SDL_FPoint pos = map_get_random_empty_spot(self->map);
+    self->player = player_init((SDL_Point){ .x = (int)pos.x,  .y = (int)pos.y }, M_PI);
 
-    p->entities = malloc(0);
-    p->entities_size = 0;
+    self->entities = malloc(0);
+    self->entities_size = 0;
 
-    p->tile_texture = IMG_LoadTexture(p->rend, "res/wall.png");
-    SDL_QueryTexture(p->tile_texture, 0, 0, &p->image_size.x, &p->image_size.y);
+    self->tile_texture = IMG_LoadTexture(self->rend, "res/wall.png");
+    SDL_QueryTexture(self->tile_texture, 0, 0, &self->image_size.x, &self->image_size.y);
 
-    p->gun_texture = IMG_LoadTexture(p->rend, "res/gun.png");
-    p->shot_texture = IMG_LoadTexture(p->rend, "res/gun_shoot.png");
+    self->gun_texture = IMG_LoadTexture(self->rend, "res/gun.png");
+    self->shot_texture = IMG_LoadTexture(self->rend, "res/gun_shoot.png");
 
-    p->restart = false;
+    self->restart = false;
 
-    p->enemies_killed = 0;
+    self->enemies_killed = 0;
 
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
-    return p;
+    return self;
 }
 
 
-void prog_cleanup(struct Prog* p)
+void prog_cleanup(struct Prog* self)
 {
     SDL_SetRelativeMouseMode(SDL_FALSE);
 
-    SDL_DestroyTexture(p->tile_texture);
-    SDL_DestroyTexture(p->gun_texture);
+    SDL_DestroyTexture(self->tile_texture);
+    SDL_DestroyTexture(self->gun_texture);
 
-    TTF_CloseFont(p->font);
+    TTF_CloseFont(self->font);
 
-    player_cleanup(p->player);
-    map_cleanup(p->map);
+    player_cleanup(self->player);
+    map_cleanup(self->map);
 
-    for (int i = 0; i < p->entities_size; ++i)
-        entity_cleanup(p->entities[i]);
+    for (int i = 0; i < self->entities_size; ++i)
+        entity_cleanup(self->entities[i]);
 
-    free(p->entities);
+    free(self->entities);
 
-    free(p);
+    free(self);
 }
 
 
-void prog_mainloop(struct Prog* p)
+void prog_mainloop(struct Prog* self)
 {
     SDL_Event evt;
 
-    while (p->running)
+    while (self->running)
     {
-        events_base(p, &evt);
+        events_base(self, &evt);
         audio_stop_finished_sounds();
 
-        for (int i = 0; i < p->entities_size; ++i)
+        for (int i = 0; i < self->entities_size; ++i)
         {
-            if (p->player->alive && p->entities[i]->type == ENTITY_ENEMY)
-                entity_move_towards_player(p->entities[i], p->player, p->map);
+            if (self->player->alive && self->entities[i]->type == ENTITY_ENEMY)
+                entity_move_towards_player(self->entities[i], self->player, self->map);
 
             SDL_FPoint diff = {
-                .x = p->player->rect.x - p->entities[i]->pos.x,
-                .y = p->player->rect.y - p->entities[i]->pos.y
+                .x = self->player->rect.x - self->entities[i]->pos.x,
+                .y = self->player->rect.y - self->entities[i]->pos.y
             };
 
             float distance = sqrtf(diff.x * diff.x + diff.y * diff.y);
 
-            if (distance <= p->entities[i]->width / 2.f)
+            if (distance <= self->entities[i]->width / 2.f)
             {
-                if (p->entities[i]->type == ENTITY_ENEMY)
+                if (self->entities[i]->type == ENTITY_ENEMY)
                 {
-                    p->player->alive = false;
-                    p->player->angle_change = 0.f;
+                    self->player->alive = false;
+                    self->player->angle_change = 0.f;
                     break;
                 }
-                else if (p->entities[i]->type == ENTITY_AMMO)
+                else if (self->entities[i]->type == ENTITY_AMMO)
                 {
                     audio_play_sound("res/ammo.wav");
-                    p->player->bullets += 16;
-                    prog_remove_entity(p, p->entities[i]);
+                    self->player->bullets += 16;
+                    prog_remove_entity(self, self->entities[i]);
                     break;
                 }
             }
         }
 
-        if (p->player->alive)
+        if (self->player->alive)
         {
-            if (p->player->shooting)
+            if (self->player->shooting)
             {
-                if ((float)(clock() - p->player->last_shot_time) / CLOCKS_PER_SEC >= .01f)
+                if ((float)(clock() - self->player->last_shot_time) / CLOCKS_PER_SEC >= .01f)
                 {
-                    p->player->shooting = false;
+                    self->player->shooting = false;
                 }
             }
 
-            if (p->entities_size < 15)
+            if (self->entities_size < 15)
             {
                 if (rand() % 2000 > 1930)
-                    prog_spawn_entity(p, ENTITY_ENEMY, "res/shrek.png");
+                    prog_spawn_entity(self, ENTITY_ENEMY, "res/shrek.png");
 
                 if (rand() % 2000 > 1980)
-                    prog_spawn_entity(p, ENTITY_AMMO, "res/deez.png");
+                    prog_spawn_entity(self, ENTITY_AMMO, "res/deez.png");
             }
         }
         
-        SDL_RenderClear(p->rend);
+        SDL_RenderClear(self->rend);
 
-        render_3d_all(p);
-        prog_render_gun(p);
+        render_3d_all(self);
+        prog_render_gun(self);
 
-        common_display_statistic(p->rend, p->font, "Bullets loaded: ", p->player->bullets_loaded, (SDL_Point){ 20, 20 });
-        common_display_statistic(p->rend, p->font, "Unused bullets: ", p->player->bullets, (SDL_Point){ 20, 40 });
-        common_display_statistic(p->rend, p->font, "Enemies killed: ", p->enemies_killed, (SDL_Point){ 20, 60 });
+        common_display_statistic(self->rend, self->font, "Bullets loaded: ", self->player->bullets_loaded, (SDL_Point){ 20, 20 });
+        common_display_statistic(self->rend, self->font, "Unused bullets: ", self->player->bullets, (SDL_Point){ 20, 40 });
+        common_display_statistic(self->rend, self->font, "Enemies killed: ", self->enemies_killed, (SDL_Point){ 20, 60 });
 
         SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
-        SDL_SetRenderDrawColor(p->rend, 255, 0, 0, 255);
-        SDL_RenderFillRect(p->rend, &crosshair);
+        SDL_SetRenderDrawColor(self->rend, 255, 0, 0, 255);
+        SDL_RenderFillRect(self->rend, &crosshair);
 
-        if (!p->player->alive)
+        if (!self->player->alive)
         {
-            SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
-            SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 200);
-            SDL_RenderFillRect(p->rend, 0);
-            SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_NONE);
+            SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_BLEND);
+            SDL_SetRenderDrawColor(self->rend, 0, 0, 0, 200);
+            SDL_RenderFillRect(self->rend, 0);
+            SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_NONE);
 
-            SDL_Texture* game_over_tex = common_render_text(p->rend, p->font, "Game over, press r to restart");
+            SDL_Texture* game_over_tex = common_render_text(self->rend, self->font, "Game over, press r to restart");
             SDL_Rect tmp = { .x = 300, .y = 380 };
             SDL_QueryTexture(game_over_tex, 0, 0, &tmp.w, &tmp.h);
-            SDL_RenderCopy(p->rend, game_over_tex, 0, &tmp);
+            SDL_RenderCopy(self->rend, game_over_tex, 0, &tmp);
 
             SDL_DestroyTexture(game_over_tex);
         }
 
-        SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
-        SDL_RenderPresent(p->rend);
+        SDL_SetRenderDrawColor(self->rend, 0, 0, 0, 255);
+        SDL_RenderPresent(self->rend);
     }
 }
 
 
-void prog_render_map(struct Prog* p)
+void prog_render_map(struct Prog* self)
 {
-    SDL_SetRenderDrawColor(p->rend, 180, 180, 0, 255);
+    SDL_SetRenderDrawColor(self->rend, 180, 180, 0, 255);
 
-    for (int i = 0; i < strlen(p->map->layout); ++i)
+    for (int i = 0; i < strlen(self->map->layout); ++i)
     {
-        if (p->map->layout[i] == '#')
+        if (self->map->layout[i] == '#')
         {
             SDL_Rect rect = {
-                .x = (i % p->map->size.x) * p->map->tile_size,
-                .y = ((i - (i % p->map->size.x)) / p->map->size.x) * p->map->tile_size,
+                .x = (i % self->map->size.x) * self->map->tile_size,
+                .y = ((i - (i % self->map->size.x)) / self->map->size.x) * self->map->tile_size,
                 .w = 50,
                 .h = 50
             };
 
-            SDL_RenderFillRect(p->rend, &rect);
+            SDL_RenderFillRect(self->rend, &rect);
         }
     }
 }
 
 
-void prog_render_gun(struct Prog* p)
+void prog_render_gun(struct Prog* self)
 {
-    SDL_Texture* tex = p->player->shooting ? p->shot_texture : p->gun_texture;
+    SDL_Texture* tex = self->player->shooting ? self->shot_texture : self->gun_texture;
 
     static SDL_Rect rect = { .x = 500, .y = 500 };
     static bool finished_reloading = false;
 
-    if (p->player->reloading)
+    if (self->player->reloading)
     {
         if (!finished_reloading)
             rect.y += 20;
@@ -194,14 +194,14 @@ void prog_render_gun(struct Prog* p)
 
         if (!finished_reloading && rect.y >= 2000)
         {
-            p->player->bullets += p->player->bullets_loaded;
-            p->player->bullets -= 16;
-            p->player->bullets_loaded = 16;
+            self->player->bullets += self->player->bullets_loaded;
+            self->player->bullets -= 16;
+            self->player->bullets_loaded = 16;
 
-            if (p->player->bullets < 0)
+            if (self->player->bullets < 0)
             {
-                p->player->bullets_loaded += p->player->bullets;
-                p->player->bullets = 0;
+                self->player->bullets_loaded += self->player->bullets;
+                self->player->bullets = 0;
             }
 
             finished_reloading = true;
@@ -209,12 +209,12 @@ void prog_render_gun(struct Prog* p)
 
         if (finished_reloading && rect.y <= 500)
         {
-            p->player->reloading = false;
+            self->player->reloading = false;
             finished_reloading = false;
         }
     }
 
-    if (!p->player->reloading)
+    if (!self->player->reloading)
     {
         rect.y = 500;
         finished_reloading = false;
@@ -222,55 +222,55 @@ void prog_render_gun(struct Prog* p)
 
     SDL_QueryTexture(tex, 0, 0, &rect.w, &rect.h);
 
-    SDL_RenderCopy(p->rend, tex, 0, &rect);
+    SDL_RenderCopy(self->rend, tex, 0, &rect);
 }
 
 
-void prog_add_entity(struct Prog* p, struct Entity* entity)
+void prog_add_entity(struct Prog* self, struct Entity* entity)
 {
-    ++p->entities_size;
-    p->entities = realloc(p->entities, sizeof(struct Entity*) * p->entities_size);
-    p->entities[p->entities_size - 1] = entity;
+    ++self->entities_size;
+    self->entities = realloc(self->entities, sizeof(struct Entity*) * self->entities_size);
+    self->entities[self->entities_size - 1] = entity;
 }
 
 
-void prog_remove_entity(struct Prog* p, struct Entity* entity)
+void prog_remove_entity(struct Prog* self, struct Entity* entity)
 {
-    struct Entity** entities = malloc(sizeof(struct Entity*) * (p->entities_size - 1));
+    struct Entity** entities = malloc(sizeof(struct Entity*) * (self->entities_size - 1));
     int index_offset = 0;
 
-    for (int i = 0; i < p->entities_size; ++i)
+    for (int i = 0; i < self->entities_size; ++i)
     {
-        if (p->entities[i] == entity)
+        if (self->entities[i] == entity)
         {
             index_offset = -1;
             continue;
         }
 
-        entities[i + index_offset] = p->entities[i];
+        entities[i + index_offset] = self->entities[i];
     }
 
     free(entity);
-    free(p->entities);
-    p->entities = entities;
-    --p->entities_size;
+    free(self->entities);
+    self->entities = entities;
+    --self->entities_size;
 }
 
 
-void prog_spawn_entity(struct Prog* p, int type, const char* sprite_path)
+void prog_spawn_entity(struct Prog* self, int type, const char* sprite_path)
 {
-    struct Entity* e = entity_init(type, (SDL_FPoint){ rand() % (p->map->size.x * p->map->tile_size), rand() % (p->map->size.y * p->map->tile_size) }, p->rend, sprite_path);
+    struct Entity* e = entity_init(type, (SDL_FPoint){ rand() % (self->map->size.x * self->map->tile_size), rand() % (self->map->size.y * self->map->tile_size) }, self->rend, sprite_path);
 
     while (true)
     {
-        e->pos = map_get_random_empty_spot(p->map);
-        SDL_Point diff = { .x = e->pos.x - p->player->rect.x, .y = e->pos.y - p->player->rect.y };
+        e->pos = map_get_random_empty_spot(self->map);
+        SDL_Point diff = { .x = e->pos.x - self->player->rect.x, .y = e->pos.y - self->player->rect.y };
         float distance_to_player = sqrtf(diff.x * diff.x + diff.y * diff.y);
 
         if (distance_to_player > 300)
             break;
     }
 
-    prog_add_entity(p, e);
+    prog_add_entity(self, e);
 }
 

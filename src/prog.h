@@ -35,17 +35,17 @@ struct Prog
 };
 
 struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend);
-void prog_cleanup(struct Prog* p);
+void prog_cleanup(struct Prog* self);
 
-void prog_mainloop(struct Prog* p);
+void prog_mainloop(struct Prog* self);
 
-void prog_render_map(struct Prog* p);
-void prog_render_gun(struct Prog* p);
+void prog_render_map(struct Prog* self);
+void prog_render_gun(struct Prog* self);
 
-void prog_add_entity(struct Prog* p, struct Entity* entity);
-void prog_remove_entity(struct Prog* p, struct Entity* entity);
+void prog_add_entity(struct Prog* self, struct Entity* entity);
+void prog_remove_entity(struct Prog* self, struct Entity* entity);
 
-void prog_spawn_entity(struct Prog* p, int type, const char* sprite_path);
+void prog_spawn_entity(struct Prog* self, int type, const char* sprite_path);
 
 #endif
 

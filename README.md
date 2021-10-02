@@ -13,6 +13,8 @@ Deez nuts sprites are ammunition, the game ends when shrek touches you.
 
 ![image](https://user-images.githubusercontent.com/73869536/134826217-95698ff2-2766-49fc-afc5-77347704a68b.png)
 
+Anything in the code that is related to rendering and uses trig needs to make sin and tan negative, since the y coordinates are flipped in programming. Everything else still uses sin and tan normally.
+
 # Building
 
 You need [vcpkg](https://github.com/microsoft/vcpkg) to build this project.

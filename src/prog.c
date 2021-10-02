@@ -17,7 +17,7 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
     self->window = window;
     self->rend = rend;
 
-    self->font = TTF_OpenFont("res/font.ttf", 16);
+    self->font = TTF_OpenFont("res/gfx/font.ttf", 16);
 
     self->map = map_init("map", (SDL_Point){ 32, 32 }, 50);
 
@@ -27,11 +27,11 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
     self->entities = malloc(0);
     self->entities_size = 0;
 
-    self->tile_texture = IMG_LoadTexture(self->rend, "res/wall.png");
+    self->tile_texture = IMG_LoadTexture(self->rend, "res/gfx/wall.png");
     SDL_QueryTexture(self->tile_texture, 0, 0, &self->image_size.x, &self->image_size.y);
 
-    self->gun_texture = IMG_LoadTexture(self->rend, "res/gun.png");
-    self->shot_texture = IMG_LoadTexture(self->rend, "res/gun_shoot.png");
+    self->gun_texture = IMG_LoadTexture(self->rend, "res/gfx/gun.png");
+    self->shot_texture = IMG_LoadTexture(self->rend, "res/gfx/gun_shoot.png");
 
     self->restart = false;
 
@@ -93,7 +93,7 @@ void prog_mainloop(struct Prog* self)
                 }
                 else if (self->entities[i]->type == ENTITY_AMMO)
                 {
-                    audio_play_sound("res/ammo.wav");
+                    audio_play_sound("res/sfx/ammo.wav");
                     self->player->bullets += 16;
                     prog_remove_entity(self, self->entities[i]);
                     break;
@@ -114,10 +114,10 @@ void prog_mainloop(struct Prog* self)
             if (self->entities_size < 15)
             {
                 if (rand() % 2000 > 1930)
-                    prog_spawn_entity(self, ENTITY_ENEMY, "res/shrek.png");
+                    prog_spawn_entity(self, ENTITY_ENEMY, "res/gfx/shrek.png");
 
                 if (rand() % 2000 > 1980)
-                    prog_spawn_entity(self, ENTITY_AMMO, "res/deez.png");
+                    prog_spawn_entity(self, ENTITY_AMMO, "res/gfx/deez.png");
             }
         }
         

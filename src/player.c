@@ -314,7 +314,7 @@ struct Entity* player_shoot(struct Player* self, struct Entity** entities, size_
     self->last_shot_time = clock();
     --self->bullets_loaded;
 
-    audio_play_sound("res/gunshot.wav");
+    audio_play_sound("res/sfx/gunshot.wav");
 
     float intersection;
     struct Entity* entity = 0;

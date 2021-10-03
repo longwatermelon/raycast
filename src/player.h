@@ -51,6 +51,12 @@ struct Player
     int enemies_killed;
 
     struct PlayerModeData mode_data;
+
+    enum
+    {
+        WEAPON_GUN,
+        WEAPON_KNIFE
+    } weapon;
 };
 
 struct Player* player_init(SDL_Point pos, float angle);
@@ -62,6 +68,9 @@ void player_move(struct Player* self, struct Map* map, float x, float y);
 
 void player_execute_mode(struct Player* self);
 
+// Returns entity attacked
+struct Entity* player_attack(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map);
+
 // Returns end point of casted ray
 SDL_Point player_cast_ray(struct Player* self, float angle, struct Map* map, struct Entity** entities, size_t entities_size, int* collision_type);
 SDL_Point player_cast_ray_horizontal(struct Player* self, float angle, struct Map* map);
@@ -72,6 +81,7 @@ SDL_Point player_cast_ray_vertical(struct Player* self, float angle, struct Map*
 int player_cast_ray_entity(struct Player* self, float angle, struct Entity** entities, size_t entities_size, struct Entity** ignored_entities, size_t ignored_entities_size, int target_type, float* intersection, struct Entity** entity_hit);
 
 struct Entity* player_shoot(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map);
+struct Entity* player_slash(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map);
 
 #endif
 

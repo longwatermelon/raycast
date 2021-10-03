@@ -73,7 +73,8 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
             if (!p->player->alive)
                 break;
 
-            struct Entity* hit = player_shoot(p->player, p->entities, p->entities_size, p->map);
+            struct Entity* hit = player_attack(p->player, p->entities, p->entities_size, p->map);
+
             if (hit)
             {
                 audio_play_sound("res/sfx/scream.wav");
@@ -107,6 +108,12 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
     case SDLK_ESCAPE:
         SDL_SetRelativeMouseMode(SDL_FALSE);
         break;
+    case SDLK_1:
+        p->player->weapon = WEAPON_GUN;
+        break;
+    case SDLK_2:
+        p->player->weapon = WEAPON_KNIFE;
+        break;
     }
 }
 
@@ -127,7 +134,8 @@ void events_mouse_down_left(struct Prog* p, SDL_Event* evt)
     if (!p->player->alive)
         return;
 
-    struct Entity* hit = player_shoot(p->player, p->entities, p->entities_size, p->map);
+    struct Entity* hit = player_attack(p->player, p->entities, p->entities_size, p->map);
+
     if (hit)
     {
         audio_play_sound("res/sfx/scream.wav");

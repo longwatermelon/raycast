@@ -33,6 +33,8 @@ struct Player* player_init(SDL_Point pos, float angle)
     self->mode_data.grappling_dst = (SDL_Point){ .x = -1, .y = -1 };
     self->mode_data.grappling_theta = 0.f;
 
+    self->weapon = WEAPON_GUN;
+
     return self;
 }
 
@@ -149,6 +151,39 @@ void player_execute_mode(struct Player* self)
     default:
         break;
     }
+}
+
+
+struct Entity* player_attack(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map)
+{
+    switch (self->weapon)
+    {
+    case WEAPON_GUN:
+    {
+        self->shooting = true;
+        self->last_shot_time = clock();
+        --self->bullets_loaded;
+
+        audio_play_sound("res/sfx/gunshot.wav");
+
+        return player_shoot(self, entities, entities_size, map);
+    } break;
+    case WEAPON_KNIFE:
+    {
+        struct Entity* ret = player_slash(self, entities, entities_size, map);
+
+        if (ret)
+            audio_play_sound("res/sfx/stab.wav");
+        else
+            audio_play_sound("res/sfx/slash.wav");
+
+        return ret;
+    } break;
+    default:
+        break;
+    }
+
+    return 0;
 }
 
 
@@ -340,12 +375,6 @@ struct Entity* player_shoot(struct Player* self, struct Entity** entities, size_
     if (self->bullets_loaded <= 0 || self->reloading)
         return 0;
 
-    self->shooting = true;
-    self->last_shot_time = clock();
-    --self->bullets_loaded;
-
-    audio_play_sound("res/sfx/gunshot.wav");
-
     float intersection;
     struct Entity* entity = 0;
     int entity_dist = player_cast_ray_entity(self, self->angle, entities, entities_size, 0, 0, ENTITY_ENEMY, &intersection, &entity);
@@ -360,6 +389,28 @@ struct Entity* player_shoot(struct Player* self, struct Entity** entities, size_
         return entity;
     }
 
+    return 0;
+}
+
+
+struct Entity* player_slash(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map)
+{
+    for (int i = 0; i < entities_size; ++i)
+    {
+        if (entities[i]->type != ENTITY_ENEMY)
+            continue;
+
+        SDL_FPoint diff = {
+            .x = entities[i]->pos.x - self->rect.x,
+            .y = entities[i]->pos.y - self->rect.y
+        };
+
+        float dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
+
+        if (dist < 40.f)
+            return entities[i];
+    }
+    
     return 0;
 }
 

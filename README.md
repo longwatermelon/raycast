@@ -13,7 +13,7 @@ Press 1 to equip gun and 2 to equip knife
 
 The game ends when shrek touches you.
 
-![image](https://user-images.githubusercontent.com/73869536/134826217-95698ff2-2766-49fc-afc5-77347704a68b.png)
+![video](https://user-images.githubusercontent.com/73869536/135743618-085a03ae-62b0-4f53-ae91-bcee3d7794bc.gif)
 
 Anything in the code that is related to rendering and uses trig needs to make sin and tan negative, since the y coordinates are flipped in programming. Everything else still uses sin and tan normally.
 

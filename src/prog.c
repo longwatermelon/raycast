@@ -250,7 +250,7 @@ void prog_spawn_entity(struct Prog* self, int type, const char* sprite_path)
         SDL_Point diff = { .x = e->pos.x - self->player->rect.x, .y = e->pos.y - self->player->rect.y };
         float distance_to_player = sqrtf(diff.x * diff.x + diff.y * diff.y);
 
-        if (distance_to_player > 300)
+        if (distance_to_player > 600)
             break;
     }
 

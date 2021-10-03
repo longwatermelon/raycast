@@ -75,11 +75,11 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
 
             struct Entity* hit = player_attack(p->player, p->entities, p->entities_size, p->map);
 
-            if (hit)
+            if (hit && !hit->enemy_dead)
             {
                 audio_play_sound("res/sfx/scream.wav");
                 ++p->player->enemies_killed;
-                entity_die(hit, p->rend);
+                entity_die(hit, p->rend, p->player->weapon);
             }
         } break;
         case SDLK_r:
@@ -137,11 +137,11 @@ void events_mouse_down_left(struct Prog* p, SDL_Event* evt)
 
     struct Entity* hit = player_attack(p->player, p->entities, p->entities_size, p->map);
 
-    if (hit)
+    if (hit && !hit->enemy_dead)
     {
         audio_play_sound("res/sfx/scream.wav");
         ++p->player->enemies_killed;
-        entity_die(hit, p->rend);
+        entity_die(hit, p->rend, p->player->weapon);
     }
 }
 

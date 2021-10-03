@@ -73,12 +73,21 @@ void entity_move_towards_player(struct Entity* self, struct Player* p, struct Ma
 }
 
 
-void entity_die(struct Entity* self, SDL_Renderer* rend)
+void entity_die(struct Entity* self, SDL_Renderer* rend, int weapon)
 {
     self->enemy_dead = true;
     clock_gettime(CLOCK_MONOTONIC, &self->enemy_death_time);
 
     SDL_DestroyTexture(self->sprite);
-    self->sprite = IMG_LoadTexture(rend, "res/gfx/shrek_dead.png");
+
+    switch (weapon)
+    {
+    case WEAPON_GUN:
+        self->sprite = IMG_LoadTexture(rend, "res/gfx/shrek_dead_gun.png");
+        break;
+    case WEAPON_KNIFE:
+        self->sprite = IMG_LoadTexture(rend, "res/gfx/shrek_dead_knife.png");
+        break;
+    }
 }
 

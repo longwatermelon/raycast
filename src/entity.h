@@ -34,7 +34,7 @@ void entity_cleanup(struct Entity* self);
 void entity_move(struct Entity* self, struct Map* map, float x, float y);
 void entity_move_towards_player(struct Entity* self, struct Player* p, struct Map* map);
 
-void entity_die(struct Entity* self, SDL_Renderer* rend);
+void entity_die(struct Entity* self, SDL_Renderer* rend, int weapon);
 
 #endif
 

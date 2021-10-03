@@ -138,6 +138,15 @@ void prog_mainloop(struct Prog* self)
             common_display_statistic(self->rend, self->font, "Unused bullets: ", self->player->bullets, (SDL_Point){ 20, 60 });
         }
 
+        if (self->player->mode_data.mode == PLAYER_MODE_GRAPPLING)
+        {
+            SDL_Texture* tex = common_render_text(self->rend, self->font, "[Grappling hook]");
+            SDL_Rect tmp = { .x = 640, .y = 20 };
+            SDL_QueryTexture(tex, 0, 0, &tmp.w, &tmp.h);
+            SDL_RenderCopy(self->rend, tex, 0, &tmp);
+            SDL_DestroyTexture(tex);
+        }
+
         SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
         SDL_SetRenderDrawColor(self->rend, 255, 0, 0, 255);
         SDL_RenderFillRect(self->rend, &crosshair);

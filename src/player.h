@@ -26,6 +26,15 @@ struct PlayerModeData
     float grappling_theta;
 };
 
+struct PlayerAnimationData
+{
+    bool gun_at_bottom;
+    SDL_Rect gun_pos;
+
+    bool knife_outstretched;
+    SDL_Rect knife_pos;
+};
+
 struct Player
 {
     SDL_FRect rect;
@@ -42,11 +51,15 @@ struct Player
 
     bool alive;
 
+    // Gun properties
     bool shooting;
     clock_t last_shot_time;
     bool reloading;
     int bullets;
     int bullets_loaded;
+
+    // Knife properties
+    bool swinging;
 
     int enemies_killed;
 
@@ -57,12 +70,20 @@ struct Player
         WEAPON_GUN,
         WEAPON_KNIFE
     } weapon;
+
+    struct PlayerAnimationData animation;
+
+    SDL_Texture* gun_texture;
+    SDL_Texture* shot_texture;
+    SDL_Texture* knife_texture;
 };
 
-struct Player* player_init(SDL_Point pos, float angle);
+struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend);
 void player_cleanup(struct Player* self);
 
 void player_render(struct Player* self, SDL_Renderer* rend, struct Map* map, struct Entity** entities, size_t entities_size);
+void player_render_weapon(struct Player* self, SDL_Renderer* rend);
+void player_advance_animations(struct Player* self);
 
 void player_move(struct Player* self, struct Map* map, float x, float y);
 

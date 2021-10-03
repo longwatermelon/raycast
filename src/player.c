@@ -5,9 +5,10 @@
 #include <math.h>
 #include <time.h>
 #include <stdbool.h>
+#include <SDL_image.h>
 
 
-struct Player* player_init(SDL_Point pos, float angle)
+struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
 {
     // Valgrind shits itself if I use malloc instead of calloc, no idea why
     struct Player* self = calloc(1, sizeof(struct Player));
@@ -27,6 +28,8 @@ struct Player* player_init(SDL_Point pos, float angle)
     self->bullets = 16;
     self->bullets_loaded = 16;
 
+    self->swinging = false;
+
     self->enemies_killed = 0;
 
     self->mode_data.mode = PLAYER_MODE_NORMAL;
@@ -34,6 +37,16 @@ struct Player* player_init(SDL_Point pos, float angle)
     self->mode_data.grappling_theta = 0.f;
 
     self->weapon = WEAPON_GUN;
+    
+    self->shot_texture = IMG_LoadTexture(rend, "res/gfx/gun_shoot.png");
+    self->gun_texture = IMG_LoadTexture(rend, "res/gfx/gun.png");
+    self->knife_texture = IMG_LoadTexture(rend, "res/gfx/knife.png");
+
+    self->animation.gun_pos = (SDL_Rect){ .x = 500, .y = 500 };
+    self->animation.gun_at_bottom = false;
+
+    self->animation.knife_pos = (SDL_Rect){ .x = 0, .y = 400 };
+    self->animation.knife_outstretched = false;
 
     return self;
 }
@@ -41,6 +54,9 @@ struct Player* player_init(SDL_Point pos, float angle)
 
 void player_cleanup(struct Player* self)
 {
+    SDL_DestroyTexture(self->shot_texture);
+    SDL_DestroyTexture(self->gun_texture);
+
     free(self);
 }
 
@@ -89,6 +105,76 @@ void player_render(struct Player* self, SDL_Renderer* rend, struct Map* map, str
     {
         SDL_Rect rect = { .x = entities[i]->pos.x - 5, .y = entities[i]->pos.y - 5, .w = 10, .h = 10 };
         SDL_RenderFillRect(rend, &rect);
+    }
+}
+
+
+void player_render_weapon(struct Player* self, SDL_Renderer* rend)
+{
+    switch (self->weapon)
+    {
+    case WEAPON_GUN:
+    {
+        SDL_Texture* tex = self->shooting ? self->shot_texture : self->gun_texture;
+        SDL_QueryTexture(tex, 0, 0, &self->animation.gun_pos.w, &self->animation.gun_pos.h);
+        SDL_RenderCopy(rend, tex, 0, &self->animation.gun_pos);
+    } break;
+    case WEAPON_KNIFE:
+    {
+        SDL_QueryTexture(self->knife_texture, 0, 0, &self->animation.knife_pos.w, &self->animation.knife_pos.h);
+        SDL_RenderCopy(rend, self->knife_texture, 0, &self->animation.knife_pos);
+    } break;
+    };
+}
+
+
+void player_advance_animations(struct Player* self)
+{
+    if (self->reloading)
+    {
+        if (!self->animation.gun_at_bottom)
+            self->animation.gun_pos.y += 20;
+        else
+            self->animation.gun_pos.y -= 20;
+
+        if (!self->animation.gun_at_bottom && self->animation.gun_pos.y >= 2000)
+        {
+            self->bullets += self->bullets_loaded;
+            self->bullets -= 16;
+            self->bullets_loaded = 16;
+
+            if (self->bullets < 0)
+            {
+                self->bullets_loaded += self->bullets;
+                self->bullets = 0;
+            }
+
+            self->animation.gun_at_bottom = true;
+        }
+
+        if (self->animation.gun_at_bottom && self->animation.gun_pos.y <= 500)
+        {
+            self->reloading = false;
+            self->animation.gun_at_bottom = false;
+        }
+    }
+
+    if (self->swinging)
+    {
+        if (!self->animation.knife_outstretched)
+            self->animation.knife_pos.y -= 20;
+        else
+            self->animation.knife_pos.y += 20;
+
+        if (self->animation.knife_pos.y <= 340)
+            self->animation.knife_outstretched = true;
+
+        if (self->animation.knife_outstretched && self->animation.knife_pos.y >= 400)
+        {
+            self->animation.knife_pos.y = 400;
+            self->swinging = false;
+            self->animation.knife_outstretched = false;
+        }
     }
 }
 
@@ -170,7 +256,11 @@ struct Entity* player_attack(struct Player* self, struct Entity** entities, size
     } break;
     case WEAPON_KNIFE:
     {
+        if (self->swinging)
+            break;
+
         struct Entity* ret = player_slash(self, entities, entities_size, map);
+        self->swinging = true;
 
         if (ret)
             audio_play_sound("res/sfx/stab.wav");

@@ -38,7 +38,6 @@ void prog_cleanup(struct Prog* self);
 void prog_mainloop(struct Prog* self);
 
 void prog_render_map(struct Prog* self);
-void prog_render_gun(struct Prog* self);
 
 void prog_add_entity(struct Prog* self, struct Entity* entity);
 void prog_remove_entity(struct Prog* self, struct Entity* entity);

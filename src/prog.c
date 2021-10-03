@@ -22,7 +22,7 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
     self->map = map_init("map", (SDL_Point){ 32, 32 }, 50);
 
     SDL_FPoint pos = map_get_random_empty_spot(self->map);
-    self->player = player_init((SDL_Point){ .x = (int)pos.x,  .y = (int)pos.y }, M_PI);
+    self->player = player_init((SDL_Point){ .x = (int)pos.x,  .y = (int)pos.y }, M_PI, self->rend);
 
     self->entities = malloc(0);
     self->entities_size = 0;
@@ -122,11 +122,13 @@ void prog_mainloop(struct Prog* self)
         }
 
         player_execute_mode(self->player);
-        
+        player_advance_animations(self->player);
+
         SDL_RenderClear(self->rend);
 
         render_3d_all(self);
-        prog_render_gun(self);
+        player_render_weapon(self->player, self->rend);
+        /* prog_render_gun(self); */
 
         common_display_statistic(self->rend, self->font, "Bullets loaded: ", self->player->bullets_loaded, (SDL_Point){ 20, 20 });
         common_display_statistic(self->rend, self->font, "Unused bullets: ", self->player->bullets, (SDL_Point){ 20, 40 });
@@ -175,54 +177,6 @@ void prog_render_map(struct Prog* self)
             SDL_RenderFillRect(self->rend, &rect);
         }
     }
-}
-
-
-void prog_render_gun(struct Prog* self)
-{
-    SDL_Texture* tex = self->player->shooting ? self->shot_texture : self->gun_texture;
-
-    static SDL_Rect rect = { .x = 500, .y = 500 };
-    static bool finished_reloading = false;
-
-    if (self->player->reloading)
-    {
-        if (!finished_reloading)
-            rect.y += 20;
-        else
-            rect.y -= 20;
-
-        if (!finished_reloading && rect.y >= 2000)
-        {
-            self->player->bullets += self->player->bullets_loaded;
-            self->player->bullets -= 16;
-            self->player->bullets_loaded = 16;
-
-            if (self->player->bullets < 0)
-            {
-                self->player->bullets_loaded += self->player->bullets;
-                self->player->bullets = 0;
-            }
-
-            finished_reloading = true;
-        }
-
-        if (finished_reloading && rect.y <= 500)
-        {
-            self->player->reloading = false;
-            finished_reloading = false;
-        }
-    }
-
-    if (!self->player->reloading)
-    {
-        rect.y = 500;
-        finished_reloading = false;
-    }
-
-    SDL_QueryTexture(tex, 0, 0, &rect.w, &rect.h);
-
-    SDL_RenderCopy(self->rend, tex, 0, &rect);
 }
 
 

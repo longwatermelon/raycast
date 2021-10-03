@@ -162,13 +162,13 @@ void player_advance_animations(struct Player* self)
     {
         if (!self->animation.knife_outstretched)
         {
-            self->animation.knife_pos.x += 20;
-            self->animation.knife_pos.y += 40;
+            self->animation.knife_pos.x += 30;
+            self->animation.knife_pos.y += 60;
         }
         else
         {
-            self->animation.knife_pos.x -= 20;
-            self->animation.knife_pos.y -= 40;
+            self->animation.knife_pos.x -= 30;
+            self->animation.knife_pos.y -= 60;
         }
 
         if (self->animation.knife_pos.x >= 100)

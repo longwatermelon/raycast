@@ -84,7 +84,7 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         } break;
         case SDLK_r:
         {
-            if (p->player->reloading)
+            if (p->player->reloading || p->player->weapon != WEAPON_GUN)
                 break;
 
             audio_play_sound("res/sfx/reload.wav");

@@ -79,7 +79,7 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
             {
                 audio_play_sound("res/sfx/scream.wav");
                 ++p->player->enemies_killed;
-                prog_remove_entity(p, hit);
+                entity_die(hit, p->rend);
             }
         } break;
         case SDLK_r:
@@ -141,7 +141,7 @@ void events_mouse_down_left(struct Prog* p, SDL_Event* evt)
     {
         audio_play_sound("res/sfx/scream.wav");
         ++p->player->enemies_killed;
-        prog_remove_entity(p, hit);
+        entity_die(hit, p->rend);
     }
 }
 

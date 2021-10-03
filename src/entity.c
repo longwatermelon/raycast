@@ -18,6 +18,8 @@ struct Entity* entity_init(int type, SDL_FPoint pos, SDL_Renderer* rend, const c
 
     self->width = 20.f;
 
+    self->enemy_dead = false;
+
     return self;
 }
 
@@ -68,5 +70,15 @@ void entity_move_towards_player(struct Entity* self, struct Player* p, struct Ma
     float theta = atan2f(p->rect.y - self->pos.y, p->rect.x - self->pos.x);
     theta += fmod(rand(), 3.f) - 1.5f;
     entity_move(self, map, self->speed * cosf(theta), self->speed * sinf(theta));
+}
+
+
+void entity_die(struct Entity* self, SDL_Renderer* rend)
+{
+    self->enemy_dead = true;
+    clock_gettime(CLOCK_MONOTONIC, &self->enemy_death_time);
+
+    SDL_DestroyTexture(self->sprite);
+    self->sprite = IMG_LoadTexture(rend, "res/gfx/shrek_dead.png");
 }
 

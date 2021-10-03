@@ -73,6 +73,20 @@ void prog_mainloop(struct Prog* self)
 
         for (int i = 0; i < self->entities_size; ++i)
         {
+            if (self->entities[i]->enemy_dead)
+            {
+                struct timespec now;
+                clock_gettime(CLOCK_MONOTONIC, &now);
+
+                if (common_time_diff(self->entities[i]->enemy_death_time, now) >= 1.f)
+                {
+                    prog_remove_entity(self, self->entities[i]);
+                    --i;
+                }
+
+                continue;
+            }
+
             if (self->player->alive && self->entities[i]->type == ENTITY_ENEMY)
                 entity_move_towards_player(self->entities[i], self->player, self->map);
 
@@ -108,8 +122,7 @@ void prog_mainloop(struct Prog* self)
                 struct timespec now;
                 clock_gettime(CLOCK_MONOTONIC, &now);
 
-                if ((now.tv_sec - self->player->last_shot_time.tv_sec) +
-                    (now.tv_nsec - self->player->last_shot_time.tv_nsec) / 1e9 >= 0.05f)
+                if (common_time_diff(self->player->last_shot_time, now) >= 0.05f)
                 {
                     self->player->shooting = false;
                 }

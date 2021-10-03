@@ -78,3 +78,9 @@ void common_display_statistic(SDL_Renderer* rend, TTF_Font* font, const char* te
     SDL_DestroyTexture(tex);
 }
 
+
+float common_time_diff(struct timespec t1, struct timespec t2)
+{
+    return (t2.tv_sec - t1.tv_sec) + (t2.tv_nsec - t1.tv_nsec) / 1e9;
+}
+

@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.20.5)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_C_COMPILER /bin/x86_64-w64-mingw32-gcc)
 project(raycast)
 
 find_package(SDL2 CONFIG REQUIRED)

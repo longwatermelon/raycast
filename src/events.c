@@ -112,7 +112,8 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         p->player->weapon = WEAPON_GUN;
         break;
     case SDLK_2:
-        p->player->weapon = WEAPON_KNIFE;
+        if (!p->player->reloading)
+            p->player->weapon = WEAPON_KNIFE;
         break;
     }
 }

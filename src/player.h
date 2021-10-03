@@ -53,7 +53,7 @@ struct Player
 
     // Gun properties
     bool shooting;
-    clock_t last_shot_time;
+    struct timespec last_shot_time;
     bool reloading;
     int bullets;
     int bullets_loaded;

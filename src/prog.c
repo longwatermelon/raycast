@@ -105,7 +105,11 @@ void prog_mainloop(struct Prog* self)
         {
             if (self->player->shooting)
             {
-                if ((float)(clock() - self->player->last_shot_time) / CLOCKS_PER_SEC >= .01f)
+                struct timespec now;
+                clock_gettime(CLOCK_MONOTONIC, &now);
+
+                if ((now.tv_sec - self->player->last_shot_time.tv_sec) +
+                    (now.tv_nsec - self->player->last_shot_time.tv_nsec) / 1e9 >= 0.05f)
                 {
                     self->player->shooting = false;
                 }

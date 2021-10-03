@@ -23,7 +23,7 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
     self->alive = true;
 
     self->shooting = false;
-    self->last_shot_time = clock();
+    clock_gettime(CLOCK_MONOTONIC, &self->last_shot_time);
     self->reloading = false;
     self->bullets = 16;
     self->bullets_loaded = 16;
@@ -250,7 +250,7 @@ struct Entity* player_attack(struct Player* self, struct Entity** entities, size
             break;
 
         self->shooting = true;
-        self->last_shot_time = clock();
+        clock_gettime(CLOCK_MONOTONIC, &self->last_shot_time);
         --self->bullets_loaded;
 
         audio_play_sound("res/sfx/gunshot.wav");

@@ -285,8 +285,14 @@ struct Entity* player_attack(struct Player* self, struct Entity** entities, size
     {
     case WEAPON_GUN:
     {
-        if (self->reloading || self->bullets_loaded <= 0)
+        if (self->reloading)
             break;
+
+        if (self->bullets_loaded <= 0)
+        {
+            audio_play_sound("res/sfx/gunshot_dry.wav");
+            break;
+        }
 
         self->shooting = true;
         clock_gettime(CLOCK_MONOTONIC, &self->last_shot_time);
@@ -529,7 +535,7 @@ struct Entity* player_slash(struct Player* self, struct Entity** entities, size_
 {
     for (int i = 0; i < entities_size; ++i)
     {
-        if (entities[i]->type != ENTITY_ENEMY)
+        if (entities[i]->type != ENTITY_ENEMY || entities[i]->enemy_dead)
             continue;
 
         SDL_FPoint diff = {

@@ -246,7 +246,7 @@ struct Entity* player_attack(struct Player* self, struct Entity** entities, size
     {
     case WEAPON_GUN:
     {
-        if (self->reloading)
+        if (self->reloading || self->bullets_loaded <= 0)
             break;
 
         self->shooting = true;

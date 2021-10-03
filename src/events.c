@@ -109,14 +109,14 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         SDL_SetRelativeMouseMode(SDL_FALSE);
         break;
     case SDLK_1:
-        if (p->player->weapon != WEAPON_GUN)
+        if (p->player->alive && p->player->weapon != WEAPON_GUN)
         {
             audio_play_sound("res/sfx/gun_cocking.wav");
             p->player->weapon = WEAPON_GUN;
         }
         break;
     case SDLK_2:
-        if (!p->player->reloading && p->player->weapon != WEAPON_KNIFE)
+        if (p->player->alive && !p->player->reloading && p->player->weapon != WEAPON_KNIFE)
         {
             audio_play_sound("res/sfx/knife_equip.wav");
             p->player->weapon = WEAPON_KNIFE;

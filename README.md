@@ -7,7 +7,7 @@ WASD to move, left and right arrow keys to rotate
 
 Space to shoot, r to reload
 
-Mouse is also supported if arrow keys are too clunky for you, click to shoot
+Mouse is also supported if arrow keys are too clunky for you, left click to shoot and right click to use grappling hook
 
 Press 1 to equip gun and 2 to equip knife
 

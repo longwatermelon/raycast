@@ -12,6 +12,8 @@ Press esc to release mouse from the window and click to recapture the mouse.
 * 1: equip gun
 * 2: equip knife
 
+The gun requires accuracy (red dot is crosshair) but the knife does not.
+
 The game ends when shrek touches you.
 
 ![video](https://user-images.githubusercontent.com/73869536/135743618-085a03ae-62b0-4f53-ae91-bcee3d7794bc.gif)

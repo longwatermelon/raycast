@@ -18,8 +18,6 @@ The game ends when shrek touches you.
 
 ![video](https://user-images.githubusercontent.com/73869536/135770853-ab2b7e44-722b-434a-96fb-0eb601770f44.gif)
 
-Anything in the code that is related to rendering and uses trig needs to make sin and tan negative, since the y coordinates are flipped in programming. Everything else still uses sin and tan normally.
-
 # Building
 
 You need [vcpkg](https://github.com/microsoft/vcpkg) to build this project.

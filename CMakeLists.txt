@@ -34,5 +34,6 @@ target_link_libraries(raycast PRIVATE
     SDL2::SDL2_ttf
     SDL2::SDL2_mixer
 )
+
 target_compile_options(raycast PRIVATE -ggdb)
 

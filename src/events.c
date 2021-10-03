@@ -108,16 +108,18 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
     case SDLK_ESCAPE:
         SDL_SetRelativeMouseMode(SDL_FALSE);
         break;
-    case SDLK_1:
+    case SDLK_2:
         if (p->player->alive && p->player->weapon != WEAPON_GUN)
         {
+            p->player->animation.switching_weapon = WEAPON_GUN;
             audio_play_sound("res/sfx/gun_cocking.wav");
             p->player->weapon = WEAPON_GUN;
         }
         break;
-    case SDLK_2:
+    case SDLK_1:
         if (p->player->alive && !p->player->reloading && p->player->weapon != WEAPON_KNIFE)
         {
+            p->player->animation.switching_weapon = WEAPON_KNIFE;
             audio_play_sound("res/sfx/knife_equip.wav");
             p->player->weapon = WEAPON_KNIFE;
         }

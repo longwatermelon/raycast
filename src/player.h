@@ -33,6 +33,8 @@ struct PlayerAnimationData
 
     bool knife_outstretched;
     SDL_Rect knife_pos;
+
+    int switching_weapon;
 };
 
 struct Player

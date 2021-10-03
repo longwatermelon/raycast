@@ -13,7 +13,6 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
     // Valgrind shits itself if I use malloc instead of calloc, no idea why
     struct Player* self = calloc(1, sizeof(struct Player));
     self->rect = (SDL_FRect){ .x = pos.x, .y = pos.y, .w = 10, .h = 10 };
-    self->angle = angle;
 
     self->angle = angle;
     self->angle_change = 0.f;
@@ -45,8 +44,10 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
     self->animation.gun_pos = (SDL_Rect){ .x = 500, .y = 500 };
     self->animation.gun_at_bottom = false;
 
-    self->animation.knife_pos = (SDL_Rect){ .x = 0, .y = 400 };
+    self->animation.knife_pos = (SDL_Rect){ .x = 0, .y = 600 + 200 };
     self->animation.knife_outstretched = false;
+
+    self->animation.switching_weapon = -1;
 
     return self;
 }
@@ -111,20 +112,14 @@ void player_render(struct Player* self, SDL_Renderer* rend, struct Map* map, str
 
 void player_render_weapon(struct Player* self, SDL_Renderer* rend)
 {
-    switch (self->weapon)
-    {
-    case WEAPON_GUN:
-    {
-        SDL_Texture* tex = self->shooting ? self->shot_texture : self->gun_texture;
-        SDL_QueryTexture(tex, 0, 0, &self->animation.gun_pos.w, &self->animation.gun_pos.h);
-        SDL_RenderCopy(rend, tex, 0, &self->animation.gun_pos);
-    } break;
-    case WEAPON_KNIFE:
-    {
-        SDL_QueryTexture(self->knife_texture, 0, 0, &self->animation.knife_pos.w, &self->animation.knife_pos.h);
-        SDL_RenderCopy(rend, self->knife_texture, 0, &self->animation.knife_pos);
-    } break;
-    };
+    // Gun
+    SDL_Texture* tex = self->shooting ? self->shot_texture : self->gun_texture;
+    SDL_QueryTexture(tex, 0, 0, &self->animation.gun_pos.w, &self->animation.gun_pos.h);
+    SDL_RenderCopy(rend, tex, 0, &self->animation.gun_pos);
+
+    // Knife
+    SDL_QueryTexture(self->knife_texture, 0, 0, &self->animation.knife_pos.w, &self->animation.knife_pos.h);
+    SDL_RenderCopy(rend, self->knife_texture, 0, &self->animation.knife_pos);
 }
 
 
@@ -162,18 +157,56 @@ void player_advance_animations(struct Player* self)
     if (self->swinging)
     {
         if (!self->animation.knife_outstretched)
-            self->animation.knife_pos.y -= 20;
+        {
+            self->animation.knife_pos.x += 20;
+            self->animation.knife_pos.y += 40;
+        }
         else
-            self->animation.knife_pos.y += 20;
+        {
+            self->animation.knife_pos.x -= 20;
+            self->animation.knife_pos.y -= 40;
+        }
 
-        if (self->animation.knife_pos.y <= 340)
+        if (self->animation.knife_pos.x >= 100)
             self->animation.knife_outstretched = true;
 
-        if (self->animation.knife_outstretched && self->animation.knife_pos.y >= 400)
+        if (self->animation.knife_outstretched && self->animation.knife_pos.x <= 0)
         {
-            self->animation.knife_pos.y = 400;
+            self->animation.knife_pos.x = 0;
             self->swinging = false;
             self->animation.knife_outstretched = false;
+        }
+    }
+
+    if (self->animation.switching_weapon != -1)
+    {
+        if (self->animation.switching_weapon == WEAPON_GUN) // Switch to gun
+        {
+            if (self->animation.knife_pos.y + 40 <= 800 && self->animation.gun_pos.y - 40 >= 500)
+            {
+                self->animation.knife_pos.y += 40;
+                self->animation.gun_pos.y -= 40;
+            }
+            else
+            {
+                self->animation.switching_weapon = -1;
+                self->animation.knife_pos.y = 800;
+                self->animation.gun_pos.y = 500;
+            }
+        }
+        else if (self->animation.switching_weapon == WEAPON_KNIFE) // Switch to knife
+        {
+            if (self->animation.gun_pos.y + 40 <= 800 && self->animation.knife_pos.y - 40 >= 600)
+            {
+                self->animation.gun_pos.y += 40;
+                self->animation.knife_pos.y -= 40;
+            }
+            else
+            {
+                self->animation.switching_weapon = -1;
+                self->animation.gun_pos.y = 800;
+                self->animation.knife_pos.y = 600;
+            }
         }
     }
 }

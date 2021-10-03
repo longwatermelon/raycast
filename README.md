@@ -11,7 +11,7 @@ Mouse is also supported if arrow keys are too clunky for you, left click to shoo
 
 Press 1 to equip gun and 2 to equip knife
 
-Deez nuts sprites are ammunition, the game ends when shrek touches you.
+The game ends when shrek touches you.
 
 ![image](https://user-images.githubusercontent.com/73869536/134826217-95698ff2-2766-49fc-afc5-77347704a68b.png)
 

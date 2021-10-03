@@ -1,15 +1,16 @@
 # raycast
 Raycasting in C
 
-Press esc to release mouse and click on the screen to recapture the mouse.
+Press esc to release mouse from the window and click to recapture the mouse.
 
-WASD to move, left and right arrow keys to rotate
-
-Space to shoot, r to reload
-
-Mouse is also supported if arrow keys are too clunky for you, left click to shoot and right click to use grappling hook
-
-Press 1 to equip gun and 2 to equip knife
+# Controls
+* WASD: movement
+* Mouse movement / left & right arrow keys: rotate
+* Left mouse button / space: attack
+* Right mouse button: grappling hook
+* R: reload
+* 1: equip gun
+* 2: equip knife
 
 The game ends when shrek touches you.
 

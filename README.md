@@ -8,7 +8,7 @@ Press esc to release mouse from the window and click to recapture the mouse.
 * Mouse movement / left & right arrow keys: rotate
 * Left mouse button / space: attack
 * Right mouse button: grappling hook
-* R: reload
+* R: reload (gun)
 * 1: equip gun
 * 2: equip knife
 

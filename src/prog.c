@@ -117,7 +117,7 @@ void prog_mainloop(struct Prog* self)
                     prog_spawn_entity(self, ENTITY_ENEMY, "res/gfx/shrek.png");
 
                 if (rand() % 2000 > 1990)
-                    prog_spawn_entity(self, ENTITY_AMMO, "res/gfx/deez.png");
+                    prog_spawn_entity(self, ENTITY_AMMO, "res/gfx/ammo.png");
             }
         }
 
@@ -128,7 +128,6 @@ void prog_mainloop(struct Prog* self)
 
         render_3d_all(self);
         player_render_weapon(self->player, self->rend);
-        /* prog_render_gun(self); */
 
         common_display_statistic(self->rend, self->font, "Enemies killed: ", self->player->enemies_killed, (SDL_Point){ 20, 20 });
 

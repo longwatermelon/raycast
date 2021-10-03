@@ -35,16 +35,18 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
     self->mode_data.grappling_dst = (SDL_Point){ .x = -1, .y = -1 };
     self->mode_data.grappling_theta = 0.f;
 
-    self->weapon = WEAPON_GUN;
+    self->weapon = WEAPON_KNIFE;
     
     self->shot_texture = IMG_LoadTexture(rend, "res/gfx/gun_shoot.png");
     self->gun_texture = IMG_LoadTexture(rend, "res/gfx/gun.png");
     self->knife_texture = IMG_LoadTexture(rend, "res/gfx/knife.png");
 
-    self->animation.gun_pos = (SDL_Rect){ .x = 500, .y = 500 };
+    self->animation.gun_default_pos = (SDL_Point){ .x = 500, .y = 500 };
+    self->animation.gun_pos = (SDL_Rect){ .x = 500, .y = 800 };
     self->animation.gun_at_bottom = false;
 
-    self->animation.knife_pos = (SDL_Rect){ .x = 0, .y = 600 + 200 };
+    self->animation.knife_default_pos = (SDL_Point){ .x = 0, .y = 600 };
+    self->animation.knife_pos = (SDL_Rect){ .x = 0, .y = 600 };
     self->animation.knife_outstretched = false;
 
     self->animation.switching_weapon = -1;
@@ -147,8 +149,10 @@ void player_advance_animations(struct Player* self)
             self->animation.gun_at_bottom = true;
         }
 
-        if (self->animation.gun_at_bottom && self->animation.gun_pos.y <= 500)
+        if (self->animation.gun_at_bottom && self->animation.gun_pos.y <= self->animation.gun_default_pos.y)
         {
+            self->animation.gun_pos.y = self->animation.gun_default_pos.y;
+
             self->reloading = false;
             self->animation.gun_at_bottom = false;
         }
@@ -170,9 +174,11 @@ void player_advance_animations(struct Player* self)
         if (self->animation.knife_pos.x >= 100)
             self->animation.knife_outstretched = true;
 
-        if (self->animation.knife_outstretched && self->animation.knife_pos.x <= 0)
+        if (self->animation.knife_outstretched && self->animation.knife_pos.x <= self->animation.knife_default_pos.x)
         {
-            self->animation.knife_pos.x = 0;
+            self->animation.knife_pos.x = self->animation.knife_default_pos.x;
+            self->animation.knife_pos.y = self->animation.knife_default_pos.y;
+
             self->swinging = false;
             self->animation.knife_outstretched = false;
         }
@@ -182,7 +188,7 @@ void player_advance_animations(struct Player* self)
     {
         if (self->animation.switching_weapon == WEAPON_GUN) // Switch to gun
         {
-            if (self->animation.knife_pos.y + 40 <= 800 && self->animation.gun_pos.y - 40 >= 500)
+            if (self->animation.knife_pos.y + 40 <= 800 && self->animation.gun_pos.y - 40 >= self->animation.gun_default_pos.y)
             {
                 self->animation.knife_pos.y += 40;
                 self->animation.gun_pos.y -= 40;
@@ -191,12 +197,12 @@ void player_advance_animations(struct Player* self)
             {
                 self->animation.switching_weapon = -1;
                 self->animation.knife_pos.y = 800;
-                self->animation.gun_pos.y = 500;
+                self->animation.gun_pos.y = self->animation.gun_default_pos.y;
             }
         }
         else if (self->animation.switching_weapon == WEAPON_KNIFE) // Switch to knife
         {
-            if (self->animation.gun_pos.y + 40 <= 800 && self->animation.knife_pos.y - 40 >= 600)
+            if (self->animation.gun_pos.y + 40 <= 800 && self->animation.knife_pos.y - 40 >= self->animation.knife_default_pos.y)
             {
                 self->animation.gun_pos.y += 40;
                 self->animation.knife_pos.y -= 40;
@@ -205,7 +211,7 @@ void player_advance_animations(struct Player* self)
             {
                 self->animation.switching_weapon = -1;
                 self->animation.gun_pos.y = 800;
-                self->animation.knife_pos.y = 600;
+                self->animation.knife_pos.y = self->animation.knife_default_pos.y;
             }
         }
     }

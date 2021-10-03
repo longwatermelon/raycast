@@ -30,9 +30,11 @@ struct PlayerAnimationData
 {
     bool gun_at_bottom;
     SDL_Rect gun_pos;
+    SDL_Point gun_default_pos;
 
     bool knife_outstretched;
     SDL_Rect knife_pos;
+    SDL_Point knife_default_pos;
 
     int switching_weapon;
 };

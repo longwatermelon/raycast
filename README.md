@@ -9,14 +9,14 @@ Press esc to release mouse from the window and click to recapture the mouse.
 * Left mouse button / space: attack
 * Right mouse button: grappling hook
 * R: reload (gun)
-* 1: equip gun
-* 2: equip knife
+* 1: equip knife
+* 2: equip gun
 
 The gun requires accuracy (red dot is crosshair) but the knife does not.
 
 The game ends when shrek touches you.
 
-![video](https://user-images.githubusercontent.com/73869536/135743618-085a03ae-62b0-4f53-ae91-bcee3d7794bc.gif)
+![video](https://user-images.githubusercontent.com/73869536/135770853-ab2b7e44-722b-434a-96fb-0eb601770f44.gif)
 
 Anything in the code that is related to rendering and uses trig needs to make sin and tan negative, since the y coordinates are flipped in programming. Everything else still uses sin and tan normally.
 

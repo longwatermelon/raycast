@@ -3,7 +3,7 @@ Raycasting in C
 
 Press esc to release mouse from the window and click to recapture the mouse.
 
-The objective of the game is to collect 7 nuts, if you touch shrek you die.
+The objective of the game is to collect 5 nuts, if you touch shrek you die.
 
 # Controls
 * WASD: movement

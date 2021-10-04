@@ -163,7 +163,7 @@ void prog_mainloop(struct Prog* self)
                 prog_spawn_entity(self, ENTITY_NUTS, "res/gfx/deez.png");
         }
 
-        if (self->nuts_collected >= 7)
+        if (self->nuts_collected >= 5)
         {
             self->win = true;
             self->player->alive = false;

@@ -111,6 +111,11 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
     case SDLK_2:
         if (p->player->alive && p->player->weapon != WEAPON_GUN)
         {
+            p->player->swinging = false;
+            p->player->animation.knife_outstretched = false;
+            p->player->animation.knife_pos.x = p->player->animation.knife_default_pos.x;
+            p->player->animation.knife_pos.y = p->player->animation.knife_default_pos.y;
+
             p->player->animation.switching_weapon = WEAPON_GUN;
             audio_play_sound("res/sfx/gun_cocking.wav");
             p->player->weapon = WEAPON_GUN;

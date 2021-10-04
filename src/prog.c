@@ -75,67 +75,7 @@ void prog_mainloop(struct Prog* self)
         events_base(self, &evt);
         audio_stop_finished_sounds();
 
-        for (int i = 0; i < self->entities_size; ++i)
-        {
-            if (self->entities[i]->enemy_dead)
-            {
-                struct timespec now;
-                clock_gettime(CLOCK_MONOTONIC, &now);
-
-                if (common_time_diff(self->entities[i]->enemy_death_time, now) >= 1.f)
-                {
-                    prog_remove_entity(self, self->entities[i]);
-                    --i;
-                }
-
-                continue;
-            }
-
-            if (!self->game_over && self->entities[i]->type == ENTITY_ENEMY)
-                entity_move_towards_player(self->entities[i], self->player, self->map);
-
-            SDL_FPoint diff = {
-                .x = self->player->rect.x - self->entities[i]->pos.x,
-                .y = self->player->rect.y - self->entities[i]->pos.y
-            };
-
-            float distance = sqrtf(diff.x * diff.x + diff.y * diff.y);
-
-            if (distance <= self->entities[i]->width / 2.f)
-            {
-                if (self->entities[i]->type == ENTITY_ENEMY)
-                {
-                    if (!self->game_over)
-                    {
-                        struct timespec now;
-                        clock_gettime(CLOCK_MONOTONIC, &now);
-
-                        if (common_time_diff(self->player->last_hurt_time, now) > 1.f)
-                        {
-                            self->player->last_hurt_time = now;
-                            --self->player->health;
-                        }
-
-                        self->player->angle_change = 0.f;
-                        break;
-                    }
-                }
-                else if (self->entities[i]->type == ENTITY_AMMO)
-                {
-                    audio_play_sound("res/sfx/ammo.wav");
-                    self->player->bullets += 16;
-                    prog_remove_entity(self, self->entities[i]);
-                    break;
-                }
-                else if (self->entities[i]->type == ENTITY_NUTS)
-                {
-                    audio_play_sound("res/sfx/nuts.wav");
-                    ++self->nuts_collected;
-                    prog_remove_entity(self, self->entities[i]);
-                    break;
-                }
-            }
-        }
+        prog_handle_entity_interaction(self);
 
         if (!self->game_over)
         {
@@ -187,75 +127,148 @@ void prog_mainloop(struct Prog* self)
 
         SDL_RenderClear(self->rend);
 
-        render_3d_all(self);
-        player_render_weapon(self->player, self->rend);
-
-        common_display_statistic(self->rend, self->font, "Health: ", self->player->health, (SDL_Point){ 20, 20 });
-        common_display_statistic(self->rend, self->font, "Nuts collected: ", self->nuts_collected, (SDL_Point){ 20, 40 });
-
-        if (self->player->weapon == WEAPON_GUN)
-        {
-            common_display_statistic(self->rend, self->font, "Bullets loaded: ", self->player->bullets_loaded, (SDL_Point){ 20, 740 });
-            common_display_statistic(self->rend, self->font, "Unused bullets: ", self->player->bullets, (SDL_Point){ 20, 760 });
-        }
-
-        if (self->player->mode_data.mode == PLAYER_MODE_GRAPPLING)
-        {
-            SDL_Texture* tex = common_render_text(self->rend, self->font, "[Grappling hook]");
-            SDL_Rect tmp = { .x = 640, .y = 20 };
-            SDL_QueryTexture(tex, 0, 0, &tmp.w, &tmp.h);
-            SDL_RenderCopy(self->rend, tex, 0, &tmp);
-            SDL_DestroyTexture(tex);
-        }
-
-        SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
-        SDL_SetRenderDrawColor(self->rend, 255, 0, 0, 255);
-        SDL_RenderFillRect(self->rend, &crosshair);
-
-        if (self->player->health != 3)
-        {
-            struct timespec now;
-            clock_gettime(CLOCK_MONOTONIC, &now);
-
-            if (self->game_over || common_time_diff(self->player->last_hurt_time, now) < 1.f)
-            {
-                SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_BLEND);
-                SDL_SetRenderDrawColor(self->rend, 255, 0, 0, 150);
-                SDL_RenderFillRect(self->rend, 0);
-                SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_NONE);
-            }
-        }
-
-        if (self->game_over)
-        {
-            SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_BLEND);
-            SDL_SetRenderDrawColor(self->rend, 0, 0, 0, 200);
-            SDL_RenderFillRect(self->rend, 0);
-            SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_NONE);
-
-            if (self->win)
-            {
-                SDL_Texture* win_tex = common_render_text(self->rend, self->font, "All the nuts were successfully collected, press r to restart");
-                SDL_Rect tmp = { .x = 125, .y = 380 };
-                SDL_QueryTexture(win_tex, 0, 0, &tmp.w, &tmp.h);
-                SDL_RenderCopy(self->rend, win_tex, 0, &tmp);
-
-                SDL_DestroyTexture(win_tex);
-            }
-            else
-            {
-                SDL_Texture* game_over_tex = common_render_text(self->rend, self->font, "Game over, press r to restart");
-                SDL_Rect tmp = { .x = 275, .y = 380 };
-                SDL_QueryTexture(game_over_tex, 0, 0, &tmp.w, &tmp.h);
-                SDL_RenderCopy(self->rend, game_over_tex, 0, &tmp);
-
-                SDL_DestroyTexture(game_over_tex);
-            }
-        }
+        prog_render_all(self);
 
         SDL_SetRenderDrawColor(self->rend, 0, 0, 0, 255);
         SDL_RenderPresent(self->rend);
     }
+}
+
+
+void prog_handle_entity_interaction(struct Prog* self)
+{
+    for (int i = 0; i < self->entities_size; ++i)
+    {
+        if (self->entities[i]->enemy_dead)
+        {
+            struct timespec now;
+            clock_gettime(CLOCK_MONOTONIC, &now);
+
+            if (common_time_diff(self->entities[i]->enemy_death_time, now) >= 1.f)
+            {
+                prog_remove_entity(self, self->entities[i]);
+                --i;
+            }
+
+            continue;
+        }
+
+        if (!self->game_over && self->entities[i]->type == ENTITY_ENEMY)
+            entity_move_towards_player(self->entities[i], self->player, self->map);
+
+        SDL_FPoint diff = {
+            .x = self->player->rect.x - self->entities[i]->pos.x,
+            .y = self->player->rect.y - self->entities[i]->pos.y
+        };
+
+        float distance = sqrtf(diff.x * diff.x + diff.y * diff.y);
+
+        if (distance <= self->entities[i]->width / 2.f)
+        {
+            if (self->entities[i]->type == ENTITY_ENEMY)
+            {
+                if (!self->game_over)
+                {
+                    struct timespec now;
+                    clock_gettime(CLOCK_MONOTONIC, &now);
+
+                    if (common_time_diff(self->player->last_hurt_time, now) > 1.f)
+                    {
+                        self->player->last_hurt_time = now;
+                        --self->player->health;
+                    }
+
+                    self->player->angle_change = 0.f;
+                    break;
+                }
+            }
+            else if (self->entities[i]->type == ENTITY_AMMO)
+            {
+                audio_play_sound("res/sfx/ammo.wav");
+                self->player->bullets += 16;
+                prog_remove_entity(self, self->entities[i]);
+                break;
+            }
+            else if (self->entities[i]->type == ENTITY_NUTS)
+            {
+                audio_play_sound("res/sfx/nuts.wav");
+                ++self->nuts_collected;
+                prog_remove_entity(self, self->entities[i]);
+                break;
+            }
+        }
+    }
+}
+
+
+void prog_render_all(struct Prog* self)
+{
+    render_3d_all(self);
+    player_render_weapon(self->player, self->rend);
+
+    common_display_statistic(self->rend, self->font, "Health: ", self->player->health, (SDL_Point){ 20, 20 });
+    common_display_statistic(self->rend, self->font, "Nuts collected: ", self->nuts_collected, (SDL_Point){ 20, 40 });
+
+    if (self->player->weapon == WEAPON_GUN)
+    {
+        common_display_statistic(self->rend, self->font, "Bullets loaded: ", self->player->bullets_loaded, (SDL_Point){ 20, 740 });
+        common_display_statistic(self->rend, self->font, "Unused bullets: ", self->player->bullets, (SDL_Point){ 20, 760 });
+    }
+
+    if (self->player->mode_data.mode == PLAYER_MODE_GRAPPLING)
+    {
+        SDL_Texture* tex = common_render_text(self->rend, self->font, "[Grappling hook]");
+        SDL_Rect tmp = { .x = 640, .y = 20 };
+        SDL_QueryTexture(tex, 0, 0, &tmp.w, &tmp.h);
+        SDL_RenderCopy(self->rend, tex, 0, &tmp);
+        SDL_DestroyTexture(tex);
+    }
+
+    SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
+    SDL_SetRenderDrawColor(self->rend, 255, 0, 0, 255);
+    SDL_RenderFillRect(self->rend, &crosshair);
+
+    if (self->player->health != 3)
+    {
+        struct timespec now;
+        clock_gettime(CLOCK_MONOTONIC, &now);
+
+        if ((self->game_over && !self->win) || common_time_diff(self->player->last_hurt_time, now) < 1.f)
+        {
+            SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_BLEND);
+            SDL_SetRenderDrawColor(self->rend, 255, 0, 0, 150);
+            SDL_RenderFillRect(self->rend, 0);
+            SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_NONE);
+        }
+    }
+
+    if (self->game_over)
+    {
+        SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(self->rend, 0, 0, 0, 200);
+        SDL_RenderFillRect(self->rend, 0);
+        SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_NONE);
+
+        if (self->win)
+        {
+            SDL_Texture* win_tex = common_render_text(self->rend, self->font, "All the nuts were successfully collected, press r to restart");
+            SDL_Rect tmp = { .x = 125, .y = 380 };
+            SDL_QueryTexture(win_tex, 0, 0, &tmp.w, &tmp.h);
+            SDL_RenderCopy(self->rend, win_tex, 0, &tmp);
+
+            SDL_DestroyTexture(win_tex);
+        }
+        else
+        {
+            SDL_Texture* game_over_tex = common_render_text(self->rend, self->font, "Game over, press r to restart");
+            SDL_Rect tmp = { .x = 275, .y = 380 };
+            SDL_QueryTexture(game_over_tex, 0, 0, &tmp.w, &tmp.h);
+            SDL_RenderCopy(self->rend, game_over_tex, 0, &tmp);
+
+            SDL_DestroyTexture(game_over_tex);
+        }
+    }
+
 }
 
 

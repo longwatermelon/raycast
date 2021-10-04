@@ -40,6 +40,8 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend);
 void prog_cleanup(struct Prog* self);
 
 void prog_mainloop(struct Prog* self);
+void prog_handle_entity_interaction(struct Prog* self);
+void prog_render_all(struct Prog* self);
 
 void prog_render_map(struct Prog* self);
 

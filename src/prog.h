@@ -30,6 +30,9 @@ struct Prog
     SDL_Texture* shot_texture;
 
     bool restart;
+    bool win;
+
+    int nuts_collected;
 };
 
 struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend);

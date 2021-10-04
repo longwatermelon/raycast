@@ -12,7 +12,8 @@ struct Entity
     enum
     {
         ENTITY_ENEMY,
-        ENTITY_AMMO
+        ENTITY_AMMO,
+        ENTITY_NUTS
     } type;
 
     SDL_FPoint pos;

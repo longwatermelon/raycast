@@ -34,6 +34,9 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
     self->shot_texture = IMG_LoadTexture(self->rend, "res/gfx/gun_shoot.png");
 
     self->restart = false;
+    self->win = false;
+
+    self->nuts_collected = 0;
 
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -112,6 +115,12 @@ void prog_mainloop(struct Prog* self)
                     prog_remove_entity(self, self->entities[i]);
                     break;
                 }
+                else if (self->entities[i]->type == ENTITY_NUTS)
+                {
+                    ++self->nuts_collected;
+                    prog_remove_entity(self, self->entities[i]);
+                    break;
+                }
             }
         }
 
@@ -135,7 +144,29 @@ void prog_mainloop(struct Prog* self)
 
                 if (rand() % 2000 > 1990)
                     prog_spawn_entity(self, ENTITY_AMMO, "res/gfx/ammo.png");
+
+                if (rand() % 2000 > 1950)
+                {
+                    bool nuts_exist = false;
+
+                    for (int i = 0; i < self->entities_size; ++i)
+                    {
+                        if (self->entities[i]->type == ENTITY_NUTS)
+                        {
+                            nuts_exist = true;
+                        }
+                    }
+
+                    if (!nuts_exist)
+                        prog_spawn_entity(self, ENTITY_NUTS, "res/gfx/deez.png");
+                }
             }
+        }
+
+        if (self->nuts_collected >= 1)
+        {
+            self->win = true;
+            self->player->alive = false;
         }
 
         player_execute_mode(self->player);
@@ -146,12 +177,13 @@ void prog_mainloop(struct Prog* self)
         render_3d_all(self);
         player_render_weapon(self->player, self->rend);
 
-        common_display_statistic(self->rend, self->font, "Enemies killed: ", self->player->enemies_killed, (SDL_Point){ 20, 20 });
+        common_display_statistic(self->rend, self->font, "Enemies killed: ", self->player->enemies_killed, (SDL_Point){ 20, 40 });
+        common_display_statistic(self->rend, self->font, "Nuts collected: ", self->nuts_collected, (SDL_Point){ 20, 20 });
 
         if (self->player->weapon == WEAPON_GUN)
         {
-            common_display_statistic(self->rend, self->font, "Bullets loaded: ", self->player->bullets_loaded, (SDL_Point){ 20, 40 });
-            common_display_statistic(self->rend, self->font, "Unused bullets: ", self->player->bullets, (SDL_Point){ 20, 60 });
+            common_display_statistic(self->rend, self->font, "Bullets loaded: ", self->player->bullets_loaded, (SDL_Point){ 20, 740 });
+            common_display_statistic(self->rend, self->font, "Unused bullets: ", self->player->bullets, (SDL_Point){ 20, 760 });
         }
 
         if (self->player->mode_data.mode == PLAYER_MODE_GRAPPLING)
@@ -174,12 +206,24 @@ void prog_mainloop(struct Prog* self)
             SDL_RenderFillRect(self->rend, 0);
             SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_NONE);
 
-            SDL_Texture* game_over_tex = common_render_text(self->rend, self->font, "Game over, press r to restart");
-            SDL_Rect tmp = { .x = 300, .y = 380 };
-            SDL_QueryTexture(game_over_tex, 0, 0, &tmp.w, &tmp.h);
-            SDL_RenderCopy(self->rend, game_over_tex, 0, &tmp);
+            if (self->win)
+            {
+                SDL_Texture* win_tex = common_render_text(self->rend, self->font, "All the nuts were successfully collected, press r to restart");
+                SDL_Rect tmp = { .x = 125, .y = 380 };
+                SDL_QueryTexture(win_tex, 0, 0, &tmp.w, &tmp.h);
+                SDL_RenderCopy(self->rend, win_tex, 0, &tmp);
 
-            SDL_DestroyTexture(game_over_tex);
+                SDL_DestroyTexture(win_tex);
+            }
+            else
+            {
+                SDL_Texture* game_over_tex = common_render_text(self->rend, self->font, "Game over, press r to restart");
+                SDL_Rect tmp = { .x = 275, .y = 380 };
+                SDL_QueryTexture(game_over_tex, 0, 0, &tmp.w, &tmp.h);
+                SDL_RenderCopy(self->rend, game_over_tex, 0, &tmp);
+
+                SDL_DestroyTexture(game_over_tex);
+            }
         }
 
         SDL_SetRenderDrawColor(self->rend, 0, 0, 0, 255);

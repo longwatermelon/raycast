@@ -138,15 +138,11 @@ void prog_mainloop(struct Prog* self)
                 }
             }
 
-            if (self->entities_size < 15)
-            {
-                if (rand() % 2000 > 1930)
-                    prog_spawn_entity(self, ENTITY_ENEMY, "res/gfx/shrek.png");
+            if (rand() % 2000 > 1930 && prog_entity_count(self, ENTITY_ENEMY) < 12)
+                prog_spawn_entity(self, ENTITY_ENEMY, "res/gfx/shrek.png");
 
-                if (rand() % 2000 > 1990)
-                    prog_spawn_entity(self, ENTITY_AMMO, "res/gfx/ammo.png");
-
-            }
+            if (rand() % 2000 > 1990 && prog_entity_count(self, ENTITY_AMMO) < 3)
+                prog_spawn_entity(self, ENTITY_AMMO, "res/gfx/ammo.png");
 
             // Spawning nuts
             bool nuts_exist = false;
@@ -299,5 +295,19 @@ void prog_spawn_entity(struct Prog* self, int type, const char* sprite_path)
     }
 
     prog_add_entity(self, e);
+}
+
+
+int prog_entity_count(struct Prog* self, int type)
+{
+    int count = 0;
+
+    for (int i = 0; i < self->entities_size; ++i)
+    {
+        if (self->entities[i]->type == type)
+            ++count;
+    }
+
+    return count;
 }
 

@@ -47,5 +47,7 @@ void prog_remove_entity(struct Prog* self, struct Entity* entity);
 
 void prog_spawn_entity(struct Prog* self, int type, const char* sprite_path);
 
+int prog_entity_count(struct Prog* self, int type);
+
 #endif
 

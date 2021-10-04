@@ -117,6 +117,7 @@ void prog_mainloop(struct Prog* self)
                 }
                 else if (self->entities[i]->type == ENTITY_NUTS)
                 {
+                    audio_play_sound("res/sfx/nuts.wav");
                     ++self->nuts_collected;
                     prog_remove_entity(self, self->entities[i]);
                     break;
@@ -145,25 +146,24 @@ void prog_mainloop(struct Prog* self)
                 if (rand() % 2000 > 1990)
                     prog_spawn_entity(self, ENTITY_AMMO, "res/gfx/ammo.png");
 
-                if (rand() % 2000 > 1950)
+            }
+
+            // Spawning nuts
+            bool nuts_exist = false;
+
+            for (int i = 0; i < self->entities_size; ++i)
+            {
+                if (self->entities[i]->type == ENTITY_NUTS)
                 {
-                    bool nuts_exist = false;
-
-                    for (int i = 0; i < self->entities_size; ++i)
-                    {
-                        if (self->entities[i]->type == ENTITY_NUTS)
-                        {
-                            nuts_exist = true;
-                        }
-                    }
-
-                    if (!nuts_exist)
-                        prog_spawn_entity(self, ENTITY_NUTS, "res/gfx/deez.png");
+                    nuts_exist = true;
                 }
             }
+
+            if (!nuts_exist)
+                prog_spawn_entity(self, ENTITY_NUTS, "res/gfx/deez.png");
         }
 
-        if (self->nuts_collected >= 1)
+        if (self->nuts_collected >= 7)
         {
             self->win = true;
             self->player->alive = false;

@@ -36,7 +36,7 @@ void events_no_delay(struct Prog* p)
 
     const Uint8* keystates = SDL_GetKeyboardState(0);
 
-    if (p->player->alive)
+    if (!p->game_over)
     {
         if (p->player->mode_data.mode == PLAYER_MODE_NORMAL)
         {
@@ -64,13 +64,13 @@ void events_no_delay(struct Prog* p)
 
 void events_keydown(struct Prog* p, SDL_Event* evt)
 {
-    if (p->player->alive)
+    if (!p->game_over)
     {
         switch (evt->key.keysym.sym)
         {
         case SDLK_SPACE:
         {
-            if (!p->player->alive)
+            if (p->game_over)
                 break;
 
             struct Entity* hit = player_attack(p->player, p->entities, p->entities_size, p->map);
@@ -109,7 +109,7 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         SDL_SetRelativeMouseMode(SDL_FALSE);
         break;
     case SDLK_2:
-        if (p->player->alive && p->player->weapon != WEAPON_GUN)
+        if (!p->game_over && p->player->weapon != WEAPON_GUN)
         {
             p->player->swinging = false;
             p->player->animation.knife_outstretched = false;
@@ -122,7 +122,7 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         }
         break;
     case SDLK_1:
-        if (p->player->alive && !p->player->reloading && p->player->weapon != WEAPON_KNIFE)
+        if (!p->game_over && !p->player->reloading && p->player->weapon != WEAPON_KNIFE)
         {
             p->player->animation.switching_weapon = WEAPON_KNIFE;
             audio_play_sound("res/sfx/knife_equip.wav");
@@ -146,7 +146,7 @@ void events_mouse_down(struct Prog* p, SDL_Event* evt)
 
 void events_mouse_down_left(struct Prog* p, SDL_Event* evt)
 {
-    if (!p->player->alive)
+    if (p->game_over)
         return;
 
     struct Entity* hit = player_attack(p->player, p->entities, p->entities_size, p->map);
@@ -162,7 +162,7 @@ void events_mouse_down_left(struct Prog* p, SDL_Event* evt)
 
 void events_mouse_down_right(struct Prog* p, SDL_Event* evt)
 {
-    if (!p->player->alive || p->player->mode_data.mode != PLAYER_MODE_NORMAL)
+    if (p->game_over || p->player->mode_data.mode != PLAYER_MODE_NORMAL)
         return;
 
     int collision_type;

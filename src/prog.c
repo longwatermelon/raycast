@@ -33,6 +33,7 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
     self->gun_texture = IMG_LoadTexture(self->rend, "res/gfx/gun.png");
     self->shot_texture = IMG_LoadTexture(self->rend, "res/gfx/gun_shoot.png");
 
+    self->game_over = false;
     self->restart = false;
     self->win = false;
 
@@ -90,7 +91,7 @@ void prog_mainloop(struct Prog* self)
                 continue;
             }
 
-            if (self->player->alive && self->entities[i]->type == ENTITY_ENEMY)
+            if (!self->game_over && self->entities[i]->type == ENTITY_ENEMY)
                 entity_move_towards_player(self->entities[i], self->player, self->map);
 
             SDL_FPoint diff = {
@@ -104,9 +105,20 @@ void prog_mainloop(struct Prog* self)
             {
                 if (self->entities[i]->type == ENTITY_ENEMY)
                 {
-                    self->player->alive = false;
-                    self->player->angle_change = 0.f;
-                    break;
+                    if (!self->game_over)
+                    {
+                        struct timespec now;
+                        clock_gettime(CLOCK_MONOTONIC, &now);
+
+                        if (common_time_diff(self->player->last_hurt_time, now) > 1.f)
+                        {
+                            self->player->last_hurt_time = now;
+                            --self->player->health;
+                        }
+
+                        self->player->angle_change = 0.f;
+                        break;
+                    }
                 }
                 else if (self->entities[i]->type == ENTITY_AMMO)
                 {
@@ -125,7 +137,7 @@ void prog_mainloop(struct Prog* self)
             }
         }
 
-        if (self->player->alive)
+        if (!self->game_over)
         {
             if (self->player->shooting)
             {
@@ -162,7 +174,12 @@ void prog_mainloop(struct Prog* self)
         if (self->nuts_collected >= 5)
         {
             self->win = true;
-            self->player->alive = false;
+            self->game_over = true;
+        }
+
+        if (self->player->health <= 0)
+        {
+            self->game_over = true;
         }
 
         player_execute_mode(self->player);
@@ -173,8 +190,8 @@ void prog_mainloop(struct Prog* self)
         render_3d_all(self);
         player_render_weapon(self->player, self->rend);
 
-        common_display_statistic(self->rend, self->font, "Enemies killed: ", self->player->enemies_killed, (SDL_Point){ 20, 40 });
-        common_display_statistic(self->rend, self->font, "Nuts collected: ", self->nuts_collected, (SDL_Point){ 20, 20 });
+        common_display_statistic(self->rend, self->font, "Health: ", self->player->health, (SDL_Point){ 20, 20 });
+        common_display_statistic(self->rend, self->font, "Nuts collected: ", self->nuts_collected, (SDL_Point){ 20, 40 });
 
         if (self->player->weapon == WEAPON_GUN)
         {
@@ -195,7 +212,21 @@ void prog_mainloop(struct Prog* self)
         SDL_SetRenderDrawColor(self->rend, 255, 0, 0, 255);
         SDL_RenderFillRect(self->rend, &crosshair);
 
-        if (!self->player->alive)
+        if (self->player->health != 3)
+        {
+            struct timespec now;
+            clock_gettime(CLOCK_MONOTONIC, &now);
+
+            if (self->game_over || common_time_diff(self->player->last_hurt_time, now) < 1.f)
+            {
+                SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_BLEND);
+                SDL_SetRenderDrawColor(self->rend, 255, 0, 0, 150);
+                SDL_RenderFillRect(self->rend, 0);
+                SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_NONE);
+            }
+        }
+
+        if (self->game_over)
         {
             SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_BLEND);
             SDL_SetRenderDrawColor(self->rend, 0, 0, 0, 200);

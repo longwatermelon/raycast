@@ -53,7 +53,8 @@ struct Player
         RAY_ALL
     } ray_mode;
 
-    bool alive;
+    int health;
+    struct timespec last_hurt_time;
 
     // Gun properties
     bool shooting;

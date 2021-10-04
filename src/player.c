@@ -19,7 +19,8 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
 
     self->ray_mode = RAY_ALL;
 
-    self->alive = true;
+    self->health = 3;
+    clock_gettime(CLOCK_MONOTONIC, &self->last_hurt_time);
 
     self->shooting = false;
     clock_gettime(CLOCK_MONOTONIC, &self->last_shot_time);

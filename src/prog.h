@@ -29,6 +29,7 @@ struct Prog
     SDL_Texture* gun_texture;
     SDL_Texture* shot_texture;
 
+    bool game_over;
     bool restart;
     bool win;
 

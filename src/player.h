@@ -81,6 +81,8 @@ struct Player
     SDL_Texture* gun_texture;
     SDL_Texture* shot_texture;
     SDL_Texture* knife_texture;
+
+    bool detect_collisions;
 };
 
 struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend);

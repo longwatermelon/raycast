@@ -130,6 +130,36 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         }
         break;
     }
+
+#ifdef CHEATS_ON
+    switch (evt->key.keysym.sym)
+    {
+    case SDLK_c:
+        p->player->detect_collisions = !p->player->detect_collisions;
+
+        if (p->player->detect_collisions)
+            printf("Enabled collision detection\n");
+        else
+            printf("Disabled collision detection\n");
+        break;
+    case SDLK_h:
+        p->player->ray_mode = RAY_HORIZONTAL;
+        printf("Set wall rendering to only horizontal\n");
+        break;
+    case SDLK_v:
+        p->player->ray_mode = RAY_VERTICAL;
+        printf("Set wall rendering to only vertical\n");
+        break;
+    case SDLK_q:
+        p->player->ray_mode = RAY_ALL;
+        printf("Rendering walls normally\n");
+        break;
+    case SDLK_b:
+        p->player->bullets_loaded += 100;
+        printf("Added a few bullets\n");
+        break;
+    }
+#endif
 }
 
 

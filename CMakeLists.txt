@@ -37,3 +37,6 @@ target_link_libraries(raycast PRIVATE
 
 target_compile_options(raycast PRIVATE -ggdb)
 
+# Uncomment to enable cheats
+# target_compile_definitions(raycast PRIVATE -DCHEATS_ON)
+

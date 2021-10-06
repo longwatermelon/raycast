@@ -242,6 +242,16 @@ void prog_render_all(struct Prog* self)
         }
     }
 
+#ifdef CHEATS_ON
+    {
+        SDL_Texture* cheats_notif = common_render_text(self->rend, self->font, "[Cheats enabled]");
+        SDL_Rect tmp = { .x = 20, .y = 60 };
+        SDL_QueryTexture(cheats_notif, 0, 0, &tmp.w, &tmp.h);
+        SDL_RenderCopy(self->rend, cheats_notif, 0, &tmp);
+        SDL_DestroyTexture(cheats_notif);
+    }
+#endif
+
     if (self->game_over)
     {
         SDL_SetRenderDrawBlendMode(self->rend, SDL_BLENDMODE_BLEND);
@@ -268,7 +278,6 @@ void prog_render_all(struct Prog* self)
             SDL_DestroyTexture(game_over_tex);
         }
     }
-
 }
 
 

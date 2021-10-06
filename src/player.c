@@ -52,6 +52,8 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
 
     self->animation.switching_weapon = -1;
 
+    self->detect_collisions = true;
+
     return self;
 }
 
@@ -241,11 +243,19 @@ void player_move(struct Player* self, struct Map* map, float x, float y)
     };
 
     // Separate x and y collision checks so that player can still move in directions that aren't occupied by obstacles after colliding with something
-    if (map->layout[grid_pos.y * map->size.x + new_grid_pos.x] != '#')
-        self->rect.x += x;
+    if (self->detect_collisions)
+    {
+        if (map->layout[grid_pos.y * map->size.x + new_grid_pos.x] != '#')
+            self->rect.x += x;
 
-    if (map->layout[new_grid_pos.y * map->size.x + grid_pos.x] != '#')
+        if (map->layout[new_grid_pos.y * map->size.x + grid_pos.x] != '#')
+            self->rect.y += y;
+    }
+    else
+    {
+        self->rect.x += x;
         self->rect.y += y;
+    }
 
     self->angle += self->angle_change;
 

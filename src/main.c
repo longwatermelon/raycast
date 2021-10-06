@@ -45,5 +45,5 @@ int main(int argc, char** argv)
     TTF_Quit();
     Mix_Quit();
 
-	return 0;
+    return 0;
 }

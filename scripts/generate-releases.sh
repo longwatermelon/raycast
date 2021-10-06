@@ -2,16 +2,23 @@
 
 # Run from project root directory
 
-echo "If you haven't commited your latest changes, commit now."
-read -p 'Continue? [y/n] ' yn
+read -p 'All unstaged changes will be discarded, continue? [y/n] ' yn
 
-build_raycast() {
+make_tarball() {
     cmake --build build
     cd releases
     mkdir raycast
-    cp ../build/raycast raycast/
-    cp ../map raycast/
-    cp -r ../res/ raycast/
+    cd raycast
+
+    cp ../../build/raycast .
+    cp ../../map .
+    cp ../../scripts/controls.txt .
+    cp -r ../../res/ .
+
+    cd ..
+    tar czf $1 raycast
+    rm -rf raycast
+    cd ..
 }
 
 if [ "$yn" = "y" ]
@@ -19,20 +26,10 @@ then
     echo 'Continuing.'
 
     mkdir releases
-
-    build_raycast
-    tar czf raycast.tar.gz raycast
-    rm -rf raycast
-    cd ..
+    make_tarball raycast.tar.gz
 
     echo "target_compile_options(raycast PRIVATE -DCHEATS_ON)" >> CMakeLists.txt
-    cmake --build build
-
-    build_raycast
-    cp ../scripts/controls.txt raycast/
-    tar czf raycast-cheats.tar.gz raycast
-    rm -rf raycast
-    cd ..
+    make_tarball raycast-cheats.tar.gz
 
     git restore .
 else

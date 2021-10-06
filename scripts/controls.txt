@@ -1,4 +1,14 @@
-Cheat controls
+Controls
+
+- WASD: movement
+- Mouse motion: rotation
+- Left mouse button / space: attack
+- Right mouse button: grappling hook
+- R: reload
+- 1: equip knife
+- 2: equip gun
+
+Cheat controls (if applicable)
 
 - c: toggle collision detection
 - h: view only horizontal walls

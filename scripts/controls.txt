@@ -1,0 +1,11 @@
+Cheat controls
+
+- c: toggle collision detection
+- h: view only horizontal walls
+- v: view only vertical walls
+- q: view walls normally
+- b: add more loaded bullets to gun
+- e: xray for entities
+- p: add health
+- x: let bullets pass through walls
+

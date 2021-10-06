@@ -53,6 +53,7 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
     self->animation.switching_weapon = -1;
 
     self->detect_collisions = true;
+    self->ignore_walls_when_shooting = false;
 
     return self;
 }
@@ -528,14 +529,20 @@ struct Entity* player_shoot(struct Player* self, struct Entity** entities, size_
     struct Entity* entity = 0;
     int entity_dist = player_cast_ray_entity(self, self->angle, entities, entities_size, 0, 0, ENTITY_ENEMY, &intersection, &entity);
 
-    int collision_type;
-    SDL_Point wall_vector = player_cast_ray(self, self->angle, map, entities, entities_size, &collision_type);
-    SDL_Point diff = { .x = wall_vector.x - self->rect.x, .y = wall_vector.y - self->rect.y };
-    int wall_dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
-
-    if (entity_dist != -1 && entity_dist < wall_dist)
+    if (self->ignore_walls_when_shooting)
     {
-        return entity;
+        if (entity_dist != -1)
+            return entity;
+    }
+    else
+    {
+        int collision_type;
+        SDL_Point wall_vector = player_cast_ray(self, self->angle, map, entities, entities_size, &collision_type);
+        SDL_Point diff = { .x = wall_vector.x - self->rect.x, .y = wall_vector.y - self->rect.y };
+        int wall_dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
+
+        if (entity_dist != -1 && entity_dist < wall_dist)
+            return entity;
     }
 
     return 0;

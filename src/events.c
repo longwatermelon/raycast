@@ -170,6 +170,14 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         ++p->player->health;
         printf("Added some health\n");
         break;
+    case SDLK_x:
+        p->player->ignore_walls_when_shooting = !p->player->ignore_walls_when_shooting;
+
+        if (p->player->ignore_walls_when_shooting)
+            printf("Bullets can now pass through walls\n");
+        else
+            printf("Bullets can no longer pass through walls\n");
+        break;
     }
 #endif
 }

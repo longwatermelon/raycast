@@ -1,7 +1,7 @@
 Controls
 
 - WASD: movement
-- Mouse motion: rotation
+- Mouse motion / arrow keys: rotation
 - Left mouse button / space: attack
 - Right mouse button: grappling hook
 - R: reload

@@ -39,6 +39,8 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 
     self->nuts_collected = 0;
 
+    self->render_entities_over_walls = false;
+
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
     return self;

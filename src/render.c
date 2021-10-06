@@ -62,7 +62,7 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
 
     for (int j = 0; j < p->entities_size; ++j)
     {
-        float intersection;
+        float intersection = 0.f;
         struct Entity* entity_hit = 0;
         int ray_length_entity = player_cast_ray_entity(p->player, angle, p->entities, p->entities_size, rendered_entities, rendered_entities_size, -1, &intersection, &entity_hit);
 
@@ -107,7 +107,7 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
     // Render entities
     for (int j = 0; j < entity_ray_lengths_size; ++j)
     {
-        if (entity_ray_lengths[j] < ray_length_wall && entity_ray_lengths[j] != -1)
+        if ((p->render_entities_over_walls && rendered_entities[j]) || (entity_ray_lengths[j] < ray_length_wall && entity_ray_lengths[j] != -1))
         {
             src.x = (intersections[j] / rendered_entities[j]->width) * rendered_entities[j]->sprite_size.x;
             src.h = rendered_entities[j]->sprite_size.y;
@@ -121,6 +121,30 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
             dst.h = line_height;
 
             SDL_RenderCopy(p->rend, rendered_entities[j]->sprite, &src, &dst);
+
+            if (p->render_entities_over_walls && (!(entity_ray_lengths[j] < ray_length_wall) || !(entity_ray_lengths[j] != -1)))
+            {
+                SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
+
+                SDL_Color color;
+
+                switch (rendered_entities[j]->type)
+                {
+                case ENTITY_NUTS:
+                    color = (SDL_Color){ .r = 0, .g = 255, .b = 0 };
+                    break;
+                case ENTITY_ENEMY:
+                    color = (SDL_Color){ .r = 0, .g = 0, .b = 0 };
+                    break;
+                case ENTITY_AMMO:
+                    color = (SDL_Color){ .r = 255, .g = 0, .b = 255 };
+                    break;
+                }
+
+                SDL_SetRenderDrawColor(p->rend, color.r, color.g, color.b, 160);
+                SDL_RenderFillRect(p->rend, &dst);
+                SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_NONE);
+            }
         }
     }
 

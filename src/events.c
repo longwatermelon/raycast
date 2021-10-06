@@ -158,6 +158,18 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         p->player->bullets_loaded += 100;
         printf("Added a few bullets\n");
         break;
+    case SDLK_e:
+        p->render_entities_over_walls = !p->render_entities_over_walls;
+
+        if (p->render_entities_over_walls)
+            printf("Rendering entities over walls\n");
+        else
+            printf("Rendering entities normally\n");
+        break;
+    case SDLK_p:
+        ++p->player->health;
+        printf("Added some health\n");
+        break;
     }
 #endif
 }

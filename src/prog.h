@@ -34,6 +34,8 @@ struct Prog
     bool win;
 
     int nuts_collected;
+
+    bool render_entities_over_walls;
 };
 
 struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend);

@@ -27,7 +27,11 @@ int render_3d_wall(struct Prog* p, float angle, int col)
     float angle_diff = common_restrict_angle(p->player->angle - angle);
 
     // Adjust for fisheye effect
-    float dist = ray_length_wall * cosf(angle_diff);
+    float dist = ray_length_wall;
+
+    if (p->adjust_fisheye)
+        dist = ray_length_wall * cosf(angle_diff);
+
     float line_height = (p->map->tile_size * 800.f) / dist;
 
     float line_offset = 400.f - line_height / 2.f;
@@ -112,7 +116,11 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
             src.x = (intersections[j] / rendered_entities[j]->width) * rendered_entities[j]->sprite_size.x;
             src.h = rendered_entities[j]->sprite_size.y;
 
-            float dist = entity_ray_lengths[j] * cosf(angle_diff);
+            float dist = entity_ray_lengths[j];
+
+            if (p->adjust_fisheye)
+                dist = entity_ray_lengths[j] * cosf(angle_diff);
+
             float line_height = (25.f * 800.f) / dist;
 
             float line_offset = 400.f;

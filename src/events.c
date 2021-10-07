@@ -178,6 +178,14 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
         else
             printf("Bullets can no longer pass through walls\n");
         break;
+    case SDLK_f:
+        p->adjust_fisheye = !p->adjust_fisheye;
+
+        if (p->adjust_fisheye)
+            printf("Adjusting for fisheye effect\n");
+        else
+            printf("Not adjusting for fisheye effect\n");
+        break;
     }
 #endif
 }

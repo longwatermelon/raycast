@@ -18,4 +18,5 @@ Cheat controls (if applicable)
 - e: xray for entities
 - p: add health
 - x: let bullets pass through walls
+- f: toggle fisheye effect
 

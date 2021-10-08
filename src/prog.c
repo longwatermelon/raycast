@@ -290,7 +290,7 @@ void prog_render_map(struct Prog* self)
 
     for (int i = 0; i < strlen(self->map->layout); ++i)
     {
-        if (self->map->layout[i] == '#')
+        if (self->map->layout[i] != '.')
         {
             SDL_Rect rect = {
                 .x = (i % self->map->size.x) * self->map->tile_size,

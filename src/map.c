@@ -33,7 +33,7 @@ SDL_FPoint map_get_random_empty_spot(struct Map* self)
         .y = (pos.y - ((int)pos.y % self->tile_size)) / self->tile_size
     };
 
-    while (self->layout[grid_pos.y * self->size.x + grid_pos.x] == '#')
+    while (self->layout[grid_pos.y * self->size.x + grid_pos.x] != '.')
     {
         pos.x = rand() % (self->size.x * self->tile_size);
         pos.y = rand() % (self->size.y * self->tile_size);

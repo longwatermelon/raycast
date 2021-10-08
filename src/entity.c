@@ -57,10 +57,10 @@ void entity_move(struct Entity* self, struct Map* map, float x, float y)
         (int)((self->pos.y + y + yo) - ((int)(self->pos.y + y + yo) % map->tile_size)) / map->tile_size
     };
 
-    if (map->layout[grid_pos.y * map->size.x + new_grid_pos.x] != '#')
+    if (map->layout[grid_pos.y * map->size.x + new_grid_pos.x] == '.')
         self->pos.x += x;
 
-    if (map->layout[new_grid_pos.y * map->size.x + grid_pos.x] != '#')
+    if (map->layout[new_grid_pos.y * map->size.x + grid_pos.x] == '.')
         self->pos.y += y;
 }
 

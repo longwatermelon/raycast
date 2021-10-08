@@ -245,10 +245,10 @@ void player_move(struct Player* self, struct Map* map, float x, float y)
     // Separate x and y collision checks so that player can still move in directions that aren't occupied by obstacles after colliding with something
     if (self->detect_collisions)
     {
-        if (map->layout[grid_pos.y * map->size.x + new_grid_pos.x] != '#')
+        if (map->layout[grid_pos.y * map->size.x + new_grid_pos.x] == '.')
             self->rect.x += x;
 
-        if (map->layout[new_grid_pos.y * map->size.x + grid_pos.x] != '#')
+        if (map->layout[new_grid_pos.y * map->size.x + grid_pos.x] == '.')
             self->rect.y += y;
     }
     else
@@ -395,7 +395,7 @@ SDL_Point player_cast_ray_horizontal(struct Player* self, float angle, struct Ma
         if (grid_pos.y < 0 || grid_pos.y >= map->size.y || grid_pos.x < 0 || grid_pos.x >= map->size.x)
             return (SDL_Point){ .x = (int)closest_horizontal.x, .y = (int)closest_horizontal.y };
 
-        if (map->layout[grid_pos.y * map->size.x + grid_pos.x] == '#')
+        if (map->layout[grid_pos.y * map->size.x + grid_pos.x] != '.')
             return (SDL_Point){ .x = (int)closest_horizontal.x, .y = (int)closest_horizontal.y };
 
         float dy = (angle < M_PI ? -map->tile_size : map->tile_size);
@@ -434,7 +434,7 @@ SDL_Point player_cast_ray_vertical(struct Player* self, float angle, struct Map*
         if (grid_pos.y < 0 || grid_pos.y >= map->size.y || grid_pos.x < 0 || grid_pos.x >= map->size.x)
             return (SDL_Point){ .x = (int)closest_vertical.x, .y = (int)closest_vertical.y };
 
-        if (map->layout[grid_pos.y * map->size.x + grid_pos.x] == '#')
+        if (map->layout[grid_pos.y * map->size.x + grid_pos.x] != '.')
             return (SDL_Point){ .x = (int)closest_vertical.x, .y = (int)closest_vertical.y };
 
         float dx = (angle < M_PI / 2.f || angle > 3 * M_PI / 2.f ? map->tile_size : -map->tile_size);

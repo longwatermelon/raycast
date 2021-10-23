@@ -40,3 +40,6 @@ target_compile_options(raycast PRIVATE -ggdb)
 # Uncomment to enable cheats
 # target_compile_definitions(raycast PRIVATE -DCHEATS_ON)
 
+# Uncomment to randomize map generation
+# target_compile_options(raycast PRIVATE -DRANDOMIZE_MAP)
+

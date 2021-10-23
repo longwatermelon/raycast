@@ -10,6 +10,18 @@ struct Map* map_init(const char* path, SDL_Point size, int tile_size)
     self->size = size;
     self->tile_size = tile_size;
 
+#ifdef RANDOMIZE_MAP
+    for (int i = 0; i < strlen(self->layout); ++i)
+    {
+        self->layout[i] = (rand() % 10 > 2 ? '.' : '#');
+
+        // Set map boundaries to all solid
+        if (i <= self->size.x || i >= self->size.x * self->size.y - self->size.x ||
+            i % self->size.x == 0 || i % self->size.x == self->size.x - 1)
+            self->layout[i] = '#';
+    }
+#endif
+
     return self;
 }
 

@@ -1,7 +1,7 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 struct Map
 {

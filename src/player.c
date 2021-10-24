@@ -5,7 +5,7 @@
 #include <math.h>
 #include <time.h>
 #include <stdbool.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 
 
 struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)

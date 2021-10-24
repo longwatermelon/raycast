@@ -6,7 +6,7 @@
 #include "render.h"
 #include "audio.h"
 #include <time.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 
 
 struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)

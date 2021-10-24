@@ -4,7 +4,7 @@
 #include "map.h"
 #include "entity.h"
 #include <stdbool.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 struct Prog;
 

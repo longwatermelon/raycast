@@ -1,7 +1,7 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-#include <SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 
 void audio_init();
 void audio_cleanup();

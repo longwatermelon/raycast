@@ -2,7 +2,7 @@
 #include "player.h"
 #include "common.h"
 #include <time.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 
 
 struct Entity* entity_init(int type, SDL_FPoint pos, SDL_Renderer* rend, const char* sprite_path)

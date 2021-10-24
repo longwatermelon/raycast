@@ -1,7 +1,7 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 struct Prog;
 
 void render_3d_all(struct Prog* p);

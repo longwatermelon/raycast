@@ -2,7 +2,7 @@ SRC=$(wildcard src/*.c)
 OBJS=$(addprefix obj/, $(SRC:.c=.o))
 
 CC=gcc
-CFLAGS=-std=gnu17 -ggdb\
+CFLAGS=-std=gnu17 -ggdb -O3
 	   # Uncomment for cheats
 	   # -DCHEATS_ON\
 	   # Uncomment to randomize map
@@ -21,4 +21,5 @@ obj/src/%.o: src/%.c src/%.h
 
 clean:
 	rm -rf obj/*
+	rm raycast
 

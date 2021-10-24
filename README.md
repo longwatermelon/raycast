@@ -22,15 +22,9 @@ The gun requires accuracy (red dot is crosshair) but the knife does not.
 
 # Building
 
-You need [vcpkg](https://github.com/microsoft/vcpkg) to build this project.
-
 ```
 git clone https://github.com/longwatermelon/raycast
 cd raycast
-mkdir build
-cd build
-cmake .. -DCMAKE_TOOLCHAIN_FILE=[path to vcpkg]/scripts/buildsystems/vcpkg.cmake
 make
-cd .. && build/raycast
+./raycast
 ```
-

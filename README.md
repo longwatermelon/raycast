@@ -1,7 +1,7 @@
 # raycast
 Raycasting in C
 
-Only supported on linux, maybe mac but I haven't tested, definitely not on windows.
+Supported on linux and mac, not on windows.
 
 Press esc to release mouse from the window and click to recapture the mouse.
 

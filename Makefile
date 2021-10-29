@@ -2,11 +2,7 @@ SRC=$(wildcard src/*.c)
 OBJS=$(addprefix obj/, $(SRC:.c=.o))
 
 CC=gcc
-CFLAGS=-std=gnu17 -ggdb -O3
-	   # Uncomment for cheats
-	   # -DCHEATS_ON\
-	   # Uncomment to randomize map
-	   # -DRANDOMIZE_MAP
+CFLAGS=-std=gnu17 -ggdb -O3 -Wall -Werror -static-libgcc
 LIBS=-lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 all:

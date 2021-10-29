@@ -134,7 +134,7 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
             {
                 SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
 
-                SDL_Color color;
+                SDL_Color color = { .r = 0, .g = 0, .b = 0 };
 
                 switch (rendered_entities[j]->type)
                 {

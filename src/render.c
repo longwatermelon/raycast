@@ -1,6 +1,7 @@
 #include "render.h"
 #include "prog.h"
 #include "common.h"
+#include <SDL2/SDL_blendmode.h>
 
 
 void render_3d_all(struct Prog* p)
@@ -46,6 +47,12 @@ int render_3d_wall(struct Prog* p, float angle, int col)
 
     SDL_Rect dst = (SDL_Rect){ .x = col, .y = (int)line_offset, .w = 1, .h = (int)line_height };
     SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
+
+    int opacity = (collision_type == COLLISION_HORIZONTAL ? 35 : 0);
+    SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(p->rend, 0, 0, 0, opacity);
+    SDL_RenderFillRect(p->rend, &dst);
+    SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_NONE);
 
     return ray_length_wall;
 }

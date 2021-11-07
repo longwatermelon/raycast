@@ -7,6 +7,17 @@ Press esc to release mouse from the window and click to recapture the mouse.
 
 The objective of the game is to collect 5 nuts, if you touch shrek your health decreases. When your health drops to 0, the game ends.
 
+# Dependencies
+
+* SDL2
+* SDL2_image
+* SDL2_ttf
+* SDL2_mixer
+
+Debian based: `sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev`
+
+Arch based: `sudo pacman -S sdl2 sdl2-image sdl2-ttf sdl2-mixer`
+
 # Controls
 * WASD: movement
 * Mouse movement / left & right arrow keys: rotate

@@ -18,6 +18,8 @@ Debian based: `sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev li
 
 Arch based: `sudo pacman -S sdl2 sdl2-image sdl2-ttf sdl2-mixer`
 
+Brew: `brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer`
+
 # Controls
 * WASD: movement
 * Mouse movement / left & right arrow keys: rotate

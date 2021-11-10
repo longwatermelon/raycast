@@ -16,6 +16,6 @@ obj/src/%.o: src/%.c src/%.h
 	$(CC) $(CFLAGS) $(LIBS) -c $< -o $@
 
 clean:
-	rm -rf obj/*
+	rm -rf obj
 	rm raycast
 

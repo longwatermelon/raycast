@@ -24,6 +24,13 @@ int main(int argc, char** argv)
     while (true)
     {
         struct Prog* p = prog_init(window, rend);
+
+        if (!p)
+        {
+            fprintf(stderr, "Game failed to initialize, aborting\n");
+            goto cleanup;
+        }
+
         prog_mainloop(p);
 
         if (!p->restart)
@@ -35,6 +42,7 @@ int main(int argc, char** argv)
         prog_cleanup(p);
     }
 
+cleanup:
     audio_cleanup();
 
     SDL_DestroyRenderer(rend);

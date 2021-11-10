@@ -7,6 +7,13 @@ struct Map* map_init(const char* path, SDL_Point size, int tile_size)
     struct Map* self = malloc(sizeof(struct Map));
 
     self->layout = common_read_file(path);
+
+    if (!self->layout)
+    {
+        fprintf(stderr, "Failed to initialize map; couldn't read layout\n");
+        return 0;
+    }
+
     self->size = size;
     self->tile_size = tile_size;
 

@@ -37,9 +37,13 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
 
     self->weapon = WEAPON_KNIFE;
     
-    self->shot_texture = IMG_LoadTexture(rend, "res/gfx/gun_shoot.png");
-    self->gun_texture = IMG_LoadTexture(rend, "res/gfx/gun.png");
-    self->knife_texture = IMG_LoadTexture(rend, "res/gfx/knife.png");
+    if (!(self->shot_texture = IMG_LoadTexture(rend, "res/gfx/gun_shoot.png")) ||
+        !(self->gun_texture = IMG_LoadTexture(rend, "res/gfx/gun.png")) ||
+        !(self->knife_texture = IMG_LoadTexture(rend, "res/gfx/knife.png")))
+    {
+        fprintf(stderr, "Player textures not found\n");
+        return 0;
+    }
 
     self->animation.gun_default_pos = (SDL_Point){ .x = 500, .y = 500 };
     self->animation.gun_pos = (SDL_Rect){ .x = 500, .y = 800 };

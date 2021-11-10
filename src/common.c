@@ -17,7 +17,7 @@ char* common_read_file(const char* path)
 
     if (!fp)
     {
-        printf("Couldn't read file %s\n", path);
+        fprintf(stderr, "Couldn't read file %s\n", path);
         return 0;
     }
 

@@ -19,10 +19,22 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 
     self->font = TTF_OpenFont("res/gfx/font.ttf", 16);
 
+    if (!self->font)
+    {
+        fprintf(stderr, "Couldn't open font\n");
+        return 0;
+    }
+
     self->map = map_init("map", (SDL_Point){ 32, 32 }, 50);
+
+    if (!self->map)
+        return 0;
 
     SDL_FPoint pos = map_get_random_empty_spot(self->map);
     self->player = player_init((SDL_Point){ .x = (int)pos.x,  .y = (int)pos.y }, M_PI, self->rend);
+
+    if (!self->player)
+        return 0;
 
     self->entities = malloc(0);
     self->entities_size = 0;
@@ -30,8 +42,11 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
     self->tile_texture = IMG_LoadTexture(self->rend, "res/gfx/wall.png");
     SDL_QueryTexture(self->tile_texture, 0, 0, &self->image_size.x, &self->image_size.y);
 
-    self->gun_texture = IMG_LoadTexture(self->rend, "res/gfx/gun.png");
-    self->shot_texture = IMG_LoadTexture(self->rend, "res/gfx/gun_shoot.png");
+    if (!self->tile_texture)
+    {
+        fprintf(stderr, "Wall textures are missing\n");
+        return 0;
+    }
 
     self->game_over = false;
     self->restart = false;
@@ -51,9 +66,6 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 void prog_cleanup(struct Prog* self)
 {
     SDL_SetRelativeMouseMode(SDL_FALSE);
-
-    SDL_DestroyTexture(self->tile_texture);
-    SDL_DestroyTexture(self->gun_texture);
 
     TTF_CloseFont(self->font);
 

@@ -11,7 +11,8 @@ void audio_init()
 {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) < 0)
     {
-        printf("Audio error: %s\n", SDL_GetError());
+        fprintf(stderr, "Audio error: %s\n", SDL_GetError());
+        return;
     }
 
     Mix_AllocateChannels(32);
@@ -44,13 +45,9 @@ void audio_play_music(const char* path)
     g_music = Mix_LoadMUS(path);
 
     if (!g_music)
-    {
-        printf("Audio error: %s\n", SDL_GetError());
-    }
+        fprintf(stderr, "Audio error: %s\n", SDL_GetError());
     else
-    {
         Mix_PlayMusic(g_music, -1);
-    }
 }
 
 
@@ -76,7 +73,7 @@ void audio_play_sound(const char* path)
 
     if (!chunk)
     {
-        printf("Audio error: %s\n", SDL_GetError());
+        fprintf(stderr, "Audio error: %s\n", SDL_GetError());
     }
     else
     {
@@ -84,7 +81,7 @@ void audio_play_sound(const char* path)
 
         if (Mix_PlayChannel(g_current_channel, chunk, 0) == -1)
         {
-            printf("Audio error: %s\n", SDL_GetError());
+            fprintf(stderr, "Audio error: %s\n", SDL_GetError());
         }
         else
         {

@@ -41,6 +41,3 @@ cd raycast
 make
 ./raycast
 ```
-
-The release generating shell script doesn't work with makefiles, I'll fix it later.
-

@@ -41,3 +41,5 @@ cd raycast
 make
 ./raycast
 ```
+
+Building may fail on macos because homebrew isn't included in default library and include search paths, it should work if you add `-I/opt/homebrew/include` and `-L/opt/homebrew/lib` to makefiles CFLAGS

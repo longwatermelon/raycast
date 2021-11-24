@@ -18,6 +18,14 @@ int main(int argc, char** argv)
     SDL_Window* window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN);
     SDL_Renderer* rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
+    FILE* fp = fopen("sfx_mute", "r");
+
+    if (fp)
+    {
+        audio_mute();
+        fclose(fp);
+    }
+
     audio_init();
     audio_play_music("res/sfx/shreksophone.wav");
 

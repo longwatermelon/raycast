@@ -7,6 +7,8 @@ Press esc to release mouse from the window and click to recapture the mouse.
 
 The objective of the game is to collect 5 nuts, if you touch shrek your health decreases. When your health drops to 0, the game ends.
 
+If you want to permanently mute sound, create an empty file named `sfx_mute` in the same directory you are running the program from.
+
 # Dependencies
 
 * SDL2

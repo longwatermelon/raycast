@@ -9,19 +9,6 @@ The objective of the game is to collect 5 nuts, if you touch shrek your health d
 
 If you want to permanently mute sound, create an empty file named `sfx_mute` in the same directory you are running the program from.
 
-# Dependencies
-
-* SDL2
-* SDL2_image
-* SDL2_ttf
-* SDL2_mixer
-
-Debian based: `sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev`
-
-Arch based: `sudo pacman -S sdl2 sdl2-image sdl2-ttf sdl2-mixer`
-
-Brew: `brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer`
-
 # Controls
 * WASD: movement
 * Mouse movement / left & right arrow keys: rotate
@@ -35,6 +22,19 @@ The gun requires accuracy (red dot is crosshair) but the knife does not.
 
 https://user-images.githubusercontent.com/73869536/140661720-0300bc67-0f27-4133-80e3-cbf32d80cd70.mp4
 
+# Dependencies
+
+* SDL2
+* SDL2_image
+* SDL2_ttf
+* SDL2_mixer
+
+Debian based: `sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev`
+
+Arch based: `sudo pacman -S sdl2 sdl2-image sdl2-ttf sdl2-mixer`
+
+Brew: `brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer`
+
 # Building
 
 ```
@@ -44,4 +44,4 @@ make
 ./raycast
 ```
 
-Building may fail on macos because homebrew isn't included in default library and include search paths, it should work if you add `-I[homebrew directory/include` and `-L[homebrew directory]/lib` to makefiles CFLAGS. For example `CFLAGS=-I/opt/homebrew/include -L/opt/homebrew/lib -std=gnu17 -ggdb -Wall -Werror`
+Building may fail on macos because homebrew isn't included in default library and include search paths, it should work if you add `-I[homebrew directory]/include` and `-L[homebrew directory]/lib` to makefiles CFLAGS. For example `CFLAGS=-I/opt/homebrew/include -L/opt/homebrew/lib -std=gnu17 -ggdb -Wall -Werror`

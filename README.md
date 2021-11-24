@@ -44,4 +44,4 @@ make
 ./raycast
 ```
 
-Building may fail on macos because homebrew isn't included in default library and include search paths, it should work if you add `-I/opt/homebrew/include` and `-L/opt/homebrew/lib` to makefiles CFLAGS
+Building may fail on macos because homebrew isn't included in default library and include search paths, it should work if you add `-I[homebrew directory/include` and `-L[homebrew directory]/lib` to makefiles CFLAGS. For example `CFLAGS=-I/opt/homebrew/include -L/opt/homebrew/lib -std=gnu17 -ggdb -Wall -Werror`

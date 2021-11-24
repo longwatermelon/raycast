@@ -3,6 +3,7 @@ OBJS=$(addprefix obj/, $(SRC:.c=.o))
 
 CC=gcc
 CFLAGS=-std=gnu17 -ggdb -Wall -Werror
+INC=
 LIBS=-lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 all:
@@ -10,10 +11,10 @@ all:
 	$(MAKE) raycast
 
 raycast: $(OBJS)
-	$(CC) $(CFLAGS) $(LIBS) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(INC) $(LIBS) $(OBJS) -o $@
 
 obj/src/%.o: src/%.c src/%.h
-	$(CC) $(CFLAGS) $(LIBS) -c $< -o $@
+	$(CC) $(CFLAGS) $(INC) $(LIBS) -c $< -o $@
 
 clean:
 	rm -rf obj

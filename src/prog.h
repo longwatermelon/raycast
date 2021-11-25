@@ -26,8 +26,7 @@ struct Prog
     SDL_Texture* tile_texture;
     SDL_Point image_size;
 
-    SDL_Texture* gun_texture;
-    SDL_Texture* shot_texture;
+    SDL_Texture* crosshair_texture;
 
     bool game_over;
     bool restart;

@@ -48,6 +48,14 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
         return 0;
     }
 
+    self->crosshair_texture = IMG_LoadTexture(self->rend, "res/gfx/crosshair.png");
+
+    if (!self->crosshair_texture)
+    {
+        fprintf(stderr, "Missing crosshair texture\n");
+        return 0;
+    }
+
     self->game_over = false;
     self->restart = false;
     self->win = false;
@@ -66,6 +74,9 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 void prog_cleanup(struct Prog* self)
 {
     SDL_SetRelativeMouseMode(SDL_FALSE);
+
+    SDL_DestroyTexture(self->tile_texture);
+    SDL_DestroyTexture(self->crosshair_texture);
 
     TTF_CloseFont(self->font);
 
@@ -239,9 +250,11 @@ void prog_render_all(struct Prog* self)
         SDL_DestroyTexture(tex);
     }
 
-    SDL_Rect crosshair = { .x = 400 - 2, .y = 400 - 2, .w = 4, .h = 4 };
-    SDL_SetRenderDrawColor(self->rend, 255, 0, 0, 255);
-    SDL_RenderFillRect(self->rend, &crosshair);
+    if (self->player->weapon == WEAPON_GUN)
+    {
+        SDL_Rect crosshair = { .x = 400 - 8, .y = 400 - 8, .w = 16, .h = 16 };
+        SDL_RenderCopy(self->rend, self->crosshair_texture, 0, &crosshair);
+    }
 
     if (self->player->health != 3)
     {

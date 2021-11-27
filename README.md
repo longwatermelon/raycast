@@ -22,7 +22,7 @@ If you want to mute certain parts of the audio playing, create a file called `sf
 * 1: equip knife
 * 2: equip gun
 
-https://user-images.githubusercontent.com/73869536/140661720-0300bc67-0f27-4133-80e3-cbf32d80cd70.mp4
+https://user-images.githubusercontent.com/73869536/143689375-5fcc2022-157c-4527-9c2c-f18d77372cb9.mp4
 
 # Dependencies
 

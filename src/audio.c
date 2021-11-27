@@ -1,4 +1,5 @@
 #include "audio.h"
+#include <SDL2/SDL_mixer.h>
 
 Mix_Music* g_music = 0;
 int g_current_channel = 0;
@@ -23,6 +24,8 @@ void audio_init()
     g_sounds_playing_size = 32;
     g_sounds_playing = malloc(32 * sizeof(Mix_Music*));
     memset(g_sounds_playing, 0, 32 * sizeof(Mix_Music*));
+
+    Mix_VolumeMusic(32);
 }
 
 
@@ -86,7 +89,7 @@ void audio_play_sound(const char* path)
     }
     else
     {
-        Mix_Volume(g_current_channel, 64);
+        Mix_Volume(g_current_channel, 32);
 
         if (Mix_PlayChannel(g_current_channel, chunk, 0) == -1)
         {

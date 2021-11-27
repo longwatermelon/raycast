@@ -1,5 +1,6 @@
 #include "prog.h"
 #include "audio.h"
+#include <stdio.h>
 #include <time.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -22,7 +23,23 @@ int main(int argc, char** argv)
 
     if (fp)
     {
-        audio_mute();
+        char muted[10];
+        fscanf(fp, "%s", muted);
+        bool sound, music;
+
+        if (strcmp(muted, "sound") == 0)
+            sound = true;
+
+        if (strcmp(muted, "music") == 0)
+            music = true;
+
+        if (strcmp(muted, "all") == 0)
+        {
+            music = true;
+            sound = true;
+        }
+
+        audio_mute(sound, music);
         fclose(fp);
     }
 

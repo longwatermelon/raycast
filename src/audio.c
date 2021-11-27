@@ -6,7 +6,8 @@ int g_current_channel = 0;
 Mix_Chunk** g_sounds_playing = 0;
 size_t g_sounds_playing_size = 0;
 
-bool g_audio_muted = false;
+bool g_music_muted = false;
+bool g_sound_muted = false;
 
 
 void audio_init()
@@ -42,7 +43,7 @@ void audio_cleanup()
 
 void audio_play_music(const char* path)
 {
-    if (g_audio_muted)
+    if (g_music_muted)
         return;
 
     audio_stop_music();
@@ -68,7 +69,7 @@ void audio_stop_music()
 
 void audio_play_sound(const char* path)
 {
-    if (g_audio_muted)
+    if (g_sound_muted)
         return;
 
     if (Mix_Playing(g_current_channel))
@@ -119,8 +120,12 @@ void audio_stop_finished_sounds()
 }
 
 
-void audio_mute()
+void audio_mute(bool sound, bool music)
 {
-    g_audio_muted = true;
+    if (sound)
+        g_sound_muted = true;
+
+    if (music)
+        g_music_muted = true;
 }
 

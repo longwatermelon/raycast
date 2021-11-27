@@ -22,8 +22,6 @@ If you want to mute certain parts of the audio playing, create a file called `sf
 * 1: equip knife
 * 2: equip gun
 
-The gun requires accuracy (red dot is crosshair) but the knife does not.
-
 https://user-images.githubusercontent.com/73869536/140661720-0300bc67-0f27-4133-80e3-cbf32d80cd70.mp4
 
 # Dependencies

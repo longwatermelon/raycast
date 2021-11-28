@@ -62,38 +62,29 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
 {
     float angle_diff = common_restrict_angle(p->player->angle - angle);
 
-    struct Entity** rendered_entities = malloc(0);
-    size_t rendered_entities_size = 0;
+    // + 1 because MAX_ENTITIES does not account for nuts
+    struct Entity* rendered_entities[MAX_ENTITIES + 1];
+    int entity_ray_lengths[MAX_ENTITIES + 1];
+    float intersections[MAX_ENTITIES + 1];
 
-    int* entity_ray_lengths = malloc(0);
-    size_t entity_ray_lengths_size = 0;
-
-    float* intersections = malloc(0);
-    size_t intersections_size = 0;
+    size_t intersection_num = 0;
 
     for (int j = 0; j < p->entities_size; ++j)
     {
         float intersection = 0.f;
         struct Entity* entity_hit = 0;
-        int ray_length_entity = player_cast_ray_entity(p->player, angle, p->entities, p->entities_size, rendered_entities, rendered_entities_size, -1, &intersection, &entity_hit);
+        int ray_length_entity = player_cast_ray_entity(p->player, angle, p->entities, p->entities_size, rendered_entities, intersection_num, -1, &intersection, &entity_hit);
 
-        ++rendered_entities_size;
-        rendered_entities = realloc(rendered_entities, rendered_entities_size * sizeof(struct Entity*));
-        rendered_entities[rendered_entities_size - 1] = entity_hit;
-
-        ++entity_ray_lengths_size;
-        entity_ray_lengths = realloc(entity_ray_lengths, sizeof(int) * entity_ray_lengths_size);
-        entity_ray_lengths[entity_ray_lengths_size - 1] = ray_length_entity;
-
-        ++intersections_size;
-        intersections = realloc(intersections, sizeof(float) * intersections_size);
-        intersections[intersections_size - 1] = intersection;
+        rendered_entities[intersection_num] = entity_hit;
+        entity_ray_lengths[intersection_num] = ray_length_entity;
+        intersections[intersection_num] = intersection;
+        ++intersection_num;
     }
 
     // Sort ray lengths
-    for (int j = 0; j < entity_ray_lengths_size; ++j)
+    for (int j = 0; j < intersection_num; ++j)
     {
-        for (int k = j; k < entity_ray_lengths_size; ++k)
+        for (int k = j; k < intersection_num; ++k)
         {
             if (entity_ray_lengths[k] > entity_ray_lengths[j])
             {
@@ -116,7 +107,7 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
     SDL_Rect dst = { .x = col, .w = 1 };
 
     // Render entities
-    for (int j = 0; j < entity_ray_lengths_size; ++j)
+    for (int j = 0; j < intersection_num; ++j)
     {
         if ((p->render_entities_over_walls && rendered_entities[j]) || (entity_ray_lengths[j] < ray_length_wall && entity_ray_lengths[j] != -1))
         {
@@ -162,9 +153,5 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
             }
         }
     }
-
-    free(rendered_entities);
-    free(entity_ray_lengths);
-    free(intersections);
 }
 

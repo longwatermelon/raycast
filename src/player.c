@@ -413,7 +413,6 @@ SDL_Point player_cast_ray_horizontal(struct Player* self, float angle, struct Ma
 SDL_Point player_cast_ray_vertical(struct Player* self, float angle, struct Map* map)
 {
     // Cast ray that only intersects vertical lines
-    
     SDL_FPoint closest_vertical;
     closest_vertical.x = (int)self->rect.x - ((int)self->rect.x % map->tile_size) + (angle < M_PI / 2.f || angle > 3 * M_PI / 2.f ? map->tile_size : 0);
     closest_vertical.y = self->rect.y + ((closest_vertical.x - self->rect.x) * -tanf(angle));
@@ -423,6 +422,9 @@ SDL_Point player_cast_ray_vertical(struct Player* self, float angle, struct Map*
 
     if (fabsf((float)(3 * M_PI / 2.f) - angle) <= 0.001f)
         return (SDL_Point){ self->rect.x, 1e5 };
+
+    // For optimization
+    float tan_a = tanf(angle);
 
     while (true)
     {
@@ -444,7 +446,7 @@ SDL_Point player_cast_ray_vertical(struct Player* self, float angle, struct Map*
         float dx = (angle < M_PI / 2.f || angle > 3 * M_PI / 2.f ? map->tile_size : -map->tile_size);
 
         closest_vertical.x += dx;
-        closest_vertical.y += dx * -tanf(angle);
+        closest_vertical.y += dx * -tan_a; // tanf(angle)
     }
 }
 
@@ -482,8 +484,8 @@ int player_cast_ray_entity(struct Player* self, float angle, struct Entity** ent
         };
 
         SDL_FPoint ray_vector = {
-            .x = cos_a,
-            .y = -sin_a
+            .x = cos_a, // cosf(angle)
+            .y = -sin_a // sinf(angle)
         };
 
         float dot_product = diff.x * ray_vector.x + diff.y * ray_vector.y;

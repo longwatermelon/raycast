@@ -35,7 +35,7 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
     self->mode_data.grappling_dst = (SDL_Point){ .x = -1, .y = -1 };
     self->mode_data.grappling_theta = 0.f;
 
-    self->weapon = WEAPON_KNIFE;
+    self->weapon = WEAPON_GUN;
     
     if (!(self->shot_texture = IMG_LoadTexture(rend, "res/gfx/gun_shoot.png")) ||
         !(self->gun_texture = IMG_LoadTexture(rend, "res/gfx/gun.png")) ||
@@ -46,11 +46,11 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
     }
 
     self->animation.gun_default_pos = (SDL_Point){ .x = 500, .y = 500 };
-    self->animation.gun_pos = (SDL_Rect){ .x = 500, .y = 800 };
+    self->animation.gun_pos = (SDL_Rect){ .x = 500, .y = 500 };
     self->animation.gun_at_bottom = false;
 
     self->animation.knife_default_pos = (SDL_Point){ .x = 0, .y = 600 };
-    self->animation.knife_pos = (SDL_Rect){ .x = 0, .y = 600 };
+    self->animation.knife_pos = (SDL_Rect){ .x = 0, .y = 800 };
     self->animation.knife_outstretched = false;
 
     self->animation.switching_weapon = -1;

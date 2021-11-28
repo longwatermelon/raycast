@@ -453,6 +453,10 @@ int player_cast_ray_entity(struct Player* self, float angle, struct Entity** ent
 {
     float shortest = -1;
 
+    // for optimization
+    float cos_a = cosf(angle);
+    float sin_a = sinf(angle);
+
     for (int i = 0; i < entities_size; ++i)
     {
         if (target_type != -1 && entities[i]->type != target_type)
@@ -478,8 +482,8 @@ int player_cast_ray_entity(struct Player* self, float angle, struct Entity** ent
         };
 
         SDL_FPoint ray_vector = {
-            .x = cosf(angle),
-            .y = -sinf(angle)
+            .x = cos_a,
+            .y = -sin_a
         };
 
         float dot_product = diff.x * ray_vector.x + diff.y * ray_vector.y;

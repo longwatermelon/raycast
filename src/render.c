@@ -106,6 +106,8 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
     SDL_Rect src = { .y = 0, .w = 1 };
     SDL_Rect dst = { .x = col, .w = 1 };
 
+    float cos_angle_diff = cosf(angle_diff);
+
     // Render entities
     for (int j = 0; j < intersection_num; ++j)
     {
@@ -117,7 +119,7 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
             float dist = entity_ray_lengths[j];
 
             if (p->adjust_fisheye)
-                dist = entity_ray_lengths[j] * cosf(angle_diff);
+                dist = entity_ray_lengths[j] * cos_angle_diff;
 
             float line_height = (25.f * 800.f) / dist;
 

@@ -116,10 +116,10 @@ void prog_mainloop(struct Prog* self)
                 }
             }
 
-            if (rand() % 2000 > 1930 && prog_entity_count(self, ENTITY_ENEMY) < 12)
+            if (rand() % 2000 > 1930 && self->entities_size < MAX_ENTITIES)
                 prog_spawn_entity(self, ENTITY_ENEMY, "res/gfx/shrek.png");
 
-            if (rand() % 2000 > 1990 && prog_entity_count(self, ENTITY_AMMO) < 3)
+            if (rand() % 2000 > 1990 && self->entities_size < MAX_ENTITIES)
                 prog_spawn_entity(self, ENTITY_AMMO, "res/gfx/ammo.png");
 
             // Spawning nuts

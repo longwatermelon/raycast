@@ -8,6 +8,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#define MAX_ENTITIES 15
+
 struct Prog
 {
     bool running;

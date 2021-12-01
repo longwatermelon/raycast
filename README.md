@@ -46,7 +46,7 @@ make
 ./raycast
 ```
 
-Building may fail on macos because homebrew isn't included in default library and include search paths, it should work if you add `-I[homebrew directory]/include` to INC and `-L[homebrew directory]/lib` to LIBS. Apple clang will also spit out a lot of warnings that don't happen with gcc, so you will need to remove `-Werror` from CFLAGS.
+Building may fail on macos because homebrew isn't included in default library and include search paths, it should work if you add `-I[homebrew directory]/include` to INC and `-L[homebrew directory]/lib` to LIBS in the makefile. Apple clang will also spit out a lot of warnings that don't happen with gcc, so you will need to remove `-Werror` from CFLAGS.
 
 Modified Makefile variables on an apple machine may look something like
 

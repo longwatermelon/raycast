@@ -67,7 +67,7 @@ void entity_move(struct Entity* self, struct Map* map, float x, float y)
 
 void entity_move_towards_player(struct Entity* self, struct Player* p, struct Map* map)
 {
-    float theta = atan2f(p->rect.y - self->pos.y, p->rect.x - self->pos.x);
+    float theta = atan2f(p->pos.y - self->pos.y, p->pos.x - self->pos.x);
     theta += fmod(rand(), 3.f) - 1.5f;
     entity_move(self, map, self->speed * cosf(theta), self->speed * sinf(theta));
 }

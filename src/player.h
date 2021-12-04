@@ -41,7 +41,7 @@ struct PlayerAnimationData
 
 struct Player
 {
-    SDL_FRect rect;
+    SDL_FPoint pos;
 
     float angle;
     float angle_change;
@@ -89,7 +89,6 @@ struct Player
 struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend);
 void player_cleanup(struct Player* self);
 
-void player_render(struct Player* self, SDL_Renderer* rend, struct Map* map, struct Entity** entities, size_t entities_size);
 void player_render_weapon(struct Player* self, SDL_Renderer* rend);
 void player_advance_animations(struct Player* self);
 

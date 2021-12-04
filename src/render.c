@@ -23,7 +23,7 @@ int render_3d_wall(struct Prog* p, float angle, int col)
     int collision_type;
     SDL_Point endp = player_cast_ray(p->player, angle, p->map, p->entities, p->entities_size, &collision_type);
 
-    int ray_length_wall = sqrtf((endp.x - p->player->rect.x) * (endp.x - p->player->rect.x) + (endp.y - p->player->rect.y) * (endp.y - p->player->rect.y));
+    int ray_length_wall = sqrtf((endp.x - p->player->pos.x) * (endp.x - p->player->pos.x) + (endp.y - p->player->pos.y) * (endp.y - p->player->pos.y));
 
     float angle_diff = common_restrict_angle(p->player->angle - angle);
 

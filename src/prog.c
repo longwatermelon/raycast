@@ -183,8 +183,8 @@ void prog_handle_entity_interaction(struct Prog* self)
             entity_move_towards_player(self->entities[i], self->player, self->map);
 
         SDL_FPoint diff = {
-            .x = self->player->rect.x - self->entities[i]->pos.x,
-            .y = self->player->rect.y - self->entities[i]->pos.y
+            .x = self->player->pos.x - self->entities[i]->pos.x,
+            .y = self->player->pos.y - self->entities[i]->pos.y
         };
 
         float distance = sqrtf(diff.x * diff.x + diff.y * diff.y);
@@ -368,7 +368,7 @@ void prog_spawn_entity(struct Prog* self, int type, const char* sprite_path)
     while (true)
     {
         e->pos = map_get_random_empty_spot(self->map);
-        SDL_Point diff = { .x = e->pos.x - self->player->rect.x, .y = e->pos.y - self->player->rect.y };
+        SDL_Point diff = { .x = e->pos.x - self->player->pos.x, .y = e->pos.y - self->player->pos.y };
         float distance_to_player = sqrtf(diff.x * diff.x + diff.y * diff.y);
 
         if (distance_to_player > 300)

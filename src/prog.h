@@ -47,8 +47,6 @@ void prog_mainloop(struct Prog* self);
 void prog_handle_entity_interaction(struct Prog* self);
 void prog_render_all(struct Prog* self);
 
-void prog_render_map(struct Prog* self);
-
 void prog_add_entity(struct Prog* self, struct Entity* entity);
 void prog_remove_entity(struct Prog* self, struct Entity* entity);
 

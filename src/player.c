@@ -36,7 +36,7 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
     self->mode_data.grappling_theta = 0.f;
 
     self->weapon = WEAPON_GUN;
-    
+
     if (!(self->shot_texture = IMG_LoadTexture(rend, "res/gfx/gun_shoot.png")) ||
         !(self->gun_texture = IMG_LoadTexture(rend, "res/gfx/gun.png")) ||
         !(self->knife_texture = IMG_LoadTexture(rend, "res/gfx/knife.png")))
@@ -225,7 +225,7 @@ void player_execute_mode(struct Player* self)
     switch (self->mode_data.mode)
     {
     case PLAYER_MODE_GRAPPLING:
-    { 
+    {
         self->pos.x += 7.f * cosf(self->mode_data.grappling_theta);
         self->pos.y += 7.f * sinf(self->mode_data.grappling_theta);
 
@@ -326,7 +326,6 @@ SDL_Point player_cast_ray(struct Player* self, float angle, struct Map* map, str
 SDL_Point player_cast_ray_horizontal(struct Player* self, float angle, struct Map* map)
 {
     // Cast ray that only intersects horizontal lines
-
     SDL_FPoint closest_horizontal;
     closest_horizontal.y = (int)self->pos.y - ((int)self->pos.y % map->tile_size) + (angle > M_PI ? map->tile_size : 0);
     closest_horizontal.x = self->pos.x + ((closest_horizontal.y - self->pos.y) / -tanf(angle));
@@ -336,6 +335,8 @@ SDL_Point player_cast_ray_horizontal(struct Player* self, float angle, struct Ma
 
     if (fabsf((float)M_PI - angle) <= 0.001f) // Facing left, almost undefined
         return (SDL_Point){ -1e5, self->pos.y };
+
+    float tan_a = tanf(angle);
 
     while (true)
     {
@@ -357,7 +358,7 @@ SDL_Point player_cast_ray_horizontal(struct Player* self, float angle, struct Ma
         float dy = (angle < M_PI ? -map->tile_size : map->tile_size);
 
         closest_horizontal.y += dy;
-        closest_horizontal.x += dy / -tanf(angle);
+        closest_horizontal.x += dy / -tan_a; // tanf(angle)
     }
 }
 
@@ -527,7 +528,7 @@ struct Entity* player_slash(struct Player* self, struct Entity** entities, size_
         if (dist < 40.f)
             return entities[i];
     }
-    
+
     return 0;
 }
 

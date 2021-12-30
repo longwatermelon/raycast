@@ -33,7 +33,7 @@ https://user-images.githubusercontent.com/73869536/143689375-5fcc2022-157c-4527-
 
 Debian based: `sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev`
 
-Arch based: `sudo pacman -S sdl2 sdl2-image sdl2-ttf sdl2-mixer`
+Arch based: `sudo pacman -S sdl2 sdl2_image sdl2_ttf sdl2_mixer`
 
 Brew: `brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer`
 

@@ -1,10 +1,10 @@
 #include "audio.h"
 #include <SDL2/SDL_mixer.h>
 
-Mix_Music* g_music = 0;
+Mix_Music *g_music = 0;
 int g_current_channel = 0;
 
-Mix_Chunk** g_sounds_playing = 0;
+Mix_Chunk **g_sounds_playing = 0;
 size_t g_sounds_playing_size = 0;
 
 bool g_music_muted = false;
@@ -44,7 +44,7 @@ void audio_cleanup()
 }
 
 
-void audio_play_music(const char* path)
+void audio_play_music(const char *path)
 {
     if (g_music_muted)
         return;
@@ -70,7 +70,7 @@ void audio_stop_music()
 }
 
 
-void audio_play_sound(const char* path)
+void audio_play_sound(const char *path)
 {
     if (g_sound_muted)
         return;
@@ -81,7 +81,7 @@ void audio_play_sound(const char* path)
         return;
     }
 
-    Mix_Chunk* chunk = Mix_LoadWAV(path);
+    Mix_Chunk *chunk = Mix_LoadWAV(path);
 
     if (!chunk)
     {

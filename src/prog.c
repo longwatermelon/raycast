@@ -9,9 +9,9 @@
 #include <SDL2/SDL_image.h>
 
 
-struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
+struct Prog *prog_init(SDL_Window *window, SDL_Renderer *rend)
 {
-    struct Prog* self = malloc(sizeof(struct Prog));
+    struct Prog *self = malloc(sizeof(struct Prog));
     self->running = true;
 
     self->window = window;
@@ -71,7 +71,7 @@ struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend)
 }
 
 
-void prog_cleanup(struct Prog* self)
+void prog_cleanup(struct Prog *self)
 {
     SDL_SetRelativeMouseMode(SDL_FALSE);
 
@@ -92,7 +92,7 @@ void prog_cleanup(struct Prog* self)
 }
 
 
-void prog_mainloop(struct Prog* self)
+void prog_mainloop(struct Prog *self)
 {
     SDL_Event evt;
 
@@ -161,7 +161,7 @@ void prog_mainloop(struct Prog* self)
 }
 
 
-void prog_handle_entity_interaction(struct Prog* self)
+void prog_handle_entity_interaction(struct Prog *self)
 {
     for (int i = 0; i < self->entities_size; ++i)
     {
@@ -227,7 +227,7 @@ void prog_handle_entity_interaction(struct Prog* self)
 }
 
 
-void prog_render_all(struct Prog* self)
+void prog_render_all(struct Prog *self)
 {
     render_3d_all(self);
     player_render_weapon(self->player, self->rend);
@@ -243,7 +243,7 @@ void prog_render_all(struct Prog* self)
 
     if (self->player->mode_data.mode == PLAYER_MODE_GRAPPLING)
     {
-        SDL_Texture* tex = common_render_text(self->rend, self->font, "[Grappling hook]");
+        SDL_Texture *tex = common_render_text(self->rend, self->font, "[Grappling hook]");
         SDL_Rect tmp = { .x = 640, .y = 20 };
         SDL_QueryTexture(tex, 0, 0, &tmp.w, &tmp.h);
         SDL_RenderCopy(self->rend, tex, 0, &tmp);
@@ -272,7 +272,7 @@ void prog_render_all(struct Prog* self)
 
 #ifdef CHEATS_ON
     {
-        SDL_Texture* cheats_notif = common_render_text(self->rend, self->font, "[Cheats enabled]");
+        SDL_Texture *cheats_notif = common_render_text(self->rend, self->font, "[Cheats enabled]");
         SDL_Rect tmp = { .x = 20, .y = 60 };
         SDL_QueryTexture(cheats_notif, 0, 0, &tmp.w, &tmp.h);
         SDL_RenderCopy(self->rend, cheats_notif, 0, &tmp);
@@ -289,7 +289,7 @@ void prog_render_all(struct Prog* self)
 
         if (self->win)
         {
-            SDL_Texture* win_tex = common_render_text(self->rend, self->font, "All the nuts were successfully collected, press r to restart");
+            SDL_Texture *win_tex = common_render_text(self->rend, self->font, "All the nuts were successfully collected, press r to restart");
             SDL_Rect tmp = { .x = 125, .y = 380 };
             SDL_QueryTexture(win_tex, 0, 0, &tmp.w, &tmp.h);
             SDL_RenderCopy(self->rend, win_tex, 0, &tmp);
@@ -298,7 +298,7 @@ void prog_render_all(struct Prog* self)
         }
         else
         {
-            SDL_Texture* game_over_tex = common_render_text(self->rend, self->font, "Game over, press r to restart");
+            SDL_Texture *game_over_tex = common_render_text(self->rend, self->font, "Game over, press r to restart");
             SDL_Rect tmp = { .x = 275, .y = 380 };
             SDL_QueryTexture(game_over_tex, 0, 0, &tmp.w, &tmp.h);
             SDL_RenderCopy(self->rend, game_over_tex, 0, &tmp);
@@ -309,7 +309,7 @@ void prog_render_all(struct Prog* self)
 }
 
 
-void prog_add_entity(struct Prog* self, struct Entity* entity)
+void prog_add_entity(struct Prog *self, struct Entity *entity)
 {
     ++self->entities_size;
     self->entities = realloc(self->entities, sizeof(struct Entity*) * self->entities_size);
@@ -317,9 +317,9 @@ void prog_add_entity(struct Prog* self, struct Entity* entity)
 }
 
 
-void prog_remove_entity(struct Prog* self, struct Entity* entity)
+void prog_remove_entity(struct Prog *self, struct Entity *entity)
 {
-    struct Entity** entities = malloc(sizeof(struct Entity*) * (self->entities_size - 1));
+    struct Entity **entities = malloc(sizeof(struct Entity*) * (self->entities_size - 1));
     int index_offset = 0;
 
     for (int i = 0; i < self->entities_size; ++i)
@@ -340,9 +340,9 @@ void prog_remove_entity(struct Prog* self, struct Entity* entity)
 }
 
 
-void prog_spawn_entity(struct Prog* self, int type, const char* sprite_path)
+void prog_spawn_entity(struct Prog *self, int type, const char *sprite_path)
 {
-    struct Entity* e = entity_init(type, (SDL_FPoint){ rand() % (self->map->size.x * self->map->tile_size), rand() % (self->map->size.y * self->map->tile_size) }, self->rend, sprite_path);
+    struct Entity *e = entity_init(type, (SDL_FPoint){ rand() % (self->map->size.x * self->map->tile_size), rand() % (self->map->size.y * self->map->tile_size) }, self->rend, sprite_path);
 
     while (true)
     {
@@ -358,7 +358,7 @@ void prog_spawn_entity(struct Prog* self, int type, const char* sprite_path)
 }
 
 
-int prog_entity_count(struct Prog* self, int type)
+int prog_entity_count(struct Prog *self, int type)
 {
     int count = 0;
 

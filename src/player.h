@@ -78,38 +78,38 @@ struct Player
 
     struct PlayerAnimationData animation;
 
-    SDL_Texture* gun_texture;
-    SDL_Texture* shot_texture;
-    SDL_Texture* knife_texture;
+    SDL_Texture *gun_texture;
+    SDL_Texture *shot_texture;
+    SDL_Texture *knife_texture;
 
     bool detect_collisions;
     bool ignore_walls_when_shooting;
 };
 
-struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend);
-void player_cleanup(struct Player* self);
+struct Player *player_init(SDL_Point pos, float angle, SDL_Renderer *rend);
+void player_cleanup(struct Player *self);
 
-void player_render_weapon(struct Player* self, SDL_Renderer* rend);
-void player_advance_animations(struct Player* self);
+void player_render_weapon(struct Player *self, SDL_Renderer *rend);
+void player_advance_animations(struct Player *self);
 
-void player_move(struct Player* self, struct Map* map, float x, float y);
+void player_move(struct Player *self, struct Map *map, float x, float y);
 
-void player_execute_mode(struct Player* self);
+void player_execute_mode(struct Player *self);
 
 // Returns entity attacked
-struct Entity* player_attack(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map);
+struct Entity *player_attack(struct Player *self, struct Entity **entities, size_t entities_size, struct Map *map);
 
 // Returns end point of casted ray
-SDL_Point player_cast_ray(struct Player* self, float angle, struct Map* map, struct Entity** entities, size_t entities_size, int* collision_type);
-SDL_Point player_cast_ray_horizontal(struct Player* self, float angle, struct Map* map);
-SDL_Point player_cast_ray_vertical(struct Player* self, float angle, struct Map* map);
+SDL_Point player_cast_ray(struct Player *self, float angle, struct Map *map, struct Entity **entities, size_t entities_size, int *collision_type);
+SDL_Point player_cast_ray_horizontal(struct Player *self, float angle, struct Map *map);
+SDL_Point player_cast_ray_vertical(struct Player *self, float angle, struct Map *map);
 
 // Returns ray length of ray that intersects with entity
 // If target type is -1, the ray will apply to all entity types
-int player_cast_ray_entity(struct Player* self, float angle, struct Entity** entities, size_t entities_size, struct Entity** ignored_entities, size_t ignored_entities_size, int target_type, float* intersection, struct Entity** entity_hit);
+int player_cast_ray_entity(struct Player *self, float angle, struct Entity **entities, size_t entities_size, struct Entity **ignored_entities, size_t ignored_entities_size, int target_type, float *intersection, struct Entity **entity_hit);
 
-struct Entity* player_shoot(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map);
-struct Entity* player_slash(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map);
+struct Entity *player_shoot(struct Player *self, struct Entity **entities, size_t entities_size, struct Map *map);
+struct Entity *player_slash(struct Player *self, struct Entity **entities, size_t entities_size, struct Map *map);
 
 #endif
 

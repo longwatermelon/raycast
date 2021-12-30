@@ -8,9 +8,9 @@
 #include <SDL2/SDL_image.h>
 
 
-struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
+struct Player *player_init(SDL_Point pos, float angle, SDL_Renderer *rend)
 {
-    struct Player* self = malloc(sizeof(struct Player));
+    struct Player *self = malloc(sizeof(struct Player));
     self->pos = (SDL_FPoint){ .x = pos.x, .y = pos.y };
 
     self->angle = angle;
@@ -62,7 +62,7 @@ struct Player* player_init(SDL_Point pos, float angle, SDL_Renderer* rend)
 }
 
 
-void player_cleanup(struct Player* self)
+void player_cleanup(struct Player *self)
 {
     SDL_DestroyTexture(self->shot_texture);
     SDL_DestroyTexture(self->gun_texture);
@@ -71,10 +71,10 @@ void player_cleanup(struct Player* self)
 }
 
 
-void player_render_weapon(struct Player* self, SDL_Renderer* rend)
+void player_render_weapon(struct Player *self, SDL_Renderer *rend)
 {
     // Gun
-    SDL_Texture* tex = self->shooting ? self->shot_texture : self->gun_texture;
+    SDL_Texture *tex = self->shooting ? self->shot_texture : self->gun_texture;
     SDL_QueryTexture(tex, 0, 0, &self->animation.gun_pos.w, &self->animation.gun_pos.h);
     SDL_RenderCopy(rend, tex, 0, &self->animation.gun_pos);
 
@@ -84,7 +84,7 @@ void player_render_weapon(struct Player* self, SDL_Renderer* rend)
 }
 
 
-void player_advance_animations(struct Player* self)
+void player_advance_animations(struct Player *self)
 {
     if (self->reloading)
     {
@@ -177,7 +177,7 @@ void player_advance_animations(struct Player* self)
 }
 
 
-void player_move(struct Player* self, struct Map* map, float x, float y)
+void player_move(struct Player *self, struct Map *map, float x, float y)
 {
     if (self->reloading)
     {
@@ -220,7 +220,7 @@ void player_move(struct Player* self, struct Map* map, float x, float y)
 }
 
 
-void player_execute_mode(struct Player* self)
+void player_execute_mode(struct Player *self)
 {
     switch (self->mode_data.mode)
     {
@@ -246,7 +246,7 @@ void player_execute_mode(struct Player* self)
 }
 
 
-struct Entity* player_attack(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map)
+struct Entity *player_attack(struct Player *self, struct Entity **entities, size_t entities_size, struct Map *map)
 {
     switch (self->weapon)
     {
@@ -274,7 +274,7 @@ struct Entity* player_attack(struct Player* self, struct Entity** entities, size
         if (self->swinging)
             break;
 
-        struct Entity* ret = player_slash(self, entities, entities_size, map);
+        struct Entity *ret = player_slash(self, entities, entities_size, map);
         self->swinging = true;
 
         if (ret)
@@ -292,7 +292,7 @@ struct Entity* player_attack(struct Player* self, struct Entity** entities, size
 }
 
 
-SDL_Point player_cast_ray(struct Player* self, float angle, struct Map* map, struct Entity** entities, size_t entities_size, int* collision_type)
+SDL_Point player_cast_ray(struct Player *self, float angle, struct Map *map, struct Entity **entities, size_t entities_size, int *collision_type)
 {
     if (angle > 2.f * M_PI)
         angle -= 2.f * M_PI;
@@ -323,7 +323,7 @@ SDL_Point player_cast_ray(struct Player* self, float angle, struct Map* map, str
 }
 
 
-SDL_Point player_cast_ray_horizontal(struct Player* self, float angle, struct Map* map)
+SDL_Point player_cast_ray_horizontal(struct Player *self, float angle, struct Map *map)
 {
     // Cast ray that only intersects horizontal lines
     SDL_FPoint closest_horizontal;
@@ -363,7 +363,7 @@ SDL_Point player_cast_ray_horizontal(struct Player* self, float angle, struct Ma
 }
 
 
-SDL_Point player_cast_ray_vertical(struct Player* self, float angle, struct Map* map)
+SDL_Point player_cast_ray_vertical(struct Player *self, float angle, struct Map *map)
 {
     // Cast ray that only intersects vertical lines
     SDL_FPoint closest_vertical;
@@ -404,7 +404,7 @@ SDL_Point player_cast_ray_vertical(struct Player* self, float angle, struct Map*
 }
 
 
-int player_cast_ray_entity(struct Player* self, float angle, struct Entity** entities, size_t entities_size, struct Entity** ignored_entities, size_t ignored_entities_size, int target_type, float* intersection, struct Entity** entity_hit)
+int player_cast_ray_entity(struct Player *self, float angle, struct Entity **entities, size_t entities_size, struct Entity **ignored_entities, size_t ignored_entities_size, int target_type, float *intersection, struct Entity **entity_hit)
 {
     float shortest = -1;
 
@@ -482,13 +482,13 @@ int player_cast_ray_entity(struct Player* self, float angle, struct Entity** ent
 }
 
 
-struct Entity* player_shoot(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map)
+struct Entity *player_shoot(struct Player *self, struct Entity **entities, size_t entities_size, struct Map *map)
 {
     if (self->bullets_loaded <= 0 || self->reloading)
         return 0;
 
     float intersection;
-    struct Entity* entity = 0;
+    struct Entity *entity = 0;
     int entity_dist = player_cast_ray_entity(self, self->angle, entities, entities_size, 0, 0, ENTITY_ENEMY, &intersection, &entity);
 
     if (self->ignore_walls_when_shooting)
@@ -511,7 +511,7 @@ struct Entity* player_shoot(struct Player* self, struct Entity** entities, size_
 }
 
 
-struct Entity* player_slash(struct Player* self, struct Entity** entities, size_t entities_size, struct Map* map)
+struct Entity *player_slash(struct Player *self, struct Entity **entities, size_t entities_size, struct Map *map)
 {
     for (int i = 0; i < entities_size; ++i)
     {

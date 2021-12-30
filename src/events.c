@@ -4,7 +4,7 @@
 #include <time.h>
 
 
-void events_base(struct Prog* p, SDL_Event* evt)
+void events_base(struct Prog *p, SDL_Event *evt)
 {
     while (SDL_PollEvent(evt))
     {
@@ -25,16 +25,16 @@ void events_base(struct Prog* p, SDL_Event* evt)
             break;
         }
     }
-   
+
     events_no_delay(p);
 }
 
 
-void events_no_delay(struct Prog* p)
+void events_no_delay(struct Prog *p)
 {
     float player_speed = 2.f;
 
-    const Uint8* keystates = SDL_GetKeyboardState(0);
+    const Uint8 *keystates = SDL_GetKeyboardState(0);
 
     if (!p->game_over)
     {
@@ -52,7 +52,7 @@ void events_no_delay(struct Prog* p)
             if (keystates[SDL_SCANCODE_D])
                 player_move(p->player, p->map, player_speed / 2.f * cosf(p->player->angle - M_PI / 2.f), player_speed / 2.f * -sinf(p->player->angle - M_PI / 2.f));
         }
-        
+
         if (keystates[SDL_SCANCODE_RIGHT])
             p->player->angle -= 0.03f;
 
@@ -62,7 +62,7 @@ void events_no_delay(struct Prog* p)
 }
 
 
-void events_keydown(struct Prog* p, SDL_Event* evt)
+void events_keydown(struct Prog *p, SDL_Event *evt)
 {
     if (!p->game_over)
     {
@@ -73,7 +73,7 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
             if (p->game_over)
                 break;
 
-            struct Entity* hit = player_attack(p->player, p->entities, p->entities_size, p->map);
+            struct Entity *hit = player_attack(p->player, p->entities, p->entities_size, p->map);
 
             if (hit && !hit->enemy_dead)
             {
@@ -191,7 +191,7 @@ void events_keydown(struct Prog* p, SDL_Event* evt)
 }
 
 
-void events_mouse_down(struct Prog* p, SDL_Event* evt)
+void events_mouse_down(struct Prog *p, SDL_Event *evt)
 {
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -202,12 +202,12 @@ void events_mouse_down(struct Prog* p, SDL_Event* evt)
 }
 
 
-void events_mouse_down_left(struct Prog* p, SDL_Event* evt)
+void events_mouse_down_left(struct Prog *p, SDL_Event *evt)
 {
     if (p->game_over)
         return;
 
-    struct Entity* hit = player_attack(p->player, p->entities, p->entities_size, p->map);
+    struct Entity *hit = player_attack(p->player, p->entities, p->entities_size, p->map);
 
     if (hit && !hit->enemy_dead)
     {
@@ -218,7 +218,7 @@ void events_mouse_down_left(struct Prog* p, SDL_Event* evt)
 }
 
 
-void events_mouse_down_right(struct Prog* p, SDL_Event* evt)
+void events_mouse_down_right(struct Prog *p, SDL_Event *evt)
 {
     if (p->game_over || p->player->mode_data.mode != PLAYER_MODE_NORMAL || p->player->reloading)
         return;

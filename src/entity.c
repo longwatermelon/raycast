@@ -5,9 +5,9 @@
 #include <SDL2/SDL_image.h>
 
 
-struct Entity* entity_init(int type, SDL_FPoint pos, SDL_Renderer* rend, const char* sprite_path)
+struct Entity *entity_init(int type, SDL_FPoint pos, SDL_Renderer *rend, const char *sprite_path)
 {
-    struct Entity* self = malloc(sizeof(struct Entity));
+    struct Entity *self = malloc(sizeof(struct Entity));
     self->type = type;
 
     self->pos = pos;
@@ -24,14 +24,14 @@ struct Entity* entity_init(int type, SDL_FPoint pos, SDL_Renderer* rend, const c
 }
 
 
-void entity_cleanup(struct Entity* self)
+void entity_cleanup(struct Entity *self)
 {
     SDL_DestroyTexture(self->sprite);
     free(self);
 }
 
 
-void entity_move(struct Entity* self, struct Map* map, float x, float y)
+void entity_move(struct Entity *self, struct Map *map, float x, float y)
 {
     int xo = 0;
 
@@ -65,7 +65,7 @@ void entity_move(struct Entity* self, struct Map* map, float x, float y)
 }
 
 
-void entity_move_towards_player(struct Entity* self, struct Player* p, struct Map* map)
+void entity_move_towards_player(struct Entity *self, struct Player *p, struct Map *map)
 {
     float theta = atan2f(p->pos.y - self->pos.y, p->pos.x - self->pos.x);
     theta += fmod(rand(), 3.f) - 1.5f;
@@ -73,7 +73,7 @@ void entity_move_towards_player(struct Entity* self, struct Player* p, struct Ma
 }
 
 
-void entity_die(struct Entity* self, SDL_Renderer* rend, int weapon)
+void entity_die(struct Entity *self, SDL_Renderer *rend, int weapon)
 {
     self->enemy_dead = true;
     clock_gettime(CLOCK_MONOTONIC, &self->enemy_death_time);

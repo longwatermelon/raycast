@@ -14,21 +14,21 @@ struct Prog
 {
     bool running;
 
-    SDL_Window* window;
-    SDL_Renderer* rend;
+    SDL_Window *window;
+    SDL_Renderer *rend;
 
-    TTF_Font* font;
+    TTF_Font *font;
 
-    struct Player* player;
-    struct Map* map;
+    struct Player *player;
+    struct Map *map;
 
-    struct Entity** entities;
+    struct Entity **entities;
     size_t entities_size;
 
-    SDL_Texture* tile_texture;
+    SDL_Texture *tile_texture;
     SDL_Point image_size;
 
-    SDL_Texture* crosshair_texture;
+    SDL_Texture *crosshair_texture;
 
     bool game_over;
     bool restart;
@@ -40,19 +40,19 @@ struct Prog
     bool adjust_fisheye;
 };
 
-struct Prog* prog_init(SDL_Window* window, SDL_Renderer* rend);
-void prog_cleanup(struct Prog* self);
+struct Prog *prog_init(SDL_Window *window, SDL_Renderer *rend);
+void prog_cleanup(struct Prog *self);
 
-void prog_mainloop(struct Prog* self);
-void prog_handle_entity_interaction(struct Prog* self);
-void prog_render_all(struct Prog* self);
+void prog_mainloop(struct Prog *self);
+void prog_handle_entity_interaction(struct Prog *self);
+void prog_render_all(struct Prog *self);
 
-void prog_add_entity(struct Prog* self, struct Entity* entity);
-void prog_remove_entity(struct Prog* self, struct Entity* entity);
+void prog_add_entity(struct Prog *self, struct Entity *entity);
+void prog_remove_entity(struct Prog *self, struct Entity *entity);
 
-void prog_spawn_entity(struct Prog* self, int type, const char* sprite_path);
+void prog_spawn_entity(struct Prog *self, int type, const char *sprite_path);
 
-int prog_entity_count(struct Prog* self, int type);
+int prog_entity_count(struct Prog *self, int type);
 
 #endif
 

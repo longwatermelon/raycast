@@ -4,7 +4,7 @@
 #include <SDL2/SDL_blendmode.h>
 
 
-void render_3d_all(struct Prog* p)
+void render_3d_all(struct Prog  *p)
 {
     float x_pos = 0.f;
 
@@ -18,7 +18,7 @@ void render_3d_all(struct Prog* p)
 }
 
 
-int render_3d_wall(struct Prog* p, float angle, int col)
+int render_3d_wall(struct Prog *p, float angle, int col)
 {
     int collision_type;
     SDL_Point endp = player_cast_ray(p->player, angle, p->map, p->entities, p->entities_size, &collision_type);
@@ -58,12 +58,12 @@ int render_3d_wall(struct Prog* p, float angle, int col)
 }
 
 
-void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
+void render_3d_entity(struct Prog *p, float angle, int col, int ray_length_wall)
 {
     float angle_diff = common_restrict_angle(p->player->angle - angle);
 
     // + 1 because MAX_ENTITIES does not account for nuts
-    struct Entity* rendered_entities[MAX_ENTITIES + 1];
+    struct Entity *rendered_entities[MAX_ENTITIES + 1];
     int entity_ray_lengths[MAX_ENTITIES + 1];
     float intersections[MAX_ENTITIES + 1];
 
@@ -72,7 +72,7 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
     for (int j = 0; j < p->entities_size; ++j)
     {
         float intersection = 0.f;
-        struct Entity* entity_hit = 0;
+        struct Entity *entity_hit = 0;
         int ray_length_entity = player_cast_ray_entity(p->player, angle, p->entities, p->entities_size, rendered_entities, intersection_num, -1, &intersection, &entity_hit);
 
         rendered_entities[intersection_num] = entity_hit;
@@ -96,7 +96,7 @@ void render_3d_entity(struct Prog* p, float angle, int col, int ray_length_wall)
                 intersections[j] = intersections[k];
                 intersections[k] = tmpi;
 
-                struct Entity* tmpe = rendered_entities[j];
+                struct Entity *tmpe = rendered_entities[j];
                 rendered_entities[j] = rendered_entities[k];
                 rendered_entities[k] = tmpe;
             }

@@ -5,13 +5,13 @@
 #include <math.h>
 
 
-char* common_read_file(const char* path)
+char *common_read_file(const char *path)
 {
-    char* contents = malloc(sizeof(char));
+    char *contents = malloc(sizeof(char));
     contents[0] = '\0';
 
-    FILE* fp = fopen(path, "r");
-    char* line = 0;
+    FILE *fp = fopen(path, "r");
+    char *line = 0;
     size_t len = 0;
     ssize_t read;
 
@@ -49,26 +49,26 @@ float common_restrict_angle(float angle)
 }
 
 
-SDL_Texture* common_render_text(SDL_Renderer* rend, TTF_Font* font, const char* text)
+SDL_Texture *common_render_text(SDL_Renderer *rend, TTF_Font *font, const char *text)
 {
     if (strlen(text) == 0)
         return 0;
 
-    SDL_Surface* surf = TTF_RenderText_Blended(font, text, (SDL_Color){ 255, 255, 255 });
-    SDL_Texture* tex = SDL_CreateTextureFromSurface(rend, surf);
+    SDL_Surface *surf = TTF_RenderText_Blended(font, text, (SDL_Color){ 255, 255, 255 });
+    SDL_Texture *tex = SDL_CreateTextureFromSurface(rend, surf);
 
     SDL_FreeSurface(surf);
     return tex;
 }
 
 
-void common_display_statistic(SDL_Renderer* rend, TTF_Font* font, const char* text, int value, SDL_Point pos)
+void common_display_statistic(SDL_Renderer *rend, TTF_Font *font, const char *text, int value, SDL_Point pos)
 {
     int value_len = snprintf(0, 0, "%d", value);
     int length = strlen(text) + value_len + 1;
-    char* display = malloc(sizeof(char) * length);
+    char *display = malloc(sizeof(char) * length);
     snprintf(display, length, "%s%d", text, value);
-    SDL_Texture* tex = common_render_text(rend, font, display);
+    SDL_Texture *tex = common_render_text(rend, font, display);
     free(display);
 
     SDL_Rect tmp = { .x = pos.x, .y = pos.y };

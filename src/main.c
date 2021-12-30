@@ -7,7 +7,7 @@
 #include <SDL2/SDL_mixer.h>
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
@@ -16,10 +16,10 @@ int main(int argc, char** argv)
 
     srand(time(0));
 
-    SDL_Window* window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN);
-    SDL_Renderer* rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    SDL_Window *window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN);
+    SDL_Renderer *rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    FILE* fp = fopen("sfx_mute", "r");
+    FILE *fp = fopen("sfx_mute", "r");
 
     if (fp)
     {
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 
     while (true)
     {
-        struct Prog* p = prog_init(window, rend);
+        struct Prog *p = prog_init(window, rend);
 
         if (!p)
         {

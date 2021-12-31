@@ -41,20 +41,33 @@ int render_3d_wall(struct Prog *p, float angle, int col)
 
     // Render walls
     SDL_Rect src = (SDL_Rect){
-        .x = ((float)((horizontal ? endp.x : endp.y) % p->map->tile_size) / (float)p->map->tile_size) * p->image_size.x,
+        .x = ((float)((horizontal ? endp.y : endp.x) % p->map->tile_size) / (float)p->map->tile_size) * p->image_size.x,
         .y = 0,
         .w = 1,
         .h = p->image_size.y
     };
 
-    SDL_Rect dst = (SDL_Rect){ .x = col, .y = (int)line_offset, .w = 1, .h = (int)line_height };
-    SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
+    SDL_Point grid_pos = {
+        .x = (endp.x - (endp.x % p->map->tile_size)) / p->map->tile_size,
+        .y = (endp.y - (endp.y % p->map->tile_size)) / p->map->tile_size
+    };
 
-    int opacity = (horizontal ? 35 : 0);
-    SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(p->rend, 0, 0, 0, opacity);
-    SDL_RenderFillRect(p->rend, &dst);
-    SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_NONE);
+    bool render = true;
+
+    if (p->map->portal && portal_check_collision(p->map->portal, grid_pos, collision_type))
+        render = false;
+
+    if (render)
+    {
+        SDL_Rect dst = (SDL_Rect){ .x = col, .y = (int)line_offset, .w = 1, .h = (int)line_height };
+        SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
+
+        int opacity = (horizontal ? 0 : 35);
+        SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(p->rend, 0, 0, 0, opacity);
+        SDL_RenderFillRect(p->rend, &dst);
+        SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_NONE);
+    }
 
     return ray_length_wall;
 }

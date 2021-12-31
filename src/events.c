@@ -90,6 +90,21 @@ void events_keydown(struct Prog *p, SDL_Event *evt)
             audio_play_sound("res/sfx/reload.wav");
             p->player->reloading = true;
         } break;
+        case SDLK_t:
+        {
+            int coll;
+            SDL_Point endp = player_cast_ray(p->player, p->player->angle, p->map, p->entities, p->entities_size, &coll);
+
+            SDL_Point grid_pos = {
+                .x = (endp.x - (endp.x % p->map->tile_size)) / p->map->tile_size,
+                .y = (endp.y - (endp.y % p->map->tile_size)) / p->map->tile_size
+            };
+
+            if (p->map->portal)
+                portal_free(p->map->portal);
+
+            p->map->portal = portal_alloc(grid_pos, coll);
+        } break;
         }
     }
     else

@@ -8,14 +8,6 @@
 
 struct Prog;
 
-enum
-{
-    DIR_UP,
-    DIR_DOWN,
-    DIR_LEFT,
-    DIR_RIGHT
-};
-
 struct PlayerModeData
 {
     enum

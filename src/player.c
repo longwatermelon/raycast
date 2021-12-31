@@ -311,9 +311,9 @@ SDL_Point player_cast_ray(struct Player *self, float angle, struct Map *map, str
 
     // Collision type representing which side the ray hits
     if (dist_h < dist_v) // Horizontal
-        *collision_type = (angle > M_PI / 2.f && angle < 3.f * M_PI / 2.f ? DIR_RIGHT : DIR_LEFT);
-    else // Vertical
         *collision_type = (angle < M_PI ? DIR_DOWN : DIR_UP);
+    else // Vertical
+        *collision_type = (angle > M_PI / 2.f && angle < 3.f * M_PI / 2.f ? DIR_RIGHT : DIR_LEFT);
 
     if (self->ray_mode == RAY_HORIZONTAL)
         return horizontal;

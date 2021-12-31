@@ -29,12 +29,17 @@ struct Map *map_init(const char *path, SDL_Point size, int tile_size)
     }
 #endif
 
+    self->portal = 0;
+
     return self;
 }
 
 
 void map_cleanup(struct Map *self)
 {
+    if (self->portal)
+        portal_free(self->portal);
+
     free(self->layout);
     free(self);
 }

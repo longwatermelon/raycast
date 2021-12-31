@@ -4,6 +4,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+enum
+{
+    DIR_UP,
+    DIR_DOWN,
+    DIR_LEFT,
+    DIR_RIGHT
+};
+
 char *common_read_file(const char *path);
 float common_restrict_angle(float angle);
 

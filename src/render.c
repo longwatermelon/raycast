@@ -37,9 +37,11 @@ int render_3d_wall(struct Prog *p, float angle, int col)
 
     float line_offset = 400.f - line_height / 2.f;
 
+    bool horizontal = collision_type == DIR_LEFT || collision_type == DIR_RIGHT;
+
     // Render walls
     SDL_Rect src = (SDL_Rect){
-        .x = ((float)((collision_type == COLLISION_HORIZONTAL ? endp.x : endp.y) % p->map->tile_size) / (float)p->map->tile_size) * p->image_size.x,
+        .x = ((float)((horizontal ? endp.x : endp.y) % p->map->tile_size) / (float)p->map->tile_size) * p->image_size.x,
         .y = 0,
         .w = 1,
         .h = p->image_size.y
@@ -48,7 +50,7 @@ int render_3d_wall(struct Prog *p, float angle, int col)
     SDL_Rect dst = (SDL_Rect){ .x = col, .y = (int)line_offset, .w = 1, .h = (int)line_height };
     SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
 
-    int opacity = (collision_type == COLLISION_HORIZONTAL ? 35 : 0);
+    int opacity = (horizontal ? 35 : 0);
     SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(p->rend, 0, 0, 0, opacity);
     SDL_RenderFillRect(p->rend, &dst);

@@ -10,8 +10,10 @@ struct Prog;
 
 enum
 {
-    COLLISION_HORIZONTAL,
-    COLLISION_VERTICAL
+    DIR_UP,
+    DIR_DOWN,
+    DIR_LEFT,
+    DIR_RIGHT
 };
 
 struct PlayerModeData

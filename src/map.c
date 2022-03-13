@@ -29,7 +29,8 @@ struct Map *map_init(const char *path, SDL_Point size, int tile_size)
     }
 #endif
 
-    self->portal = 0;
+    self->portal_1 = 0;
+    self->portal_2 = 0;
 
     return self;
 }
@@ -37,8 +38,11 @@ struct Map *map_init(const char *path, SDL_Point size, int tile_size)
 
 void map_cleanup(struct Map *self)
 {
-    if (self->portal)
-        portal_free(self->portal);
+    if (self->portal_1)
+        portal_free(self->portal_1);
+
+    if (self->portal_2)
+        portal_free(self->portal_2);
 
     free(self->layout);
     free(self);
@@ -69,3 +73,14 @@ SDL_FPoint map_get_random_empty_spot(struct Map *self)
     return pos;
 }
 
+
+struct Portal *map_check_portal_collision(struct Map *self, SDL_Point grid_pos, int dir)
+{
+    if (self->portal_1 && portal_check_collision(self->portal_1, grid_pos, dir))
+        return self->portal_1;
+
+    if (self->portal_2 && portal_check_collision(self->portal_2, grid_pos, dir))
+        return self->portal_2;
+
+    return 0;
+}

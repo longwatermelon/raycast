@@ -100,10 +100,10 @@ void events_keydown(struct Prog *p, SDL_Event *evt)
                 .y = (endp.y - (endp.y % p->map->tile_size)) / p->map->tile_size
             };
 
-            if (p->map->portal)
-                portal_free(p->map->portal);
-
-            p->map->portal = portal_alloc(grid_pos, coll);
+            if (p->map->portal_1)
+                p->map->portal_2 = portal_alloc(grid_pos, coll);
+            else
+                p->map->portal_1 = portal_alloc(grid_pos, coll);
         } break;
         }
     }

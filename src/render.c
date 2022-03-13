@@ -52,12 +52,14 @@ int render_3d_wall(struct Prog *p, float angle, int col)
         .y = (endp.y - (endp.y % p->map->tile_size)) / p->map->tile_size
     };
 
-    bool render = true;
+    struct Portal *portal = map_check_portal_collision(p->map, grid_pos, collision_type);
 
-    if (p->map->portal && portal_check_collision(p->map->portal, grid_pos, collision_type))
-        render = false;
-
-    if (render)
+    if (portal)
+    {
+        struct Portal *other = (portal == p->map->portal_1 ? p->map->portal_2 : p->map->portal_1);
+        (void)other;
+    }
+    else
     {
         SDL_Rect dst = (SDL_Rect){ .x = col, .y = (int)line_offset, .w = 1, .h = (int)line_height };
         SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);

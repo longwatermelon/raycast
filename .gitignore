@@ -2,6 +2,6 @@ obj/
 releases/
 .cache/
 compile_commands.json
-raycast
 sfx_mute
+/a.out
 

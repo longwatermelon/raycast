@@ -11,12 +11,11 @@ all:
 	$(MAKE) raycast
 
 raycast: $(OBJS)
-	$(CC) $(CFLAGS) $(INC) $(LIBS) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(INC) $(OBJS) $(LIBS)
 
 obj/src/%.o: src/%.c src/%.h
-	$(CC) $(CFLAGS) $(INC) $(LIBS) -c $< -o $@
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@ $(LIBS)
 
 clean:
-	rm -rf obj
-	rm raycast
+	-rm -rf obj a.out
 

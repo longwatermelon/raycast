@@ -39,20 +39,19 @@ Brew: `brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer`
 
 # Building
 
+## Linux
 ```
 git clone https://github.com/longwatermelon/raycast
 cd raycast
 make
-./raycast
+./a.out
 ```
 
-Building may fail on macos because homebrew isn't included in default library and include search paths, it should work if you add `-I[homebrew directory]/include` to INC and `-L[homebrew directory]/lib` to LIBS in the makefile. Apple clang will also spit out a lot of warnings that don't happen with gcc, so you will need to remove `-Werror` from CFLAGS.
-
-Modified Makefile variables on an apple machine may look something like
-
+## MacOS
 ```
-CC=gcc
-CFLAGS=-std=gnu17 -ggdb -Wall
-INC=-I/opt/homebrew/include
-LIBS=-L/opt/homebrew/lib -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+git clone https://github.com/longwatermelon/rasterize
+cd rasterize
+make INCLUDE=-I$(brew --prefix)/include LIBRARIES=-L$(brew --prefix)/lib FLAGS=-Wno-error=unused-command-line-argument
+./a.out
 ```
+

@@ -6,6 +6,10 @@ CFLAGS=-std=gnu17 -ggdb -Wall -Werror
 INC=
 LIBS=-lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
+CFLAGS+=$(FLAGS)
+INC+=$(INCLUDE)
+LIBS+=$(LIBRARIES)
+
 all:
 	mkdir -p obj/src/
 	$(MAKE) raycast

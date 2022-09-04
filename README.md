@@ -55,3 +55,10 @@ make INCLUDE=-I$(brew --prefix)/include LIBRARIES=-L$(brew --prefix)/lib FLAGS=-
 ./a.out
 ```
 
+# Building options
+To enable cheats, add `-DCHEATS_ON` to the Makefile.
+
+To enable map randomization, add `-DRANDOMIZE_MAP` to the Makefile.
+
+To enable grappling hook spin, add `-DGRAPPLE_SPIN` to the Makefile.
+

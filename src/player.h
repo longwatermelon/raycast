@@ -26,6 +26,7 @@ struct PlayerModeData
 
     SDL_Point grappling_dst;
     float grappling_theta;
+    float grappling_drot;
 };
 
 struct PlayerAnimationData

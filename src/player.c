@@ -34,6 +34,7 @@ struct Player *player_init(SDL_Point pos, float angle, SDL_Renderer *rend)
     self->mode_data.mode = PLAYER_MODE_NORMAL;
     self->mode_data.grappling_dst = (SDL_Point){ .x = -1, .y = -1 };
     self->mode_data.grappling_theta = 0.f;
+    self->mode_data.grappling_drot = 0.f;
 
     self->weapon = WEAPON_GUN;
 
@@ -228,6 +229,10 @@ void player_execute_mode(struct Player *self)
     {
         self->pos.x += 7.f * cosf(self->mode_data.grappling_theta);
         self->pos.y += 7.f * sinf(self->mode_data.grappling_theta);
+#ifdef GRAPPLE_SPIN
+        self->angle += self->mode_data.grappling_drot;
+        self->angle = common_restrict_angle(self->angle);
+#endif
 
         if (fabsf(self->pos.x - self->mode_data.grappling_dst.x) < 10.f &&
             fabsf(self->pos.y - self->mode_data.grappling_dst.y) < 10.f)

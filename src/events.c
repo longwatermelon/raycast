@@ -18,7 +18,8 @@ void events_base(struct Prog *p, SDL_Event *evt)
             break;
         case SDL_MOUSEMOTION:
         {
-            p->player->angle -= 0.002f * evt->motion.xrel;
+            if (p->player->mode_data.mode != PLAYER_MODE_GRAPPLING)
+                p->player->angle -= 0.002f * evt->motion.xrel;
         } break;
         case SDL_MOUSEBUTTONDOWN:
             events_mouse_down(p, evt);
@@ -232,6 +233,14 @@ void events_mouse_down_right(struct Prog *p, SDL_Event *evt)
     p->player->mode_data.mode = PLAYER_MODE_GRAPPLING;
     p->player->mode_data.grappling_dst = (SDL_Point){ .x = dst.x + xo, .y = dst.y + yo };
     p->player->mode_data.grappling_theta = atan2f(dst.y - p->player->pos.y, dst.x - p->player->pos.x);
+
+    SDL_Point diff = {
+        dst.x - p->player->pos.x,
+        dst.y - p->player->pos.y
+    };
+    float distance = sqrtf(diff.x * diff.x + diff.y * diff.y);
+
+    p->player->mode_data.grappling_drot = (rand() % 2 ? -1 : 1) * (7.f / distance) * M_PI * 3.f;
 
     audio_play_sound("res/sfx/grapple.wav");
 }

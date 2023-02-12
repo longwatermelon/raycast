@@ -18,8 +18,7 @@ void events_base(struct Prog *p, SDL_Event *evt)
             break;
         case SDL_MOUSEMOTION:
         {
-            if (p->player->mode_data.mode != PLAYER_MODE_GRAPPLING)
-                p->player->angle -= 0.002f * evt->motion.xrel;
+            p->player->angle -= 0.002f * evt->motion.xrel;
         } break;
         case SDL_MOUSEBUTTONDOWN:
             events_mouse_down(p, evt);

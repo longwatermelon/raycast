@@ -1,6 +1,8 @@
 # raycast
 Raycasting in C
 
+[Demo](https://longwatermelon.github.io/raycast)
+
 Supported on linux and mac, not on windows.
 
 Press esc to release mouse from the window and click to recapture the mouse.
@@ -21,6 +23,7 @@ If you want to mute certain parts of the audio playing, create a file called `sf
 * R: reload (gun)
 * 1: equip knife
 * 2: equip gun
+* Left shift: detonate grenade
 
 https://user-images.githubusercontent.com/73869536/143689375-5fcc2022-157c-4527-9c2c-f18d77372cb9.mp4
 

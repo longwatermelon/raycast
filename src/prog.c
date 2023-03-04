@@ -25,8 +25,6 @@ struct Prog *prog_init(SDL_Window *window, SDL_Renderer *rend)
         return 0;
     }
 
-    printf("here\n");
-    fflush(stdout);
     self->map = map_init("res/map", (SDL_Point){ 32, 32 }, 50);
 
     if (!self->map)

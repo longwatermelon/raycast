@@ -54,5 +54,7 @@ void prog_spawn_entity(struct Prog *self, int type, const char *sprite_path);
 
 int prog_entity_count(struct Prog *self, int type);
 
+void prog_blast(struct Prog *self);
+
 #endif
 

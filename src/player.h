@@ -69,6 +69,9 @@ struct Player
     // Knife properties
     bool swinging;
 
+    // Grenade
+    int grenades;
+
     int enemies_killed;
 
     struct PlayerModeData mode_data;
@@ -76,7 +79,8 @@ struct Player
     enum
     {
         WEAPON_GUN,
-        WEAPON_KNIFE
+        WEAPON_KNIFE,
+        WEAPON_BLAST
     } weapon;
 
     struct PlayerAnimationData animation;

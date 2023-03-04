@@ -10,5 +10,8 @@ void render_3d_all(struct Prog *p);
 int render_3d_wall(struct Prog *p, float angle, int col);
 void render_3d_entity(struct Prog *p, float angle, int col, int ray_length_wall);
 
+void render_shake();
+void render_flash();
+
 #endif
 

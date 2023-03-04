@@ -1,6 +1,7 @@
 #include "player.h"
 #include "common.h"
 #include "prog.h"
+#include "render.h"
 #include "audio.h"
 #include <math.h>
 #include <time.h>
@@ -26,6 +27,8 @@ struct Player *player_init(SDL_Point pos, float angle, SDL_Renderer *rend)
     self->reloading = false;
     self->bullets = 16;
     self->bullets_loaded = 16;
+
+    self->grenades = 3;
 
     self->swinging = false;
 
@@ -243,6 +246,9 @@ void player_execute_mode(struct Player *self)
 
             self->mode_data.grappling_dst = (SDL_Point){ .x = -1, .y = -1 };
             self->mode_data.grappling_theta = 0.f;
+
+            audio_play_sound("res/sfx/impact.wav");
+            render_shake();
         }
     } break;
     default:

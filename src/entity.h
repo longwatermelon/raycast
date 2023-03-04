@@ -13,6 +13,7 @@ struct Entity
     {
         ENTITY_ENEMY,
         ENTITY_AMMO,
+        ENTITY_GRENADE,
         ENTITY_NUTS
     } type;
 
@@ -27,13 +28,16 @@ struct Entity
     // Entity type specific properties
     bool enemy_dead;
     struct timespec enemy_death_time;
+
+    bool blasted;
+    SDL_FPoint blast_dir;
 };
 
 struct Entity *entity_init(int type, SDL_FPoint pos, SDL_Renderer *rend, const char *sprite_path);
 void entity_cleanup(struct Entity *self);
 
-void entity_move(struct Entity *self, struct Map *map, float x, float y);
-void entity_move_towards_player(struct Entity *self, struct Player *p, struct Map *map);
+void entity_move(struct Entity *self, SDL_Renderer *rend, struct Map *map, float x, float y);
+void entity_move_towards_player(struct Entity *self, SDL_Renderer *rend, struct Player *p, struct Map *map);
 
 void entity_die(struct Entity *self, SDL_Renderer *rend, int weapon);
 

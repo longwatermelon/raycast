@@ -119,8 +119,11 @@ void prog_mainloop(struct Prog *self)
             if (rand() % 2000 > 1930 && self->entities_size < MAX_ENTITIES)
                 prog_spawn_entity(self, ENTITY_ENEMY, "res/gfx/shrek.png");
 
-            if (rand() % 2000 > 1990 && self->entities_size < MAX_ENTITIES)
+            if (rand() % 2000 > 1995 && self->entities_size < MAX_ENTITIES)
                 prog_spawn_entity(self, ENTITY_AMMO, "res/gfx/ammo.png");
+
+            if (rand() % 2000 > 1990 && self->entities_size < MAX_ENTITIES)
+                prog_spawn_entity(self, ENTITY_GRENADE, "res/gfx/grenade.png");
 
             // Spawning nuts
             bool nuts_exist = false;
@@ -180,7 +183,7 @@ void prog_handle_entity_interaction(struct Prog *self)
         }
 
         if (!self->game_over && self->entities[i]->type == ENTITY_ENEMY)
-            entity_move_towards_player(self->entities[i], self->player, self->map);
+            entity_move_towards_player(self->entities[i], self->rend, self->player, self->map);
 
         SDL_FPoint diff = {
             .x = self->player->pos.x - self->entities[i]->pos.x,
@@ -222,6 +225,13 @@ void prog_handle_entity_interaction(struct Prog *self)
                 prog_remove_entity(self, self->entities[i]);
                 break;
             }
+            else if (self->entities[i]->type == ENTITY_GRENADE)
+            {
+                audio_play_sound("res/sfx/ammo.wav");
+                ++self->player->grenades;
+                prog_remove_entity(self, self->entities[i]);
+                break;
+            }
         }
     }
 }
@@ -234,6 +244,7 @@ void prog_render_all(struct Prog *self)
 
     common_display_statistic(self->rend, self->font, "Health: ", self->player->health, (SDL_Point){ 20, 20 });
     common_display_statistic(self->rend, self->font, "Nuts collected: ", self->nuts_collected, (SDL_Point){ 20, 40 });
+    common_display_statistic(self->rend, self->font, "Grenades: ", self->player->grenades, (SDL_Point){ 20, 60 });
 
     if (self->player->weapon == WEAPON_GUN)
     {
@@ -273,7 +284,7 @@ void prog_render_all(struct Prog *self)
 #ifdef CHEATS_ON
     {
         SDL_Texture *cheats_notif = common_render_text(self->rend, self->font, "[Cheats enabled]");
-        SDL_Rect tmp = { .x = 20, .y = 60 };
+        SDL_Rect tmp = { .x = 20, .y = 80 };
         SDL_QueryTexture(cheats_notif, 0, 0, &tmp.w, &tmp.h);
         SDL_RenderCopy(self->rend, cheats_notif, 0, &tmp);
         SDL_DestroyTexture(cheats_notif);
@@ -371,3 +382,29 @@ int prog_entity_count(struct Prog *self, int type)
     return count;
 }
 
+void prog_blast(struct Prog *self)
+{
+    if (self->player->grenades == 0)
+        return;
+
+    --self->player->grenades;
+    audio_play_sound("res/sfx/grenade.wav");
+    render_flash();
+    for (size_t i = 0; i < self->entities_size; ++i)
+    {
+        SDL_FPoint diff = {
+            self->player->pos.x - self->entities[i]->pos.x,
+            self->player->pos.y - self->entities[i]->pos.y
+        };
+
+        float dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
+        if (dist > 300.f)
+            continue;
+
+        self->entities[i]->blasted = true;
+        self->entities[i]->blast_dir = (SDL_FPoint){
+            -diff.x / dist * 20.f,
+            -diff.y / dist * 20.f
+        };
+    }
+}

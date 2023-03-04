@@ -18,7 +18,7 @@ void events_base(struct Prog *p, SDL_Event *evt)
             break;
         case SDL_MOUSEMOTION:
         {
-            p->player->angle -= 0.002f * evt->motion.xrel;
+            p->player->angle -= 0.004f * evt->motion.xrel;
         } break;
         case SDL_MOUSEBUTTONDOWN:
             events_mouse_down(p, evt);
@@ -89,6 +89,10 @@ void events_keydown(struct Prog *p, SDL_Event *evt)
 
             audio_play_sound("res/sfx/reload.wav");
             p->player->reloading = true;
+        } break;
+        case SDLK_LSHIFT:
+        {
+            prog_blast(p);
         } break;
         }
     }

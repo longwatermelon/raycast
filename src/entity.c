@@ -1,5 +1,7 @@
 #include "entity.h"
 #include "player.h"
+#include "audio.h"
+#include "render.h"
 #include "common.h"
 #include <time.h>
 #include <SDL2/SDL_image.h>
@@ -20,6 +22,9 @@ struct Entity *entity_init(int type, SDL_FPoint pos, SDL_Renderer *rend, const c
 
     self->enemy_dead = false;
 
+    self->blasted = false;
+    self->blast_dir = (SDL_FPoint){ 0.f, 0.f };
+
     return self;
 }
 
@@ -31,8 +36,14 @@ void entity_cleanup(struct Entity *self)
 }
 
 
-void entity_move(struct Entity *self, struct Map *map, float x, float y)
+void entity_move(struct Entity *self, SDL_Renderer *rend, struct Map *map, float x, float y)
 {
+    if (self->blasted)
+    {
+        x = self->blast_dir.x;
+        y = self->blast_dir.y;
+    }
+
     int xo = 0;
 
     if (x > 0)
@@ -57,19 +68,36 @@ void entity_move(struct Entity *self, struct Map *map, float x, float y)
         (int)((self->pos.y + y + yo) - ((int)(self->pos.y + y + yo) % map->tile_size)) / map->tile_size
     };
 
-    if (map->layout[grid_pos.y * map->size.x + new_grid_pos.x] == '.')
-        self->pos.x += x;
+    if (self->blasted)
+    {
+        if (map->layout[new_grid_pos.y * map->size.x + new_grid_pos.x] != '.')
+        {
+            entity_die(self, rend, WEAPON_BLAST);
+            audio_play_sound("res/sfx/impact.wav");
+            render_shake();
+        }
+        else
+        {
+            self->pos.x += x;
+            self->pos.y += y;
+        }
+    }
+    else
+    {
+        if (map->layout[grid_pos.y * map->size.x + new_grid_pos.x] == '.')
+            self->pos.x += x;
 
-    if (map->layout[new_grid_pos.y * map->size.x + grid_pos.x] == '.')
-        self->pos.y += y;
+        if (map->layout[new_grid_pos.y * map->size.x + grid_pos.x] == '.')
+            self->pos.y += y;
+    }
 }
 
 
-void entity_move_towards_player(struct Entity *self, struct Player *p, struct Map *map)
+void entity_move_towards_player(struct Entity *self, SDL_Renderer *rend, struct Player *p, struct Map *map)
 {
     float theta = atan2f(p->pos.y - self->pos.y, p->pos.x - self->pos.x);
     theta += fmod(rand(), 3.f) - 1.5f;
-    entity_move(self, map, self->speed * cosf(theta), self->speed * sinf(theta));
+    entity_move(self, rend, map, self->speed * cosf(theta), self->speed * sinf(theta));
 }
 
 
@@ -87,6 +115,9 @@ void entity_die(struct Entity *self, SDL_Renderer *rend, int weapon)
         break;
     case WEAPON_KNIFE:
         self->sprite = IMG_LoadTexture(rend, "res/gfx/shrek_dead_knife.png");
+        break;
+    case WEAPON_BLAST:
+        self->sprite = IMG_LoadTexture(rend, "res/gfx/shrek_dead_blast.png");
         break;
     }
 }

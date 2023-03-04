@@ -2,11 +2,22 @@
 #include "prog.h"
 #include "common.h"
 #include <SDL2/SDL_blendmode.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_timer.h>
 
+Uint32 shake_begin = 0;
+Uint32 flash_begin = 0;
 
 void render_3d_all(struct Prog  *p)
 {
     float x_pos = 0.f;
+
+    SDL_Texture *tex = SDL_CreateTexture(p->rend,
+        SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET,
+        800, 800);
+    SDL_SetRenderTarget(p->rend, tex);
+    SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
+    SDL_RenderFillRect(p->rend, 0);
 
     for (float i = p->player->angle + M_PI / 6.f; i > p->player->angle - M_PI / 6.f; i -= 0.0013f) // Cast 800 rays
     {
@@ -15,6 +26,23 @@ void render_3d_all(struct Prog  *p)
 
         x_pos += 1.f;
     }
+
+    SDL_SetRenderTarget(p->rend, 0);
+
+    bool shake = shake_begin != 0 && SDL_GetTicks() - shake_begin < 100;
+    SDL_FRect r = { shake ? (float)(rand() % 100 - 50) / 10.f : 0.f, shake ? (float)(rand() % 100 - 50) / 10.f : 0.f, 800, 800 };
+
+    SDL_RenderCopyF(p->rend, tex, 0, &r);
+
+    if (SDL_GetTicks() - flash_begin < 1000 && flash_begin != 0)
+    {
+        SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(p->rend, 255, 255, 255, (1.f - (float)(SDL_GetTicks() - flash_begin) / 1000.f) * 255);
+        SDL_RenderFillRect(p->rend, 0);
+        SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_NONE);
+    }
+
+    SDL_DestroyTexture(tex);
 }
 
 
@@ -149,6 +177,9 @@ void render_3d_entity(struct Prog *p, float angle, int col, int ray_length_wall)
                 case ENTITY_AMMO:
                     color = (SDL_Color){ .r = 255, .g = 0, .b = 255 };
                     break;
+                case ENTITY_GRENADE:
+                    color = (SDL_Color){ .r = 255, .g = 255, .b = 0 };
+                    break;
                 }
 
                 SDL_SetRenderDrawColor(p->rend, color.r, color.g, color.b, 160);
@@ -159,3 +190,12 @@ void render_3d_entity(struct Prog *p, float angle, int col, int ray_length_wall)
     }
 }
 
+void render_shake()
+{
+    shake_begin = SDL_GetTicks();
+}
+
+void render_flash()
+{
+    flash_begin = SDL_GetTicks();
+}

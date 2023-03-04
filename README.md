@@ -22,8 +22,6 @@ If you want to mute certain parts of the audio playing, create a file called `sf
 * 1: equip knife
 * 2: equip gun
 
-https://user-images.githubusercontent.com/73869536/143689375-5fcc2022-157c-4527-9c2c-f18d77372cb9.mp4
-
 # Dependencies
 
 * SDL2

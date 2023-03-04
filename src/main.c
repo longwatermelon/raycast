@@ -6,9 +6,29 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#endif
+
+struct Prog *g_prog;
+SDL_Window *window;
+SDL_Renderer *rend;
+
+void emloop()
+{
+    prog_mainloop(g_prog);
+
+    if (g_prog->restart)
+    {
+        prog_cleanup(g_prog);
+        g_prog = prog_init(window, rend);
+    }
+}
 
 int main(int argc, char **argv)
 {
+    printf("here\n");
+    fflush(stdout);
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
     TTF_Init();
@@ -16,9 +36,13 @@ int main(int argc, char **argv)
 
     srand(time(0));
 
-    SDL_Window *window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN);
-    SDL_Renderer *rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    window = SDL_CreateWindow("Raycaster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN);
+    rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
+    printf("created window\n");
+    fflush(stdout);
+
+#ifndef __EMSCRIPTEN__
     FILE *fp = fopen("sfx_mute", "r");
 
     if (fp)
@@ -42,10 +66,17 @@ int main(int argc, char **argv)
         audio_mute(sound, music);
         fclose(fp);
     }
+#endif
 
     audio_init();
     audio_play_music("res/sfx/shreksophone.wav");
 
+#ifdef __EMSCRIPTEN__
+    printf("setting loop\n");
+    fflush(stdout);
+    g_prog = prog_init(window, rend);
+    emscripten_set_main_loop(emloop, -1, 1);
+#else
     while (true)
     {
         struct Prog *p = prog_init(window, rend);
@@ -66,6 +97,7 @@ int main(int argc, char **argv)
 
         prog_cleanup(p);
     }
+#endif
 
 cleanup:
     audio_cleanup();

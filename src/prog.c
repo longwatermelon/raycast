@@ -25,7 +25,9 @@ struct Prog *prog_init(SDL_Window *window, SDL_Renderer *rend)
         return 0;
     }
 
-    self->map = map_init("map", (SDL_Point){ 32, 32 }, 50);
+    printf("here\n");
+    fflush(stdout);
+    self->map = map_init("res/map", (SDL_Point){ 32, 32 }, 50);
 
     if (!self->map)
         return 0;
@@ -96,7 +98,9 @@ void prog_mainloop(struct Prog *self)
 {
     SDL_Event evt;
 
+#ifndef __EMSCRIPTEN__
     while (self->running)
+#endif
     {
         events_base(self, &evt);
         audio_stop_finished_sounds();

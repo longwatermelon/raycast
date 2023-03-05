@@ -30,7 +30,9 @@ void render_3d_all(struct Prog  *p)
     SDL_SetRenderTarget(p->rend, 0);
 
     bool shake = shake_begin != 0 && SDL_GetTicks() - shake_begin < 100;
-    SDL_FRect r = { shake ? (float)(rand() % 100 - 50) / 10.f : 0.f, shake ? (float)(rand() % 100 - 50) / 10.f : 0.f, 800, 800 };
+    float shake_x = shake ? (float)(rand() % 100 - 50) / 10.f : 0.f;
+    float shake_y = shake ? (float)(rand() % 100 - 50) / 10.f : 0.f;
+    SDL_FRect r = { shake_x, shake_y, 800, 800 };
 
     SDL_RenderCopyF(p->rend, tex, 0, &r);
 
@@ -76,6 +78,9 @@ int render_3d_wall(struct Prog *p, float angle, int col)
         .w = 1,
         .h = p->image_size.y
     };
+
+    if (wall - '0' < 0 || wall - '0' >= 6)
+        return ray_length_wall;
 
     SDL_Rect dst = (SDL_Rect){ .x = col, .y = (int)line_offset, .w = 1, .h = (int)line_height };
     SDL_RenderCopy(p->rend, p->tile_textures[wall - '0'], &src, &dst);

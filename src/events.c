@@ -190,6 +190,10 @@ void events_keydown(struct Prog *p, SDL_Event *evt)
         else
             printf("Not adjusting for fisheye effect\n");
         break;
+    case SDLK_g:
+        ++p->player->grenades;
+        printf("+1 grenade\n");
+        break;
     }
 #endif
 }

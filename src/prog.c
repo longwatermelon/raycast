@@ -39,14 +39,13 @@ struct Prog *prog_init(SDL_Window *window, SDL_Renderer *rend)
     self->entities = malloc(0);
     self->entities_size = 0;
 
-    self->tile_texture = IMG_LoadTexture(self->rend, "res/gfx/wall.png");
-    SDL_QueryTexture(self->tile_texture, 0, 0, &self->image_size.x, &self->image_size.y);
-
-    if (!self->tile_texture)
-    {
-        fprintf(stderr, "Wall textures are missing\n");
-        return 0;
-    }
+    self->tile_textures[0] = IMG_LoadTexture(self->rend, "res/gfx/wall0.png");
+    self->tile_textures[1] = IMG_LoadTexture(self->rend, "res/gfx/wall1.png");
+    self->tile_textures[2] = IMG_LoadTexture(self->rend, "res/gfx/wall2.png");
+    self->tile_textures[3] = IMG_LoadTexture(self->rend, "res/gfx/wall3.png");
+    self->tile_textures[4] = IMG_LoadTexture(self->rend, "res/gfx/wall5.png");
+    self->tile_textures[5] = IMG_LoadTexture(self->rend, "res/gfx/wall5.png");
+    SDL_QueryTexture(self->tile_textures[0], 0, 0, &self->image_size.x, &self->image_size.y);
 
     self->crosshair_texture = IMG_LoadTexture(self->rend, "res/gfx/crosshair.png");
 
@@ -75,7 +74,9 @@ void prog_cleanup(struct Prog *self)
 {
     SDL_SetRelativeMouseMode(SDL_FALSE);
 
-    SDL_DestroyTexture(self->tile_texture);
+    for (int i = 0; i < sizeof(self->tile_textures) / sizeof(SDL_Texture*); ++i)
+        SDL_DestroyTexture(self->tile_textures[i]);
+
     SDL_DestroyTexture(self->crosshair_texture);
 
     TTF_CloseFont(self->font);
@@ -153,7 +154,7 @@ void prog_mainloop(struct Prog *self)
             self->game_over = true;
         }
 
-        player_execute_mode(self->player);
+        player_execute_mode(self->player, self->map);
         player_advance_animations(self->player);
 
         SDL_RenderClear(self->rend);

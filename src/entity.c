@@ -1,4 +1,5 @@
 #include "entity.h"
+#include "map.h"
 #include "player.h"
 #include "audio.h"
 #include "render.h"
@@ -75,6 +76,7 @@ void entity_move(struct Entity *self, SDL_Renderer *rend, struct Map *map, float
             entity_die(self, rend, WEAPON_BLAST);
             audio_play_sound("res/sfx/impact.wav");
             render_shake();
+            map_damage_wall(map, new_grid_pos);
         }
         else
         {

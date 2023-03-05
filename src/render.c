@@ -49,7 +49,9 @@ void render_3d_all(struct Prog  *p)
 int render_3d_wall(struct Prog *p, float angle, int col)
 {
     int collision_type;
-    SDL_Point endp = player_cast_ray(p->player, angle, p->map, p->entities, p->entities_size, &collision_type);
+    char wall;
+    SDL_Point gpos;
+    SDL_Point endp = player_cast_ray(p->player, angle, p->map, p->entities, p->entities_size, &collision_type, &wall, &gpos);
 
     int ray_length_wall = sqrtf((endp.x - p->player->pos.x) * (endp.x - p->player->pos.x) + (endp.y - p->player->pos.y) * (endp.y - p->player->pos.y));
 
@@ -76,7 +78,7 @@ int render_3d_wall(struct Prog *p, float angle, int col)
     };
 
     SDL_Rect dst = (SDL_Rect){ .x = col, .y = (int)line_offset, .w = 1, .h = (int)line_height };
-    SDL_RenderCopy(p->rend, p->tile_texture, &src, &dst);
+    SDL_RenderCopy(p->rend, p->tile_textures[wall - '0'], &src, &dst);
 
     int opacity = (horizontal ? 35 : 0);
     SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);

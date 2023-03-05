@@ -25,7 +25,7 @@ struct Prog
     struct Entity **entities;
     size_t entities_size;
 
-    SDL_Texture *tile_texture;
+    SDL_Texture *tile_textures[6];
     SDL_Point image_size;
 
     SDL_Texture *crosshair_texture;

@@ -228,13 +228,16 @@ void events_mouse_down_right(struct Prog *p, SDL_Event *evt)
         return;
 
     int collision_type;
-    SDL_Point dst = player_cast_ray(p->player, p->player->angle, p->map, p->entities, p->entities_size, &collision_type);
+    char wall;
+    SDL_Point gpos;
+    SDL_Point dst = player_cast_ray(p->player, p->player->angle, p->map, p->entities, p->entities_size, &collision_type, &wall, &gpos);
 
     int xo = dst.x > p->player->pos.x ? -5 : 5;
     int yo = dst.y > p->player->pos.y ? -5 : 5;
 
     p->player->mode_data.mode = PLAYER_MODE_GRAPPLING;
     p->player->mode_data.grappling_dst = (SDL_Point){ .x = dst.x + xo, .y = dst.y + yo };
+    p->player->mode_data.grappling_dst_wall_gpos = gpos;
     p->player->mode_data.grappling_theta = atan2f(dst.y - p->player->pos.y, dst.x - p->player->pos.x);
 
     SDL_Point diff = {

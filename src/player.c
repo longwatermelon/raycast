@@ -36,6 +36,7 @@ struct Player *player_init(SDL_Point pos, float angle, SDL_Renderer *rend)
 
     self->mode_data.mode = PLAYER_MODE_NORMAL;
     self->mode_data.grappling_dst = (SDL_Point){ .x = -1, .y = -1 };
+    self->mode_data.grappling_dst_wall_gpos = (SDL_Point){ -1, -1 };
     self->mode_data.grappling_theta = 0.f;
     self->mode_data.grappling_drot = 0.f;
 
@@ -224,7 +225,7 @@ void player_move(struct Player *self, struct Map *map, float x, float y)
 }
 
 
-void player_execute_mode(struct Player *self)
+void player_execute_mode(struct Player *self, struct Map *map)
 {
     switch (self->mode_data.mode)
     {
@@ -249,6 +250,8 @@ void player_execute_mode(struct Player *self)
 
             audio_play_sound("res/sfx/impact.wav");
             render_shake();
+            map_damage_wall(map, self->mode_data.grappling_dst_wall_gpos);
+            self->mode_data.grappling_dst_wall_gpos = (SDL_Point){ -1, -1 };
         }
     } break;
     default:
@@ -303,7 +306,7 @@ struct Entity *player_attack(struct Player *self, struct Entity **entities, size
 }
 
 
-SDL_Point player_cast_ray(struct Player *self, float angle, struct Map *map, struct Entity **entities, size_t entities_size, int *collision_type)
+SDL_Point player_cast_ray(struct Player *self, float angle, struct Map *map, struct Entity **entities, size_t entities_size, int *collision_type, char *wall, SDL_Point *grid_pos)
 {
     if (angle > 2.f * M_PI)
         angle -= 2.f * M_PI;
@@ -311,8 +314,10 @@ SDL_Point player_cast_ray(struct Player *self, float angle, struct Map *map, str
     if (angle < 0.f)
         angle += 2.f * M_PI;
 
-    SDL_Point horizontal = player_cast_ray_horizontal(self, angle, map);
-    SDL_Point vertical = player_cast_ray_vertical(self, angle, map);
+    char hwall, vwall;
+    SDL_Point hg, vg;
+    SDL_Point horizontal = player_cast_ray_horizontal(self, angle, map, &hwall, &hg);
+    SDL_Point vertical = player_cast_ray_vertical(self, angle, map, &vwall, &vg);
 
     SDL_Point diff_h = { .x = horizontal.x - self->pos.x, .y = horizontal.y - self->pos.y };
     SDL_Point diff_v = { .x = vertical.x - self->pos.x, .y = vertical.y - self->pos.y };
@@ -327,15 +332,25 @@ SDL_Point player_cast_ray(struct Player *self, float angle, struct Map *map, str
         *collision_type = (angle < M_PI ? DIR_DOWN : DIR_UP);
 
     if (self->ray_mode == RAY_HORIZONTAL)
+    {
+        *wall = hwall;
+        *grid_pos = hg;
         return horizontal;
+    }
     if (self->ray_mode == RAY_VERTICAL)
+    {
+        *wall = vwall;
+        *grid_pos = vg;
         return vertical;
+    }
 
+    *wall = dist_h < dist_v ? hwall : vwall;
+    *grid_pos = dist_h < dist_v ? hg : vg;
     return dist_h < dist_v ? horizontal : vertical;
 }
 
 
-SDL_Point player_cast_ray_horizontal(struct Player *self, float angle, struct Map *map)
+SDL_Point player_cast_ray_horizontal(struct Player *self, float angle, struct Map *map, char *wall, SDL_Point *gpos)
 {
     // Cast ray that only intersects horizontal lines
     SDL_FPoint closest_horizontal;
@@ -365,7 +380,11 @@ SDL_Point player_cast_ray_horizontal(struct Player *self, float angle, struct Ma
             return (SDL_Point){ .x = (int)closest_horizontal.x, .y = (int)closest_horizontal.y };
 
         if (map->layout[grid_pos.y * map->size.x + grid_pos.x] != '.')
+        {
+            *wall = map->layout[grid_pos.y * map->size.x + grid_pos.x];
+            *gpos = grid_pos;
             return (SDL_Point){ .x = (int)closest_horizontal.x, .y = (int)closest_horizontal.y };
+        }
 
         float dy = (angle < M_PI ? -map->tile_size : map->tile_size);
 
@@ -375,7 +394,7 @@ SDL_Point player_cast_ray_horizontal(struct Player *self, float angle, struct Ma
 }
 
 
-SDL_Point player_cast_ray_vertical(struct Player *self, float angle, struct Map *map)
+SDL_Point player_cast_ray_vertical(struct Player *self, float angle, struct Map *map, char *wall, SDL_Point *gpos)
 {
     // Cast ray that only intersects vertical lines
     SDL_FPoint closest_vertical;
@@ -406,7 +425,11 @@ SDL_Point player_cast_ray_vertical(struct Player *self, float angle, struct Map 
             return (SDL_Point){ .x = (int)closest_vertical.x, .y = (int)closest_vertical.y };
 
         if (map->layout[grid_pos.y * map->size.x + grid_pos.x] != '.')
+        {
+            *wall = map->layout[grid_pos.y * map->size.x + grid_pos.x];
+            *gpos = grid_pos;
             return (SDL_Point){ .x = (int)closest_vertical.x, .y = (int)closest_vertical.y };
+        }
 
         float dx = (angle < M_PI / 2.f || angle > 3 * M_PI / 2.f ? map->tile_size : -map->tile_size);
 
@@ -511,7 +534,9 @@ struct Entity *player_shoot(struct Player *self, struct Entity **entities, size_
     else
     {
         int collision_type;
-        SDL_Point wall_vector = player_cast_ray(self, self->angle, map, entities, entities_size, &collision_type);
+        char wall;
+        SDL_Point gpos;
+        SDL_Point wall_vector = player_cast_ray(self, self->angle, map, entities, entities_size, &collision_type, &wall, &gpos);
         SDL_Point diff = { .x = wall_vector.x - self->pos.x, .y = wall_vector.y - self->pos.y };
         int wall_dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
 

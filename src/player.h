@@ -25,6 +25,7 @@ struct PlayerModeData
     } mode;
 
     SDL_Point grappling_dst;
+    SDL_Point grappling_dst_wall_gpos;
     float grappling_theta;
     float grappling_drot;
 };
@@ -101,15 +102,15 @@ void player_advance_animations(struct Player *self);
 
 void player_move(struct Player *self, struct Map *map, float x, float y);
 
-void player_execute_mode(struct Player *self);
+void player_execute_mode(struct Player *self, struct Map *map);
 
 // Returns entity attacked
 struct Entity *player_attack(struct Player *self, struct Entity **entities, size_t entities_size, struct Map *map);
 
 // Returns end point of casted ray
-SDL_Point player_cast_ray(struct Player *self, float angle, struct Map *map, struct Entity **entities, size_t entities_size, int *collision_type);
-SDL_Point player_cast_ray_horizontal(struct Player *self, float angle, struct Map *map);
-SDL_Point player_cast_ray_vertical(struct Player *self, float angle, struct Map *map);
+SDL_Point player_cast_ray(struct Player *self, float angle, struct Map *map, struct Entity **entities, size_t entities_size, int *collision_type, char *wall, SDL_Point *grid_pos);
+SDL_Point player_cast_ray_horizontal(struct Player *self, float angle, struct Map *map, char *wall, SDL_Point *grid_pos);
+SDL_Point player_cast_ray_vertical(struct Player *self, float angle, struct Map *map, char *wall, SDL_Point *grid_pos);
 
 // Returns ray length of ray that intersects with entity
 // If target type is -1, the ray will apply to all entity types

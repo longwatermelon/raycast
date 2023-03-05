@@ -64,3 +64,13 @@ SDL_FPoint map_get_random_empty_spot(struct Map *self)
     return pos;
 }
 
+void map_damage_wall(struct Map *self, SDL_Point gpos)
+{
+    char *ref_ch = &self->layout[gpos.y * self->size.x + gpos.x];
+    if (*ref_ch == '5')
+        return;
+
+    ++(*ref_ch);
+    if (*ref_ch == '4')
+        *ref_ch = '.';
+}

@@ -401,7 +401,7 @@ void prog_blast(struct Prog *self)
         };
 
         float dist = sqrtf(diff.x * diff.x + diff.y * diff.y);
-        if (dist > 300.f)
+        if (dist > 400.f)
             continue;
 
         self->entities[i]->blasted = true;

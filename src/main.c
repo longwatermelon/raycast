@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     {
         char muted[10];
         fscanf(fp, "%s", muted);
-        bool sound, music;
+        bool sound = false, music = false;
 
         if (strcmp(muted, "sound") == 0)
             sound = true;
